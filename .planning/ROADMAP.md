@@ -24,12 +24,12 @@ CoupleSpace ships as a mobile-first PWA that gives couples a private shared spac
   3. Partner can enter the invite code to connect, and the pair is established
   4. User can set display name and upload a profile picture visible to their partner
   5. Each user can see their partner's profile within the paired space
-**Plans**: TBD
+**Plans**: 3 plans created
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01: Project Scaffold & Supabase Foundation (Vite + PWA, Supabase client, DB schema, auth store, app shell)
+- [ ] 01-02: Authentication & Pairing System (Google OAuth, auth callback, invite codes, pairing UI, session persistence)
+- [ ] 01-03: Profile Management & App Shell (profile edit, avatar upload, partner view, drawer navigation, settings)
 
 ### Phase 2: Real-Time Chat
 **Goal**: Paired couples can exchange real-time messages with rich interaction
@@ -101,7 +101,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Pairing | 0/3 | Not started | - |
+| 1. Foundation & Pairing | 0/3 | Planning complete | - |
 | 2. Real-Time Chat | 0/2 | Not started | - |
 | 3. Voice & Image Sharing | 0/2 | Not started | - |
 | 4. Homepage Dashboard | 0/2 | Not started | - |
