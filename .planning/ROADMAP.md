@@ -2,81 +2,30 @@
 
 ## Overview
 
-CoupleSpace ships as a mobile-first PWA that gives couples a private shared space. The roadmap follows a vertical MVP approach: each phase delivers an end-to-end user capability. Foundation and auth come first (everything depends on pairing), then real-time chat (the core value), then media features, then the homepage dashboard (the differentiator), and finally shared notes and agenda. Each phase produces a deployable artifact — no big-bang integration.
+CoupleSpace ships as a mobile-first PWA that gives couples a private shared space. The roadmap follows a vertical MVP approach: each phase delivers an end-to-end user capability.
+
+## Milestones
+
+- ✅ **v1.0 MVP** — Phases 1-3 (shipped 2026-07-25)
+- 📋 **v1.1 Complete** — Phases 4-5 (planned)
 
 ## Phases
 
-- [x] **Phase 1: Foundation & Pairing** - App shell, Supabase setup, Google OAuth, couple pairing, profiles
-- [ ] **Phase 2: Real-Time Chat** - Private messaging with text, replies, and emoji reactions
-- [ ] **Phase 3: Voice & Image Sharing** - Voice messages, image sharing in chat, shared photo album
-- [ ] **Phase 4: Homepage Dashboard** - Random memory, mood tracker, mini photo album, daily ritual view
-- [ ] **Phase 5: Shared Notes & Agenda** - Collaborative notes, event calendar, date reminders
+<details>
+<summary>✅ v1.0 MVP (Phases 1-3) — SHIPPED 2026-07-25</summary>
+
+- [x] Phase 1: Foundation & Pairing (3/3 plans) — completed 2026-07-24
+- [x] Phase 2: Real-Time Chat (3/3 plans) — completed 2026-07-25
+- [x] Phase 3: Voice & Image Sharing (2/2 plans) — completed 2026-07-25
+
+</details>
+
+### 📋 v1.1 Complete (Planned)
+
+- [ ] Phase 4: Homepage Dashboard (2 plans)
+- [ ] Phase 5: Shared Notes & Agenda (2 plans)
 
 ## Phase Details
-
-### Phase 1: Foundation & Pairing
-
-**Goal**: Two users can authenticate, pair, and see each other's profiles in a shared private space
-**Depends on**: Nothing (first phase)
-**Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05, PROF-01, PROF-02, PROF-03
-**Success Criteria** (what must be TRUE):
-
-  1. User can sign in with Google and stay logged in across browser refreshes
-  2. User can generate an invite code/link and share it with their partner
-  3. Partner can enter the invite code to connect, and the pair is established
-  4. User can set display name and upload a profile picture visible to their partner
-  5. Each user can see their partner's profile within the paired space
-
-**Plans**: 3 plans created
-
-Plans:
-
-- [x] 01-01: Project Scaffold & Supabase Foundation (Vite + PWA, Supabase client, DB schema, auth store, app shell)
-- [x] 01-02: Authentication & Pairing System (Google OAuth, auth callback, invite codes, pairing UI, session persistence)
-- [x] 01-03: Profile Management & App Shell (profile edit, avatar upload, partner view, drawer navigation, settings)
-
-### Phase 2: Real-Time Chat
-
-**Goal**: Paired couples can exchange real-time messages with rich interaction
-**Depends on**: Phase 1
-**Requirements**: CHAT-01, CHAT-05, CHAT-06, CHAT-07
-**Success Criteria** (what must be TRUE):
-
-  1. User can send a text message and partner receives it in real-time
-  2. User can reply to a specific message and the quoted context is visible
-  3. User can react to any message with an emoji and partner sees the reaction
-  4. Chat interface works smoothly on mobile devices with proper sizing and touch targets
-  5. Messages persist and load full history when reopening chat
-
-**Plans**: 3 plans created
-
-Plans:
-
-- [ ] 02-01: Chat Schema + Core Real-time Messaging — Database migration, Zustand chat store with Supabase Realtime, core ChatView with message list, bubbles, input, date separators, delivery indicators, auto-scroll
-- [ ] 02-02: Replies + Reactions + Delete + Typing — QuotePreview, reply mode, ContextMenu, DeleteConfirmDialog, ReactionPicker, ReactionChip, TypingIndicator with animations
-- [ ] 02-03: Chat Settings + Notifications + Mobile Polish — Chat settings page (theme, font size, notifications, read receipts), push notifications, final mobile touch target audit
-
-### Phase 3: Voice & Image Sharing
-
-**Goal**: Couples can exchange voice messages and images within their chat, and build a shared photo album
-**Depends on**: Phase 2
-**Requirements**: CHAT-02, CHAT-03, CHAT-04, HOME-04, HOME-05
-**Success Criteria** (what must be TRUE):
-
-  1. User can hold to record a voice message, see waveform, and send it inline in chat
-  2. Partner can tap to play voice message with waveform visualization
-  3. User can send images in chat that display inline as thumbnails
-  4. User can upload photos to a shared album accessible from the homepage
-  5. Mini photo album displays horizontally scrollable thumbnails on homepage
-
-**Plans**: 1/2 plans executed
-
-Plans:
-
-- [x] 03-01-PLAN.md
-- [x] 03-02-PLAN.md
-- [x] 03-01: Voice Messages + Image Sharing in Chat — DB migration, storage bucket, voice recording (hold-to-record, waveform, slide-to-cancel), image compression, inline media components, chatStore extensions, ChatView integration
-- [ ] 03-02: Shared Photo Album — album_photos table, album-photos bucket, albumStore, AlbumPage with upload/grid, MiniAlbum on homepage, drawer navigation
 
 ### Phase 4: Homepage Dashboard
 
@@ -119,13 +68,10 @@ Plans:
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
-
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Foundation & Pairing | 3/3 | Complete | 2026-07-24 |
-| 2. Real-Time Chat | 3/3 | Complete | 2026-07-25 |
-| 3. Voice & Image Sharing | 1/2 | In Progress|  |
-| 4. Homepage Dashboard | 0/2 | Not started | - |
-| 5. Shared Notes & Agenda | 0/2 | Not started | - |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Foundation & Pairing | v1.0 | 3/3 | Complete | 2026-07-24 |
+| 2. Real-Time Chat | v1.0 | 3/3 | Complete | 2026-07-25 |
+| 3. Voice & Image Sharing | v1.0 | 2/2 | Complete | 2026-07-25 |
+| 4. Homepage Dashboard | v1.1 | 0/2 | Not started | - |
+| 5. Shared Notes & Agenda | v1.1 | 0/2 | Not started | - |

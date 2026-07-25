@@ -9,35 +9,35 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Auth & Pairing
 
-- [ ] **AUTH-01**: User can sign in with Google OAuth
-- [ ] **AUTH-02**: User session persists across browser refresh
-- [ ] **AUTH-03**: User can generate an invite code/link to pair with partner
-- [ ] **AUTH-04**: User can enter an invite code/link to connect with partner
-- [ ] **AUTH-05**: Only two users can be paired per pairID
+- [x] **AUTH-01**: User can sign in with Google OAuth
+- [x] **AUTH-02**: User session persists across browser refresh
+- [x] **AUTH-03**: User can generate an invite code/link to pair with partner
+- [x] **AUTH-04**: User can enter an invite code/link to connect with partner
+- [x] **AUTH-05**: Only two users can be paired per pairID
 
 ### Profile
 
-- [ ] **PROF-01**: User can set display name
-- [ ] **PROF-02**: User can upload profile picture
-- [ ] **PROF-03**: User can customize profile icon/avatar
+- [x] **PROF-01**: User can set display name
+- [x] **PROF-02**: User can upload profile picture
+- [x] **PROF-03**: User can customize profile icon/avatar
 
 ### Chat
 
-- [ ] **CHAT-01**: User can send and receive real-time text messages
+- [x] **CHAT-01**: User can send and receive real-time text messages
 - [x] **CHAT-02**: User can record and send voice messages (WhatsApp-style: hold to record, slide to cancel)
 - [x] **CHAT-03**: Voice messages play inline with waveform display
 - [x] **CHAT-04**: User can send images in chat
-- [ ] **CHAT-05**: User can reply to (quote) a specific message
-- [ ] **CHAT-06**: User can react to messages with emojis
-- [ ] **CHAT-07**: Chat interface is optimized for mobile devices
+- [x] **CHAT-05**: User can reply to (quote) a specific message
+- [x] **CHAT-06**: User can react to messages with emojis
+- [x] **CHAT-07**: Chat interface is optimized for mobile devices
 
 ### Homepage Dashboard
 
 - [ ] **HOME-01**: Homepage displays random memory photo from shared album
 - [ ] **HOME-02**: User can select daily mood from predefined emotions (happy, tired, sad, missing, needy)
 - [ ] **HOME-03**: Mood status is visible to both partners
-- [ ] **HOME-04**: Mini photo album displays horizontally scrollable photos
-- [ ] **HOME-05**: User can upload photos to shared album
+- [x] **HOME-04**: Mini photo album displays horizontally scrollable photos
+- [x] **HOME-05**: User can upload photos to shared album
 
 ### Shared Notes
 
@@ -99,23 +99,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
-| AUTH-04 | Phase 1 | Pending |
-| AUTH-05 | Phase 1 | Pending |
-| PROF-01 | Phase 1 | Pending |
-| PROF-02 | Phase 1 | Pending |
-| PROF-03 | Phase 1 | Pending |
-| CHAT-01 | Phase 2 | Pending |
-| CHAT-05 | Phase 2 | Pending |
-| CHAT-06 | Phase 2 | Pending |
-| CHAT-07 | Phase 2 | Pending |
+| AUTH-01 | Phase 1 | Complete |
+| AUTH-02 | Phase 1 | Complete |
+| AUTH-03 | Phase 1 | Complete |
+| AUTH-04 | Phase 1 | Complete |
+| AUTH-05 | Phase 1 | Complete |
+| PROF-01 | Phase 1 | Complete |
+| PROF-02 | Phase 1 | Complete |
+| PROF-03 | Phase 1 | Complete |
+| CHAT-01 | Phase 2 | Complete |
+| CHAT-05 | Phase 2 | Complete |
+| CHAT-06 | Phase 2 | Complete |
+| CHAT-07 | Phase 2 | Complete |
 | CHAT-02 | Phase 3 | Complete |
 | CHAT-03 | Phase 3 | Complete |
 | CHAT-04 | Phase 3 | Complete |
-| HOME-04 | Phase 3 | Pending |
-| HOME-05 | Phase 3 | Pending |
+| HOME-04 | Phase 3 | Complete |
+| HOME-05 | Phase 3 | Complete |
 | HOME-01 | Phase 4 | Pending |
 | HOME-02 | Phase 4 | Pending |
 | HOME-03 | Phase 4 | Pending |
@@ -132,6 +132,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 - v1 requirements: 27 total
 - Mapped to phases: 27
 - Unmapped: 0 ✓
+- Completed (Phases 1-3): 19/27
+- Remaining (Phases 4-5): 8/27
 
 ---
 *Requirements defined: 2026-07-24*

@@ -1,90 +1,66 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: milestone
-current_phase: 03
-status: completed
-stopped_at: Phase 3 context gathered
-last_updated: "2026-07-25T15:01:21.010Z"
+milestone_name: MVP
+current_phase: 04
+status: milestone_complete
+stopped_at: v1.0 milestone archived
+last_updated: "2026-07-25T18:00:00.000Z"
 last_activity: 2026-07-25
-last_activity_desc: Phase 03 marked complete
+last_activity_desc: v1.0 milestone archived
 progress:
-  total_phases: 3
+  total_phases: 5
   completed_phases: 3
-  total_plans: 8
+  total_plans: 10
   completed_plans: 8
-current_phase_name: voice-image-sharing
+current_phase_name: homepage-dashboard
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-24)
+See: .planning/PROJECT.md (updated 2026-07-25)
 
 **Core value:** Chat between couples — real-time private messaging is the foundation
-**Current focus:** Phase 03 — voice-image-sharing
+**Current focus:** Planning v1.1 — Homepage Dashboard (Phase 4)
 
 ## Current Position
 
-Phase: 03 — COMPLETE
-Plan: 2 of 2
-Status: Phase 03 complete
-Last activity: 2026-07-25 — Phase 03 marked complete
+Milestone: v1.0 — SHIPPED ✅
+Phase: Next is 04 (Homepage Dashboard)
+Progress: [█████████░] 60% (3/5 phases complete)
 
-Progress: [█████████░] 88% (Phases 1-2 complete)
+## Milestone Summary
 
-## Performance Metrics
-
-**Velocity:**
-
-- Total plans completed: 6
-- Average duration: —
-- Total execution time: 0 hours
-
-**By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 1. Foundation & Pairing | 3/3 | 3 | — |
-| 2. Real-Time Chat | 3/3 | 3 | — |
-
-**Recent Trend:**
-
-- Last 5 plans: —
-- Trend: —
-
-*Updated after each plan completion*
+**v1.0 MVP** shipped 2026-07-25:
+- 3 phases (Foundation, Chat, Voice/Image)
+- 8 plans completed
+- 19/27 v1 requirements done
+- 10 bugs found and fixed during UAT
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+All v1.0 decisions validated as ✓ Good.
 
-- Roadmap created: 5 phases, standard granularity, 27/27 requirements mapped
-- Spotify integration moved to v2 (not in v1 requirements)
-- Shared Notes (NOTE-01..03) included in v1 scope as Phase 5
-- Phase 2 complete: Real-time chat with replies, reactions, delete, typing, settings
-- [Phase ?]: LiveAudioVisualizer uses mediaRecorder prop, not analyserNode. Updated mediaRecorder.js to expose getMediaRecorder().
+### Known Issues
 
-### Pending Todos
+- `gh` CLI not installed — PR creation via manual link
+- Some Supabase migrations applied manually (MCP timeouts)
+- ServiceWorker MIME type warning in dev (non-blocking)
 
-None yet.
-
-### Blockers/Concerns
-
-None yet.
-
-## Deferred Items
+### Deferred Items
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| *(none)* | | | |
+| Phase 4 | Homepage Dashboard | Planned | v1.0 close |
+| Phase 5 | Shared Notes & Agenda | Planned | v1.0 close |
 
 ## Session Continuity
 
-Last session: 2026-07-25T10:50:00.000Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-voice-image-sharing/03-CONTEXT.md
+Last session: 2026-07-25
+Stopped at: v1.0 milestone archived
+Next: `/gsd-new-milestone` to start v1.1
