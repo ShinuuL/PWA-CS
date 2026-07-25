@@ -12,6 +12,7 @@
   font-size: 2rem;
   margin-bottom: 0.5rem;
   color: var(--color-primary);
+  font-family: 'Press Start 2P', monospace;
 }
 
 .login-page p {
