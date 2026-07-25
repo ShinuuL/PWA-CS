@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { Send, ChevronDown, Reply } from 'lucide-react'
+import { Send, ChevronDown, Reply, Trash2, X, SmilePlus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useAuthStore from '../../stores/authStore'
 import useChatStore from '../../stores/chatStore'
 import usePairing from '../pairing/usePairing'
 import './chat.css'
 
-const REACTION_EMOJIS = ['❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '💯']
+const REACTION_EMOJIS = ['❤️', '😂', '👍', '👎', '😢', '🔥', '😍', '🎉']
 
 function formatTime(date) {
   return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -47,47 +47,234 @@ function TypingIndicator() {
       className="chat-typing-indicator"
     >
       <div className="chat-typing-dots">
-        <span /><span /><span />
+        {[0, 1, 2].map(i => (
+          <motion.span
+            key={i}
+            animate={{ scale: [1, 1.3, 1] }}
+            transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+          />
+        ))}
       </div>
     </motion.div>
   )
 }
 
-function MessageBubble({ message, isOwn, showAvatar, onLongPress }) {
-  const [showReactions, setShowReactions] = useState(false)
+function QuotePreview({ message, onCancel }) {
+  if (!message) return null
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      className="chat-quote-preview"
+    >
+      <div className="chat-quote-content">
+        <span className="chat-quote-name">{message.profiles?.display_name || 'Partner'}</span>
+        <span className="chat-quote-text">{message.content}</span>
+      </div>
+      <button className="chat-quote-cancel" onClick={onCancel} aria-label="Cancel reply">
+        <X size={16} />
+      </button>
+    </motion.div>
+  )
+}
+
+function ContextMenu({ position, onClose, onReply, onReact, onDelete }) {
+  const menuRef = useRef(null)
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        onClose()
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    document.addEventListener('touchstart', handleClick)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('touchstart', handleClick)
+    }
+  }, [onClose])
+
+  return (
+    <motion.div
+      ref={menuRef}
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.15 }}
+      className="chat-context-menu"
+      style={{ top: position.y, left: position.x }}
+    >
+      <button className="chat-context-menu-item" onClick={onReply}>
+        <Reply size={18} />
+        <span>Reply</span>
+      </button>
+      <button className="chat-context-menu-item" onClick={onReact}>
+        <SmilePlus size={18} />
+        <span>React</span>
+      </button>
+      <button className="chat-context-menu-item chat-context-menu-item--delete" onClick={onDelete}>
+        <Trash2 size={18} />
+        <span>Delete</span>
+      </button>
+    </motion.div>
+  )
+}
+
+function ReactionPicker({ messageId, onClose, onReact }) {
+  const pickerRef = useRef(null)
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target)) {
+        onClose()
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    document.addEventListener('touchstart', handleClick)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('touchstart', handleClick)
+    }
+  }, [onClose])
+
+  return (
+    <motion.div
+      ref={pickerRef}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+      className="chat-reaction-picker"
+    >
+      {REACTION_EMOJIS.map(emoji => (
+        <button
+          key={emoji}
+          className="chat-reaction-picker__emoji"
+          onClick={() => { onReact(messageId, emoji); onClose() }}
+        >
+          {emoji}
+        </button>
+      ))}
+    </motion.div>
+  )
+}
+
+function DeleteConfirmDialog({ forEveryone, onConfirm, onCancel }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="chat-delete-overlay"
+      onClick={onCancel}
+    >
+      <motion.div
+        initial={{ scale: 0.95 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.95 }}
+        className="chat-delete-dialog"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3>Delete message?</h3>
+        <p>
+          {forEveryone
+            ? 'This will remove the message for everyone. This cannot be undone.'
+            : 'This will remove the message from your chat only.'}
+        </p>
+        <div className="chat-delete-dialog__actions">
+          <button className="chat-delete-dialog__cancel" onClick={onCancel}>Cancel</button>
+          <button className="chat-delete-dialog__delete" onClick={onConfirm}>Delete</button>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+function ReactionChips({ reactions, messageId, isOwn }) {
+  const { user } = useAuthStore()
+  const { addReaction } = useChatStore()
+
+  const groups = (reactions || []).reduce((acc, r) => {
+    if (!acc[r.emoji]) acc[r.emoji] = { emoji: r.emoji, count: 0, hasOwn: false }
+    acc[r.emoji].count++
+    if (r.user_id === user?.id) acc[r.emoji].hasOwn = true
+    return acc
+  }, {})
+
+  if (Object.keys(groups).length === 0) return null
+
+  return (
+    <div className={`chat-reactions ${isOwn ? 'own' : 'other'}`}>
+      {Object.values(groups).map(group => (
+        <motion.button
+          key={group.emoji}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          className={`chat-reaction-chip ${group.hasOwn ? 'own' : ''}`}
+          onClick={() => addReaction(messageId, group.emoji)}
+        >
+          {group.emoji} {group.count > 1 && group.count}
+        </motion.button>
+      ))}
+    </div>
+  )
+}
+
+function MessageBubble({ message, isOwn, showAvatar, onContextMenu, onSwipeReply }) {
+  const [swipeX, setSwipeX] = useState(0)
+  const touchStart = useRef({ x: 0, y: 0, time: 0 })
   const longPressTimer = useRef(null)
-  const touchStart = useRef({ x: 0, y: 0 })
 
   const handleTouchStart = (e) => {
-    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+    touchStart.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+      time: Date.now()
+    }
     longPressTimer.current = setTimeout(() => {
-      setShowReactions(true)
+      navigator.vibrate?.(50)
+      const rect = e.currentTarget.getBoundingClientRect()
+      onContextMenu(message, {
+        x: rect.left + rect.width / 2,
+        y: rect.top
+      })
     }, 500)
   }
 
   const handleTouchMove = (e) => {
     const dx = e.touches[0].clientX - touchStart.current.x
     const dy = e.touches[0].clientY - touchStart.current.y
-    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+
+    if (Math.abs(dy) > 10) {
       clearTimeout(longPressTimer.current)
+      setSwipeX(0)
+      return
+    }
+
+    if (dx > 10) {
+      clearTimeout(longPressTimer.current)
+      setSwipeX(Math.min(dx, 120))
     }
   }
 
   const handleTouchEnd = () => {
     clearTimeout(longPressTimer.current)
+    if (swipeX > 80) {
+      navigator.vibrate?.(50)
+      onSwipeReply(message)
+    }
+    setSwipeX(0)
   }
 
-  if (message.deleted && !message.deleted_for_everyone) {
-    return (
-      <div className={`chat-message-row ${isOwn ? 'own' : 'other'}`}>
-        <div className="chat-bubble deleted">
-          <span className="chat-deleted-text">Message deleted</span>
-        </div>
-      </div>
-    )
+  const handleContextMenu = (e) => {
+    e.preventDefault()
+    onContextMenu(message, { x: e.clientX, y: e.clientY })
   }
 
-  if (message.deleted && message.deleted_for_everyone) {
+  if (message.deleted) {
     return (
       <div className={`chat-message-row ${isOwn ? 'own' : 'other'}`}>
         <div className="chat-bubble deleted">
@@ -97,18 +284,14 @@ function MessageBubble({ message, isOwn, showAvatar, onLongPress }) {
     )
   }
 
-  const reactionGroups = (message.reactions || []).reduce((acc, r) => {
-    if (!acc[r.emoji]) acc[r.emoji] = { emoji: r.emoji, count: 0, users: [] }
-    acc[r.emoji].count++
-    acc[r.emoji].users.push(r.user_id)
-    return acc
-  }, {})
+  const quotedMessage = message.reply_to ? message._repliedMessage : null
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       className={`chat-message-row ${isOwn ? 'own' : 'other'}`}
+      style={{ transform: `translateX(${isOwn ? -swipeX : swipeX}px)` }}
     >
       {!isOwn && showAvatar && (
         <div className="chat-avatar">
@@ -132,49 +315,20 @@ function MessageBubble({ message, isOwn, showAvatar, onLongPress }) {
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          onContextMenu={(e) => { e.preventDefault(); setShowReactions(!showReactions) }}
+          onContextMenu={handleContextMenu}
         >
-          {message.reply_to && (
-            <div className="chat-reply-preview">
-              <Reply size={12} />
-              <span>Reply</span>
+          {quotedMessage && (
+            <div className="chat-inline-quote">
+              <span className="chat-inline-quote-name">{quotedMessage.profiles?.display_name || 'Partner'}</span>
+              <span className="chat-inline-quote-text">{quotedMessage.content}</span>
             </div>
           )}
           <span className="chat-message-text">{message.content}</span>
           <span className="chat-message-time">{formatTime(message.created_at)}</span>
         </div>
 
-        {Object.keys(reactionGroups).length > 0 && (
-          <div className="chat-reactions">
-            {Object.values(reactionGroups).map(group => (
-              <button key={group.emoji} className="chat-reaction-badge">
-                {group.emoji} {group.count > 1 && group.count}
-              </button>
-            ))}
-          </div>
-        )}
+        <ReactionChips reactions={message.reactions} messageId={message.id} isOwn={isOwn} />
       </div>
-
-      <AnimatePresence>
-        {showReactions && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="chat-reaction-picker"
-            onMouseLeave={() => setShowReactions(false)}
-          >
-            {REACTION_EMOJIS.map(emoji => (
-              <button key={emoji} onClick={() => {
-                onLongPress(message.id, emoji)
-                setShowReactions(false)
-              }}>
-                {emoji}
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   )
 }
@@ -222,13 +376,17 @@ export default function ChatView() {
   const {
     messages, loading, sending, error,
     partnerTyping, isAtBottom, offlineQueue,
+    replyTo, showDeleteConfirm, deleteTarget, deleteForEveryone, showReactionPicker,
     initializeChat, sendMessage,
-    addReaction, setTyping, setIsAtBottom,
+    setReplyTo, cancelReply,
+    openDeleteConfirm, closeDeleteConfirm, confirmDelete,
+    setShowReactionPicker, addReaction,
+    setTyping, setIsAtBottom,
     syncOfflineQueue, cleanup
   } = useChatStore()
 
   const [inputValue, setInputValue] = useState('')
-  const [replyTo, setReplyTo] = useState(null)
+  const [contextMenu, setContextMenu] = useState(null)
   const messagesEndRef = useRef(null)
   const scrollContainerRef = useRef(null)
   const [unreadCount, setUnreadCount] = useState(0)
@@ -264,9 +422,8 @@ export default function ChatView() {
 
   const handleSend = () => {
     if (!inputValue.trim() || sending) return
-    sendMessage(inputValue, replyTo)
+    sendMessage(inputValue)
     setInputValue('')
-    setReplyTo(null)
     setTyping(false)
   }
 
@@ -288,6 +445,22 @@ export default function ChatView() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     setUnreadCount(0)
     setIsAtBottom(true)
+  }
+
+  const handleContextMenuAction = (message, action) => {
+    setContextMenu(null)
+    if (action === 'reply') {
+      setReplyTo(message)
+    } else if (action === 'react') {
+      setShowReactionPicker(message.id)
+    } else if (action === 'delete') {
+      const isOwn = message.sender_id === user?.id
+      openDeleteConfirm(message, isOwn)
+    }
+  }
+
+  const handleSwipeReply = (message) => {
+    setReplyTo(message)
   }
 
   if (!pairId) return null
@@ -348,7 +521,8 @@ export default function ChatView() {
                   message={msg}
                   isOwn={isOwn}
                   showAvatar={isLast && !isOwn}
-                  onLongPress={addReaction}
+                  onContextMenu={(m, pos) => setContextMenu({ message: m, position: pos })}
+                  onSwipeReply={handleSwipeReply}
                 />
               </div>
             )
@@ -369,13 +543,11 @@ export default function ChatView() {
         <ScrollToBottomButton onClick={scrollToBottom} count={unreadCount} />
       )}
 
-      {replyTo && (
-        <div className="chat-reply-bar">
-          <Reply size={14} />
-          <span>Replying to message</span>
-          <button onClick={() => setReplyTo(null)}>×</button>
-        </div>
-      )}
+      <AnimatePresence>
+        {replyTo && (
+          <QuotePreview message={replyTo} onCancel={cancelReply} />
+        )}
+      </AnimatePresence>
 
       <div className="chat-input-bar">
         <div className="chat-input-wrapper">
@@ -398,6 +570,39 @@ export default function ChatView() {
           </button>
         </div>
       </div>
+
+      <AnimatePresence>
+        {contextMenu && (
+          <ContextMenu
+            position={contextMenu.position}
+            onClose={() => setContextMenu(null)}
+            onReply={() => handleContextMenuAction(contextMenu.message, 'reply')}
+            onReact={() => handleContextMenuAction(contextMenu.message, 'react')}
+            onDelete={() => handleContextMenuAction(contextMenu.message, 'delete')}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showReactionPicker && (
+          <ReactionPicker
+            messageId={showReactionPicker}
+            onClose={() => setShowReactionPicker(null)}
+            onReact={addReaction}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showDeleteConfirm && deleteTarget && (
+          <DeleteConfirmDialog
+            message={deleteTarget}
+            forEveryone={deleteForEveryone}
+            onConfirm={confirmDelete}
+            onCancel={closeDeleteConfirm}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

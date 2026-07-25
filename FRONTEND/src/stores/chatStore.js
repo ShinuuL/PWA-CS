@@ -14,6 +14,12 @@ const useChatStore = create((set, get) => ({
   subscription: null,
   typingTimeout: null,
 
+  replyTo: null,
+  showDeleteConfirm: false,
+  deleteTarget: null,
+  deleteForEveryone: false,
+  showReactionPicker: null,
+
   initializeChat: async (pairId) => {
     const { user } = useAuthStore.getState()
     if (!user || !pairId) return
@@ -114,11 +120,12 @@ const useChatStore = create((set, get) => ({
     }
   },
 
-  sendMessage: async (content, replyTo = null) => {
+  sendMessage: async (content, replyToId = null) => {
     const { user } = useAuthStore.getState()
-    const { pairId, messages, offlineQueue } = get()
+    const { pairId, messages, offlineQueue, replyTo } = get()
     if (!user || !pairId || !content.trim()) return
 
+    const replyId = replyToId || replyTo?.id || null
     const tempId = `temp-${Date.now()}`
     const optimisticMessage = {
       id: tempId,
@@ -126,7 +133,7 @@ const useChatStore = create((set, get) => ({
       pair_id: pairId,
       sender_id: user.id,
       content: content.trim(),
-      reply_to: replyTo,
+      reply_to: replyId,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       read_at: null,
@@ -137,6 +144,7 @@ const useChatStore = create((set, get) => ({
     }
 
     set({ sending: true, messages: [...messages, optimisticMessage] })
+    get().cancelReply()
 
     if (!navigator.onLine) {
       set({
@@ -151,7 +159,7 @@ const useChatStore = create((set, get) => ({
         pair_id: pairId,
         sender_id: user.id,
         content: content.trim(),
-        reply_to: replyTo
+        reply_to: replyId
       })
       if (error) throw error
     } catch (err) {
@@ -208,6 +216,29 @@ const useChatStore = create((set, get) => ({
       set({ error: err.message })
     }
   },
+
+  setReplyTo: (message) => set({ replyTo: message }),
+  cancelReply: () => set({ replyTo: null }),
+
+  openDeleteConfirm: (message, forEveryone = false) => set({
+    showDeleteConfirm: true,
+    deleteTarget: message,
+    deleteForEveryone: forEveryone
+  }),
+  closeDeleteConfirm: () => set({
+    showDeleteConfirm: false,
+    deleteTarget: null,
+    deleteForEveryone: false
+  }),
+  confirmDelete: async () => {
+    const { deleteTarget, deleteForEveryone } = get()
+    if (deleteTarget) {
+      await get().deleteMessage(deleteTarget.id, deleteForEveryone)
+    }
+    get().closeDeleteConfirm()
+  },
+
+  setShowReactionPicker: (messageId) => set({ showReactionPicker: messageId }),
 
   addReaction: async (messageId, emoji) => {
     const { user } = useAuthStore.getState()
@@ -289,7 +320,10 @@ const useChatStore = create((set, get) => ({
       supabase.removeChannel(subscription)
     }
     if (typingTimeout) clearTimeout(typingTimeout)
-    set({ subscription: null, typingTimeout: null, messages: [], pairId: null })
+    set({
+      subscription: null, typingTimeout: null, messages: [], pairId: null,
+      replyTo: null, showDeleteConfirm: false, deleteTarget: null, showReactionPicker: null
+    })
   }
 }))
 
