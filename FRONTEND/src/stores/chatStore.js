@@ -299,6 +299,87 @@ const useChatStore = create((set, get) => ({
     }
   },
 
+  sendImageMessage: async (imageBlob, dimensions = {}) => {
+    const { user } = useAuthStore.getState()
+    const { pairId, messages } = get()
+    if (!user || !pairId || !imageBlob) return
+
+    const tempId = `temp-${Date.now()}`
+    const tempBlobUrl = URL.createObjectURL(imageBlob)
+
+    // Optimistic message with local blob URL for instant display
+    const optimisticMessage = {
+      id: tempId,
+      temp_id: tempId,
+      pair_id: pairId,
+      sender_id: user.id,
+      content: '',
+      message_type: 'image',
+      media_url: tempBlobUrl,
+      media_width: dimensions.width || null,
+      media_height: dimensions.height || null,
+      reply_to: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      read_at: null,
+      deleted: false,
+      deleted_for_everyone: false,
+      profiles: user.user_metadata || {},
+      reactions: []
+    }
+
+    set({ sending: true, messages: [...messages, optimisticMessage] })
+
+    if (!navigator.onLine) {
+      set({
+        offlineQueue: [...get().offlineQueue, { ...optimisticMessage, _blob: imageBlob }],
+        sending: false
+      })
+      return
+    }
+
+    try {
+      // Upload to Supabase Storage
+      const timestamp = Date.now()
+      const random = Math.random().toString(36).slice(2, 8)
+      const ext = imageBlob.type === 'image/png' ? 'png' : 'jpg'
+      const filePath = `${pairId}/${timestamp}-${random}.${ext}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('chat-media')
+        .upload(filePath, imageBlob, { contentType: imageBlob.type || 'image/jpeg' })
+
+      if (uploadError) throw uploadError
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('chat-media')
+        .getPublicUrl(filePath)
+
+      const publicUrl = urlData?.publicUrl
+      if (!publicUrl) throw new Error('Failed to get public URL')
+
+      // Insert message into database
+      const { error: insertError } = await supabase.from('messages').insert({
+        pair_id: pairId,
+        sender_id: user.id,
+        content: '',
+        message_type: 'image',
+        media_url: publicUrl,
+        media_width: dimensions.width || null,
+        media_height: dimensions.height || null
+      })
+      if (insertError) throw insertError
+
+      // Revoke the temporary blob URL
+      URL.revokeObjectURL(tempBlobUrl)
+    } catch (err) {
+      set({ error: err.message, sending: false })
+    } finally {
+      set({ sending: false })
+    }
+  },
+
   syncOfflineQueue: async () => {
     const { offlineQueue } = get()
     if (offlineQueue.length === 0) return

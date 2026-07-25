@@ -7,6 +7,9 @@ import useChatStore from '../../stores/chatStore'
 import { usePairing } from '../pairing/usePairing'
 import VoiceRecorder from './VoiceRecorder'
 import VoiceMessage from './VoiceMessage'
+import ImagePicker from './ImagePicker'
+import ImageViewer from './ImageViewer'
+import ImageMessage from './ImageMessage'
 import './chat.css'
 
 const REACTION_EMOJIS = ['❤️', '😂', '👍', '👎', '😢', '🔥', '😍', '🎉']
@@ -333,15 +336,15 @@ function MessageBubble({ message, isOwn, showAvatar, onContextMenu, onSwipeReply
               isOwn={isOwn}
             />
           ) : message.message_type === 'image' ? (
-            /* ImageMessage will be rendered in Task 3 — placeholder for now */
-            <div className="chat-image-bubble">
-              <img
-                src={message.media_url}
-                alt="Shared image"
-                className="chat-image-bubble__img"
-                loading="lazy"
-              />
-            </div>
+            <ImageMessage
+              src={message.media_url}
+              alt="Shared image"
+              dimensions={{
+                width: message.media_width,
+                height: message.media_height
+              }}
+              onClick={(src) => setViewerSrc(src)}
+            />
           ) : (
             <span className="chat-message-text">{message.content}</span>
           )}
@@ -401,7 +404,7 @@ export default function ChatView() {
     partnerTyping, isAtBottom, offlineQueue,
     replyTo, showDeleteConfirm, deleteTarget, deleteForEveryone, showReactionPicker,
     settings,
-    initializeChat, sendMessage, sendVoiceMessage,
+    initializeChat, sendMessage, sendVoiceMessage, sendImageMessage,
     setReplyTo, cancelReply,
     openDeleteConfirm, closeDeleteConfirm, confirmDelete,
     setShowReactionPicker, addReaction,
@@ -412,6 +415,7 @@ export default function ChatView() {
   const [inputValue, setInputValue] = useState('')
   const [contextMenu, setContextMenu] = useState(null)
   const [isRecording, setIsRecording] = useState(false)
+  const [viewerSrc, setViewerSrc] = useState(null)
   const messagesEndRef = useRef(null)
   const scrollContainerRef = useRef(null)
   const [unreadCount, setUnreadCount] = useState(0)
@@ -472,6 +476,10 @@ export default function ChatView() {
   const handleCancelRecording = useCallback(() => {
     setIsRecording(false)
   }, [])
+
+  const handleSendImage = useCallback((blob, dimensions) => {
+    sendImageMessage(blob, dimensions)
+  }, [sendImageMessage])
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value)
@@ -621,6 +629,7 @@ export default function ChatView() {
         ) : (
           <div className="chat-input-bar" key="chat-input-bar">
             <div className="chat-input-wrapper">
+              <ImagePicker onSendImage={handleSendImage} />
               <button
                 className="chat-mic-btn"
                 onPointerDown={(e) => {
@@ -685,6 +694,12 @@ export default function ChatView() {
           />
         )}
       </AnimatePresence>
+
+      <ImageViewer
+        src={viewerSrc}
+        alt="Shared image"
+        onClose={() => setViewerSrc(null)}
+      />
     </div>
   )
 }
