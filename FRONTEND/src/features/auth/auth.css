@@ -1,0 +1,35 @@
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+}
+
+.login-page h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
+}
+
+.login-page p {
+  color: var(--color-text-secondary);
+  margin-bottom: 2rem;
+}
+
+.login-button {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.login-button:hover {
+  opacity: 0.9;
+}
