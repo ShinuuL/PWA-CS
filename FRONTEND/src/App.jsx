@@ -12,8 +12,15 @@ import PartnerProfile from './features/profile/PartnerProfile'
 import SettingsPage from './features/settings/SettingsPage'
 import ChatView from './features/chat/ChatView'
 import ChatSettings from './features/chat/ChatSettings'
+import AlbumPage from './features/album/AlbumPage'
+import MiniAlbum from './features/album/MiniAlbum'
 
-const HomePage = () => <div style={{ padding: '1.5rem' }}>Home (Phase 4)</div>
+const HomePage = () => (
+  <div style={{ padding: '1.5rem' }}>
+    <h2 style={{ color: 'var(--color-text-primary)', marginBottom: '1rem' }}>Home</h2>
+    <MiniAlbum />
+  </div>
+)
 const AgendaPage = () => <div style={{ padding: '1.5rem' }}>Agenda (Phase 5)</div>
 
 function App() {
@@ -61,6 +68,18 @@ function App() {
             <ProtectedRoute>
               <AppShell>
                 <ChatSettings />
+              </AppShell>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/album"
+          element={
+            <ProtectedRoute>
+              <AppShell>
+                <PairingGate>
+                  <AlbumPage />
+                </PairingGate>
               </AppShell>
             </ProtectedRoute>
           }
