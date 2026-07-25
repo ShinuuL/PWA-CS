@@ -209,6 +209,7 @@ export function useVoiceRecorder() {
     isRecording,
     duration,
     waveformData,
+    mediaRecorder: mediaRecorderRef.current,
     startRecording,
     stopRecording,
     cancelRecording,

@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Send, ChevronDown, Reply, Trash2, X, SmilePlus, Settings } from 'lucide-react'
+import { Send, ChevronDown, Reply, Trash2, X, SmilePlus, Settings, Mic } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useAuthStore from '../../stores/authStore'
 import useChatStore from '../../stores/chatStore'
-import usePairing from '../pairing/usePairing'
+import { usePairing } from '../pairing/usePairing'
+import VoiceRecorder from './VoiceRecorder'
+import VoiceMessage from './VoiceMessage'
 import './chat.css'
 
 const REACTION_EMOJIS = ['❤️', '😂', '👍', '👎', '😢', '🔥', '😍', '🎉']
@@ -324,7 +326,25 @@ function MessageBubble({ message, isOwn, showAvatar, onContextMenu, onSwipeReply
               <span className="chat-inline-quote-text">{quotedMessage.content}</span>
             </div>
           )}
-          <span className="chat-message-text">{message.content}</span>
+          {message.message_type === 'voice' ? (
+            <VoiceMessage
+              mediaUrl={message.media_url}
+              duration={message.media_duration}
+              isOwn={isOwn}
+            />
+          ) : message.message_type === 'image' ? (
+            /* ImageMessage will be rendered in Task 3 — placeholder for now */
+            <div className="chat-image-bubble">
+              <img
+                src={message.media_url}
+                alt="Shared image"
+                className="chat-image-bubble__img"
+                loading="lazy"
+              />
+            </div>
+          ) : (
+            <span className="chat-message-text">{message.content}</span>
+          )}
           <span className="chat-message-time">{formatTime(message.created_at)}</span>
         </div>
 
@@ -373,14 +393,15 @@ function EmptyState() {
 
 export default function ChatView() {
   const navigate = useNavigate()
-  const { pairId } = usePairing()
+  const { checkPairStatus } = usePairing()
   const { user } = useAuthStore()
+  const [pairId, setPairId] = useState(null)
   const {
     messages, loading, sending, error,
     partnerTyping, isAtBottom, offlineQueue,
     replyTo, showDeleteConfirm, deleteTarget, deleteForEveryone, showReactionPicker,
     settings,
-    initializeChat, sendMessage,
+    initializeChat, sendMessage, sendVoiceMessage,
     setReplyTo, cancelReply,
     openDeleteConfirm, closeDeleteConfirm, confirmDelete,
     setShowReactionPicker, addReaction,
@@ -390,15 +411,21 @@ export default function ChatView() {
 
   const [inputValue, setInputValue] = useState('')
   const [contextMenu, setContextMenu] = useState(null)
+  const [isRecording, setIsRecording] = useState(false)
   const messagesEndRef = useRef(null)
   const scrollContainerRef = useRef(null)
   const [unreadCount, setUnreadCount] = useState(0)
   const typingTimerRef = useRef(null)
 
   useEffect(() => {
-    if (pairId) initializeChat(pairId)
+    checkPairStatus().then(pair => {
+      if (pair) {
+        setPairId(pair.id)
+        initializeChat(pair.id)
+      }
+    })
     return () => cleanup()
-  }, [pairId, initializeChat, cleanup])
+  }, [checkPairStatus, initializeChat, cleanup])
 
   useEffect(() => {
     if (isAtBottom) {
@@ -436,6 +463,15 @@ export default function ChatView() {
       handleSend()
     }
   }
+
+  const handleSendVoice = useCallback((blob) => {
+    setIsRecording(false)
+    sendVoiceMessage(blob, 0)
+  }, [sendVoiceMessage])
+
+  const handleCancelRecording = useCallback(() => {
+    setIsRecording(false)
+  }, [])
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value)
@@ -575,27 +611,47 @@ export default function ChatView() {
         )}
       </AnimatePresence>
 
-      <div className="chat-input-bar">
-        <div className="chat-input-wrapper">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
-            className="chat-input"
-            disabled={sending}
+      <AnimatePresence>
+        {isRecording ? (
+          <VoiceRecorder
+            key="voice-recorder"
+            onSendVoice={handleSendVoice}
+            onCancel={handleCancelRecording}
           />
-          <button
-            className="chat-send-btn"
-            onClick={handleSend}
-            disabled={!inputValue.trim() || sending}
-            aria-label="Send message"
-          >
-            <Send size={20} />
-          </button>
-        </div>
-      </div>
+        ) : (
+          <div className="chat-input-bar" key="chat-input-bar">
+            <div className="chat-input-wrapper">
+              <button
+                className="chat-mic-btn"
+                onPointerDown={(e) => {
+                  e.preventDefault()
+                  setIsRecording(true)
+                }}
+                aria-label="Record voice message"
+              >
+                <Mic size={20} />
+              </button>
+              <input
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Type a message..."
+                className="chat-input"
+                disabled={sending}
+              />
+              <button
+                className="chat-send-btn"
+                onClick={handleSend}
+                disabled={!inputValue.trim() || sending}
+                aria-label="Send message"
+              >
+                <Send size={20} />
+              </button>
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {contextMenu && (

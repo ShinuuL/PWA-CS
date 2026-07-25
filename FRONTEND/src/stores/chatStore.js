@@ -221,6 +221,84 @@ const useChatStore = create((set, get) => ({
     }
   },
 
+  sendVoiceMessage: async (voiceBlob, durationSeconds = 0) => {
+    const { user } = useAuthStore.getState()
+    const { pairId, messages } = get()
+    if (!user || !pairId || !voiceBlob) return
+
+    const tempId = `temp-${Date.now()}`
+    const tempBlobUrl = URL.createObjectURL(voiceBlob)
+
+    // Optimistic message with local blob URL for instant display
+    const optimisticMessage = {
+      id: tempId,
+      temp_id: tempId,
+      pair_id: pairId,
+      sender_id: user.id,
+      content: '',
+      message_type: 'voice',
+      media_url: tempBlobUrl,
+      media_duration: durationSeconds,
+      reply_to: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      read_at: null,
+      deleted: false,
+      deleted_for_everyone: false,
+      profiles: user.user_metadata || {},
+      reactions: []
+    }
+
+    set({ sending: true, messages: [...messages, optimisticMessage] })
+
+    if (!navigator.onLine) {
+      set({
+        offlineQueue: [...get().offlineQueue, { ...optimisticMessage, _blob: voiceBlob }],
+        sending: false
+      })
+      return
+    }
+
+    try {
+      // Upload to Supabase Storage
+      const timestamp = Date.now()
+      const random = Math.random().toString(36).slice(2, 8)
+      const filePath = `${pairId}/${timestamp}-${random}.webm`
+
+      const { error: uploadError } = await supabase.storage
+        .from('chat-media')
+        .upload(filePath, voiceBlob, { contentType: voiceBlob.type || 'audio/webm' })
+
+      if (uploadError) throw uploadError
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('chat-media')
+        .getPublicUrl(filePath)
+
+      const publicUrl = urlData?.publicUrl
+      if (!publicUrl) throw new Error('Failed to get public URL')
+
+      // Insert message into database
+      const { error: insertError } = await supabase.from('messages').insert({
+        pair_id: pairId,
+        sender_id: user.id,
+        content: '',
+        message_type: 'voice',
+        media_url: publicUrl,
+        media_duration: durationSeconds
+      })
+      if (insertError) throw insertError
+
+      // Revoke the temporary blob URL
+      URL.revokeObjectURL(tempBlobUrl)
+    } catch (err) {
+      set({ error: err.message, sending: false })
+    } finally {
+      set({ sending: false })
+    }
+  },
+
   syncOfflineQueue: async () => {
     const { offlineQueue } = get()
     if (offlineQueue.length === 0) return
@@ -228,6 +306,11 @@ const useChatStore = create((set, get) => ({
     set({ sending: true })
 
     for (const msg of offlineQueue) {
+      // Skip voice/image messages that can't be synced (blob no longer available)
+      if (msg.message_type === 'voice' || msg.message_type === 'image') {
+        set({ error: 'Media messages cannot be synced offline. Please resend when online.' })
+        continue
+      }
       try {
         const { error } = await supabase.from('messages').insert({
           pair_id: msg.pair_id,
