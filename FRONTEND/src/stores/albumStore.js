@@ -13,7 +13,9 @@ const useAlbumStore = create((set, get) => ({
 
   initializeAlbum: async (pairId) => {
     const { user } = useAuthStore.getState()
+    const current = get()
     if (!user || !pairId) return
+    if (current.pairId === pairId && current.subscription) return
 
     set({ loading: true, pairId, error: null })
 
@@ -27,6 +29,12 @@ const useAlbumStore = create((set, get) => ({
       if (error) throw error
 
       set({ photos: photos || [], loading: false })
+
+      // Clean up any existing subscription first
+      const oldChannel = get().subscription
+      if (oldChannel) {
+        supabase.removeChannel(oldChannel)
+      }
 
       // Subscribe to real-time changes on album_photos
       const channel = supabase

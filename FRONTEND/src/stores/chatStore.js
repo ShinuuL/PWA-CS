@@ -49,6 +49,7 @@ const useChatStore = create((set, get) => ({
   pairId: null,
   subscription: null,
   typingTimeout: null,
+  pendingTempIds: {},
 
   replyTo: null,
   showDeleteConfirm: false,
@@ -62,7 +63,9 @@ const useChatStore = create((set, get) => ({
 
   initializeChat: async (pairId) => {
     const { user } = useAuthStore.getState()
+    const current = get()
     if (!user || !pairId) return
+    if (current.pairId === pairId && current.subscription) return
 
     set({ loading: true, pairId, error: null })
 
@@ -72,7 +75,7 @@ const useChatStore = create((set, get) => ({
     try {
       const { data: messages, error } = await supabase
         .from('messages')
-        .select('*, reactions(*), profiles!sender_id(display_name, avatar_url)')
+        .select('*, reactions(*), profiles(display_name, avatar_url)')
         .eq('pair_id', pairId)
         .order('created_at', { ascending: true })
 
@@ -84,6 +87,12 @@ const useChatStore = create((set, get) => ({
         p_pair_id: pairId,
         p_user_id: user.id
       })
+
+      // Clean up any existing subscription first
+      const oldChannel = get().subscription
+      if (oldChannel) {
+        await supabase.removeChannel(oldChannel)
+      }
 
       const channel = supabase
         .channel(`chat:${pairId}`)
@@ -98,11 +107,18 @@ const useChatStore = create((set, get) => ({
 
           if (eventType === 'INSERT') {
             if (newMsg.sender_id === user.id) {
-              set({
-                messages: state.messages.map(m =>
-                  m.id === newMsg.temp_id ? { ...newMsg, temp_id: undefined } : m
-                )
-              })
+              const pendingIds = state.pendingTempIds
+              const matchIdx = state.messages.findIndex(m => m.temp_id && pendingIds[m.temp_id])
+              if (matchIdx >= 0) {
+                const newMessages = [...state.messages]
+                const { temp_id, ...realMsg } = newMsg
+                newMessages[matchIdx] = { ...realMsg }
+                const newPending = { ...pendingIds }
+                delete newPending[state.messages[matchIdx].temp_id]
+                set({ messages: newMessages, pendingTempIds: newPending })
+              } else {
+                set({ messages: [...state.messages, newMsg] })
+              }
             } else {
               set({ messages: [...state.messages, newMsg] })
               if (!state.isInChat) {
@@ -195,7 +211,11 @@ const useChatStore = create((set, get) => ({
       reactions: []
     }
 
-    set({ sending: true, messages: [...messages, optimisticMessage] })
+    set({
+      sending: true,
+      messages: [...messages, optimisticMessage],
+      pendingTempIds: { ...get().pendingTempIds, [tempId]: true }
+    })
     get().cancelReply()
 
     if (!navigator.onLine) {
@@ -249,7 +269,11 @@ const useChatStore = create((set, get) => ({
       reactions: []
     }
 
-    set({ sending: true, messages: [...messages, optimisticMessage] })
+    set({
+      sending: true,
+      messages: [...messages, optimisticMessage],
+      pendingTempIds: { ...get().pendingTempIds, [tempId]: true }
+    })
 
     if (!navigator.onLine) {
       set({
@@ -290,8 +314,7 @@ const useChatStore = create((set, get) => ({
       })
       if (insertError) throw insertError
 
-      // Revoke the temporary blob URL
-      URL.revokeObjectURL(tempBlobUrl)
+      // Blob URL will be cleaned up when component unmounts or realtime replaces it
     } catch (err) {
       set({ error: err.message, sending: false })
     } finally {
@@ -328,7 +351,11 @@ const useChatStore = create((set, get) => ({
       reactions: []
     }
 
-    set({ sending: true, messages: [...messages, optimisticMessage] })
+    set({
+      sending: true,
+      messages: [...messages, optimisticMessage],
+      pendingTempIds: { ...get().pendingTempIds, [tempId]: true }
+    })
 
     if (!navigator.onLine) {
       set({
@@ -371,8 +398,7 @@ const useChatStore = create((set, get) => ({
       })
       if (insertError) throw insertError
 
-      // Revoke the temporary blob URL
-      URL.revokeObjectURL(tempBlobUrl)
+      // Blob URL will be cleaned up when component unmounts or realtime replaces it
     } catch (err) {
       set({ error: err.message, sending: false })
     } finally {

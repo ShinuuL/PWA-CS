@@ -58,7 +58,7 @@ ON storage.objects FOR INSERT TO authenticated
 WITH CHECK (
   bucket_id = 'album-photos'
   AND (storage.foldername(name))[1] IN (
-    SELECT pair_id::text FROM pairs WHERE user_one = auth.uid() OR user_two = auth.uid()
+    SELECT id::text FROM pairs WHERE user_one = auth.uid() OR user_two = auth.uid()
   )
 );
 
@@ -68,7 +68,7 @@ ON storage.objects FOR SELECT TO authenticated
 USING (
   bucket_id = 'album-photos'
   AND (storage.foldername(name))[1] IN (
-    SELECT pair_id::text FROM pairs WHERE user_one = auth.uid() OR user_two = auth.uid()
+    SELECT id::text FROM pairs WHERE user_one = auth.uid() OR user_two = auth.uid()
   )
 );
 
@@ -78,6 +78,6 @@ ON storage.objects FOR DELETE TO authenticated
 USING (
   bucket_id = 'album-photos'
   AND (storage.foldername(name))[1] IN (
-    SELECT pair_id::text FROM pairs WHERE user_one = auth.uid() OR user_two = auth.uid()
+    SELECT id::text FROM pairs WHERE user_one = auth.uid() OR user_two = auth.uid()
   )
 );

@@ -229,7 +229,7 @@ function ReactionChips({ reactions, messageId, isOwn }) {
   )
 }
 
-function MessageBubble({ message, isOwn, showAvatar, onContextMenu, onSwipeReply }) {
+function MessageBubble({ message, isOwn, showAvatar, onContextMenu, onSwipeReply, onImageClick }) {
   const [swipeX, setSwipeX] = useState(0)
   const touchStart = useRef({ x: 0, y: 0, time: 0 })
   const longPressTimer = useRef(null)
@@ -343,7 +343,7 @@ function MessageBubble({ message, isOwn, showAvatar, onContextMenu, onSwipeReply
                 width: message.media_width,
                 height: message.media_height
               }}
-              onClick={(src) => setViewerSrc(src)}
+              onClick={onImageClick}
             />
           ) : (
             <span className="chat-message-text">{message.content}</span>
@@ -593,6 +593,7 @@ export default function ChatView() {
                   showAvatar={isLast && !isOwn}
                   onContextMenu={(m, pos) => setContextMenu({ message: m, position: pos })}
                   onSwipeReply={handleSwipeReply}
+                  onImageClick={(src) => setViewerSrc(src)}
                 />
               </div>
             )

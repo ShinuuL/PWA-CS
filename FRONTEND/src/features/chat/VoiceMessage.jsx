@@ -1,12 +1,12 @@
 /**
  * Inline voice message component with playback and waveform visualization.
  * Uses <audio> element for playback (simpler, fewer iOS issues per Pitfall 6).
- * Uses AudioVisualizer from react-audio-visualize for static waveform display.
+ * Uses PlaybackWaveform for static waveform display with progress.
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { Play, Pause } from 'lucide-react'
-import { AudioVisualizer } from 'react-audio-visualize'
+import { PlaybackWaveform } from '../../shared/components/Waveform'
 
 /**
  * Format seconds into MM:SS display.
@@ -31,7 +31,6 @@ function formatTime(seconds) {
 export default function VoiceMessage({ mediaUrl, duration, isOwn }) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
-  const [isLoaded, setIsLoaded] = useState(false)
   const audioRef = useRef(null)
 
   // Handle play/pause
@@ -74,20 +73,17 @@ export default function VoiceMessage({ mediaUrl, duration, isOwn }) {
       setIsPlaying(false)
       setCurrentTime(0)
     }
-    const handleLoadedData = () => setIsLoaded(true)
 
     audio.addEventListener('timeupdate', handleTimeUpdate)
     audio.addEventListener('play', handlePlay)
     audio.addEventListener('pause', handlePause)
     audio.addEventListener('ended', handleEnded)
-    audio.addEventListener('loadeddata', handleLoadedData)
 
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate)
       audio.removeEventListener('play', handlePlay)
       audio.removeEventListener('pause', handlePause)
       audio.removeEventListener('ended', handleEnded)
-      audio.removeEventListener('loadeddata', handleLoadedData)
     }
   }, [])
 
@@ -109,20 +105,16 @@ export default function VoiceMessage({ mediaUrl, duration, isOwn }) {
 
       {/* Waveform visualization */}
       <div className="chat-voice-bubble__waveform">
-        {isLoaded ? (
-          <AudioVisualizer
-            blob={new Blob([], { type: 'audio/webm' })}
-            width={160}
-            height={40}
-            barWidth={2}
-            gap={1}
-            barColor={isOwn ? 'rgba(255,255,255,0.5)' : 'rgba(184,124,255,0.4)'}
-            barPlayedColor={isOwn ? 'rgba(255,255,255,0.9)' : 'var(--color-primary)'}
-            currentTime={currentTime}
-          />
-        ) : (
-          <div className="chat-voice-bubble__loading" />
-        )}
+        <PlaybackWaveform
+          audioRef={audioRef}
+          barCount={40}
+          width={160}
+          height={40}
+          barWidth={2}
+          gap={1}
+          barColor={isOwn ? 'rgba(255,255,255,0.5)' : 'rgba(184,124,255,0.4)'}
+          barPlayedColor={isOwn ? 'rgba(255,255,255,0.9)' : '#B87CFF'}
+        />
       </div>
 
       {/* Duration display */}

@@ -114,13 +114,25 @@ export default function ImageViewer({ src, alt, onClose }) {
           <motion.div
             className="chat-image-viewer__container"
             onClick={(e) => e.stopPropagation()}
-            drag={scale > 1}
+            drag
             dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            dragElastic={{ top: 0.5, bottom: 0.5, left: 0, right: 0 }}
             onDrag={(e, info) => {
-              setTranslate(prev => ({
-                x: prev.x + info.delta.x,
-                y: prev.y + info.delta.y
-              }))
+              if (scale > 1) {
+                setTranslate(prev => ({
+                  x: prev.x + info.delta.x,
+                  y: prev.y + info.delta.y
+                }))
+              } else {
+                setTranslate({ x: 0, y: info.offset.y })
+              }
+            }}
+            onDragEnd={(e, info) => {
+              if (scale <= 1 && info.offset.y > 100) {
+                onClose?.()
+              } else {
+                setTranslate({ x: 0, y: 0 })
+              }
             }}
           >
             <motion.img
@@ -128,7 +140,8 @@ export default function ImageViewer({ src, alt, onClose }) {
               alt={alt || 'Full-screen image'}
               className="chat-image-viewer__img"
               style={{
-                transform: `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)`
+                transform: `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)`,
+                opacity: scale <= 1 ? Math.max(0, 1 - Math.abs(translate.y) / 300) : 1
               }}
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}

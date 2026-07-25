@@ -7,7 +7,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { Trash2 } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { LiveAudioVisualizer } from 'react-audio-visualize'
+import { LiveWaveform } from '../../shared/components/Waveform'
 import { useVoiceRecorder } from '../../shared/lib/mediaRecorder'
 
 const CANCEL_SLIDE_THRESHOLD = 100 // pixels left from start to trigger cancel
@@ -34,7 +34,7 @@ export default function VoiceRecorder({ onSendVoice, onCancel }) {
   const {
     isRecording,
     duration,
-    mediaRecorder,
+    waveformData,
     startRecording,
     stopRecording,
     cancelRecording
@@ -156,17 +156,14 @@ export default function VoiceRecorder({ onSendVoice, onCancel }) {
 
       {/* Live waveform visualization */}
       <div className="chat-voice-recorder__waveform">
-        {mediaRecorder && (
-          <LiveAudioVisualizer
-            mediaRecorder={mediaRecorder}
-            width="100%"
-            height={48}
-            barWidth={2}
-            gap={1}
-            barColor="rgba(255, 255, 255, 0.7)"
-            backgroundColor="transparent"
-          />
-        )}
+        <LiveWaveform
+          waveformData={waveformData}
+          width={200}
+          height={48}
+          barWidth={2}
+          gap={1}
+          barColor="rgba(255, 255, 255, 0.7)"
+        />
       </div>
 
       {/* Slide hint */}

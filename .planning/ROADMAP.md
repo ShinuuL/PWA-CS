@@ -74,7 +74,7 @@ Plans:
 Plans:
 
 - [x] 03-01-PLAN.md
-- [ ] 03-02-PLAN.md
+- [x] 03-02-PLAN.md
 - [x] 03-01: Voice Messages + Image Sharing in Chat — DB migration, storage bucket, voice recording (hold-to-record, waveform, slide-to-cancel), image compression, inline media components, chatStore extensions, ChatView integration
 - [ ] 03-02: Shared Photo Album — album_photos table, album-photos bucket, albumStore, AlbumPage with upload/grid, MiniAlbum on homepage, drawer navigation
 

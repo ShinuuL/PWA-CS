@@ -17,7 +17,7 @@ export default function Header({ onMenuClick }) {
         .select('*')
         .or(`user_one.eq.${user.id},user_two.eq.${user.id}`)
         .not('code_used', 'eq', false)
-        .single()
+        .maybeSingle()
 
       if (!pair) return
 
@@ -27,7 +27,7 @@ export default function Header({ onMenuClick }) {
         .from('profiles')
         .select('display_name, avatar_url')
         .eq('id', partnerId)
-        .single()
+        .maybeSingle()
 
       setPartner(profile)
     }
