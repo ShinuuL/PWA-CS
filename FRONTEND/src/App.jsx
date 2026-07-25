@@ -3,15 +3,17 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import useAuthStore from './stores/authStore'
 import ProtectedRoute from './shared/components/ProtectedRoute'
 import PairingGate from './features/pairing/PairingGate'
+import AppShell from './shared/components/AppShell'
 
 import LoginPage from './features/auth/LoginPage'
 import AuthCallback from './features/auth/AuthCallback'
+import ProfilePage from './features/profile/ProfilePage'
+import PartnerProfile from './features/profile/PartnerProfile'
+import SettingsPage from './features/settings/SettingsPage'
 
-// Placeholder pages
-const HomePage = () => <div>Home (Phase 4)</div>
-const ChatPage = () => <div>Chat (Phase 2)</div>
-const AgendaPage = () => <div>Agenda (Phase 5)</div>
-const SettingsPage = () => <div>Settings</div>
+const HomePage = () => <div style={{ padding: '1.5rem' }}>Home (Phase 4)</div>
+const ChatPage = () => <div style={{ padding: '1.5rem' }}>Chat (Phase 2)</div>
+const AgendaPage = () => <div style={{ padding: '1.5rem' }}>Agenda (Phase 5)</div>
 
 function App() {
   const { initialize, loading } = useAuthStore()
@@ -27,13 +29,16 @@ function App() {
       <Routes>
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/login" element={<LoginPage />} />
+
         <Route
           path="/home"
           element={
             <ProtectedRoute>
-              <PairingGate>
-                <HomePage />
-              </PairingGate>
+              <AppShell>
+                <PairingGate>
+                  <HomePage />
+                </PairingGate>
+              </AppShell>
             </ProtectedRoute>
           }
         />
@@ -41,9 +46,11 @@ function App() {
           path="/chat"
           element={
             <ProtectedRoute>
-              <PairingGate>
-                <ChatPage />
-              </PairingGate>
+              <AppShell>
+                <PairingGate>
+                  <ChatPage />
+                </PairingGate>
+              </AppShell>
             </ProtectedRoute>
           }
         />
@@ -51,20 +58,48 @@ function App() {
           path="/agenda"
           element={
             <ProtectedRoute>
-              <PairingGate>
-                <AgendaPage />
-              </PairingGate>
+              <AppShell>
+                <PairingGate>
+                  <AgendaPage />
+                </PairingGate>
+              </AppShell>
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/settings"
           element={
             <ProtectedRoute>
-              <SettingsPage />
+              <AppShell>
+                <SettingsPage />
+              </AppShell>
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <AppShell>
+                <ProfilePage />
+              </AppShell>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/partner"
+          element={
+            <ProtectedRoute>
+              <AppShell>
+                <PairingGate>
+                  <PartnerProfile />
+                </PairingGate>
+              </AppShell>
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/" element={<Navigate to="/home" replace />} />
       </Routes>
     </BrowserRouter>

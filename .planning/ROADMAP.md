@@ -6,7 +6,7 @@ CoupleSpace ships as a mobile-first PWA that gives couples a private shared spac
 
 ## Phases
 
-- [ ] **Phase 1: Foundation & Pairing** - App shell, Supabase setup, Google OAuth, couple pairing, profiles
+- [x] **Phase 1: Foundation & Pairing** - App shell, Supabase setup, Google OAuth, couple pairing, profiles
 - [ ] **Phase 2: Real-Time Chat** - Private messaging with text, replies, and emoji reactions
 - [ ] **Phase 3: Voice & Image Sharing** - Voice messages, image sharing in chat, shared photo album
 - [ ] **Phase 4: Homepage Dashboard** - Random memory, mood tracker, mini photo album, daily ritual view
@@ -27,9 +27,9 @@ CoupleSpace ships as a mobile-first PWA that gives couples a private shared spac
 **Plans**: 3 plans created
 
 Plans:
-- [ ] 01-01: Project Scaffold & Supabase Foundation (Vite + PWA, Supabase client, DB schema, auth store, app shell)
-- [ ] 01-02: Authentication & Pairing System (Google OAuth, auth callback, invite codes, pairing UI, session persistence)
-- [ ] 01-03: Profile Management & App Shell (profile edit, avatar upload, partner view, drawer navigation, settings)
+- [x] 01-01: Project Scaffold & Supabase Foundation (Vite + PWA, Supabase client, DB schema, auth store, app shell)
+- [x] 01-02: Authentication & Pairing System (Google OAuth, auth callback, invite codes, pairing UI, session persistence)
+- [x] 01-03: Profile Management & App Shell (profile edit, avatar upload, partner view, drawer navigation, settings)
 
 ### Phase 2: Real-Time Chat
 **Goal**: Paired couples can exchange real-time messages with rich interaction
@@ -101,7 +101,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Pairing | 0/3 | Planning complete | - |
+| 1. Foundation & Pairing | 3/3 | Complete | 2026-07-24 |
 | 2. Real-Time Chat | 0/2 | Not started | - |
 | 3. Voice & Image Sharing | 0/2 | Not started | - |
 | 4. Homepage Dashboard | 0/2 | Not started | - |

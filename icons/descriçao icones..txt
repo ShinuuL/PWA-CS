@@ -1,0 +1,16 @@
+
+### 1. Ícone em Tamanho Grande (512x512 px)
+
+Este arquivo é ideal para ser usado como o ícone principal do aplicativo na Google Play Store ou como um elemento de destaque em alta resolução no site.
+
+Ele apresenta o símbolo central: um coração entrelaçado e contínuo, misturando o **roxo primário (#B87CFF)** com o **ciano de destaque (#00E5CC)**, com um brilho neon sobre o fundo **preto profundo (#0A0C14)**, pontilhado por estrelas sutis e um brilho quente ao centro.
+
+{image_1.png}
+
+---
+
+### 2. Ícone em Tamanho Pequeno (192x192 px)
+
+Este arquivo foi otimizado para telas menores, garantindo que o símbolo do coração cósmico permaneça nítido e reconhecível mesmo em resoluções mais baixas (como ícones de notificação ou na grade de aplicativos do celular).
+
+{image_2.png}

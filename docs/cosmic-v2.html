@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoupleSpace — Design System v2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,300;0,500;1,300&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-deep: #0A0C14;
+    --bg-surface: #12141F;
+    --bg-card: #1A1D2E;
+    --bg-card-hover: #222540;
+    --border-subtle: rgba(255, 255, 255, 0.04);
+    --border-glow: rgba(190, 140, 255, 0.12);
+    --border-glow-strong: rgba(190, 140, 255, 0.25);
+
+    --primary: #B87CFF;
+    --primary-dim: #8B5CF6;
+    --primary-glow: rgba(184, 124, 255, 0.15);
+    --accent: #00E5CC;
+    --accent-dim: #00B8A3;
+    --accent-glow: rgba(0, 229, 204, 0.12);
+    --warm: #FFB87C;
+    --warm-dim: #E8995C;
+    --pink: #FF7CB8;
+
+    --text-primary: #F0EEF5;
+    --text-secondary: #9895AD;
+    --text-tertiary: #5E5B75;
+    --text-on-primary: #0A0C14;
+
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+  }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* ---- Ambient background ---- */
+  .ambient-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .ambient-bg::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: -20%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(ellipse, rgba(184, 124, 255, 0.06), transparent 70%);
+  }
+  .ambient-bg::after {
+    content: '';
+    position: absolute;
+    bottom: -20%;
+    right: -10%;
+    width: 50%;
+    height: 50%;
+    background: radial-gradient(ellipse, rgba(0, 229, 204, 0.04), transparent 70%);
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 40px 120px;
+  }
+
+  /* ---- Hero ---- */
+  .hero {
+    margin-bottom: 80px;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: clamp(36px, 5vw, 52px);
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    background: linear-gradient(135deg, var(--text-primary) 30%, var(--primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  .hero p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 560px;
+    line-height: 1.6;
+  }
+
+  /* ---- Section ---- */
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .section-title-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--primary);
+    opacity: 0.6;
+  }
+  .section-title h2 {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: var(--text-primary);
+  }
+  .section-title-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border-glow) 0%, transparent 100%);
+  }
+
+  /* ---- Component grid ---- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-bottom: 60px;
+  }
+  .grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  /* ---- Showcase card (wraps each component demo) ---- */
+  .showcase {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glow);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .showcase::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-glow-strong), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .showcase:hover::before { opacity: 1; }
+  .showcase-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 20px;
+  }
+
+  /* ======= COSMIC CARD ======= */
+  .cosmic-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glow);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    position: relative;
+    transition: all 0.25s ease;
+  }
+  .cosmic-card:hover {
+    border-color: var(--border-glow-strong);
+    transform: translateY(-1px);
+  }
+  .cosmic-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.2px;
+  }
+  .cosmic-card-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .cosmic-card.vivid {
+    background: linear-gradient(135deg, rgba(184, 124, 255, 0.06), rgba(0, 229, 204, 0.04));
+    border-color: var(--border-glow-strong);
+  }
+  .cosmic-card.vivid .cosmic-card-title { color: var(--primary); }
+
+  .cosmic-card.inset {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: transparent;
+    padding: 16px;
+  }
+
+  /* Glowing card variant */
+  .cosmic-card.glow {
+    background: var(--bg-card);
+    border-color: transparent;
+    box-shadow: 0 0 30px rgba(184, 124, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  .cosmic-card.glow::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, var(--border-glow-strong), transparent 50%, var(--border-glow));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* ======= COSMIC TEXT FIELD ======= */
+  .cosmic-field {
+    position: relative;
+  }
+  .cosmic-field-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 8px;
+  }
+  .cosmic-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+    outline: none;
+    transition: all 0.2s;
+  }
+  .cosmic-input::placeholder {
+    color: var(--text-tertiary);
+    font-size: 13px;
+  }
+  .cosmic-input:focus {
+    border-color: var(--primary-dim);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+    background: rgba(0, 0, 0, 0.4);
+  }
+  .cosmic-input-wrap {
+    position: relative;
+  }
+  .cosmic-input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+    font-size: 16px;
+    pointer-events: none;
+  }
+  .cosmic-input-icon ~ .cosmic-input {
+    padding-left: 44px;
+  }
+
+  /* ======= COSMIC BUTTON ======= */
+  .cosmic-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .cosmic-btn.primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+    color: var(--text-on-primary);
+  }
+  .cosmic-btn.primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(184, 124, 255, 0.25);
+  }
+  .cosmic-btn.primary:active {
+    transform: translateY(0);
+  }
+  .cosmic-btn.secondary {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--border-glow-strong);
+  }
+  .cosmic-btn.secondary:hover {
+    background: var(--primary-glow);
+    border-color: var(--primary);
+  }
+  .cosmic-btn.ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    text-transform: none;
+    padding: 8px 12px;
+  }
+  .cosmic-btn.ghost:hover {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* ======= COSMIC TOP BAR ======= */
+  .cosmic-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: rgba(10, 12, 20, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+  .cosmic-bar-left, .cosmic-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .cosmic-bar-title {
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: -0.3px;
+    background: linear-gradient(135deg, var(--text-primary), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .cosmic-bar-icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 15px;
+    transition: all 0.2s;
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+  .cosmic-bar-icon:hover {
+    background: rgba(255,255,255,0.05);
+    color: var(--text-primary);
+  }
+  .cosmic-bar-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-on-primary);
+  }
+
+  /* ======= SECTION HEADER ======= */
+  .cosmic-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .cosmic-section-header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+  }
+  .cosmic-section-header-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border-glow), transparent 90%);
+  }
+  .cosmic-section-header-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--primary);
+    opacity: 0.5;
+  }
+
+  /* ======= STARDUST ======= */
+  .stardust-demo {
+    position: relative;
+    height: 160px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: radial-gradient(ellipse at 30% 40%, rgba(184, 124, 255, 0.04), transparent 70%),
+                radial-gradient(ellipse at 70% 60%, rgba(0, 229, 204, 0.03), transparent 60%),
+                var(--bg-deep);
+  }
+
+  .stardust-demo-content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .stardust-demo-content p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+  }
+  .stardust-demo-content .big {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+
+  /* ======= CHAT BUBBLE ======= */
+  .chat-bubble {
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    line-height: 1.5;
+    position: relative;
+  }
+  .chat-bubble.sent {
+    background: linear-gradient(135deg, rgba(184, 124, 255, 0.15), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(184, 124, 255, 0.15);
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+  }
+  .chat-bubble.received {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+  }
+  .chat-bubble-time {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+  .chat-bubble-sender {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 2px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  /* ======= MOOD / EMOJI DISPLAY ======= */
+  .mood-ring {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border-subtle);
+    min-width: 80px;
+  }
+  .mood-ring .emoji {
+    font-size: 32px;
+    filter: grayscale(0.2);
+    transition: all 0.2s;
+  }
+  .mood-ring:hover .emoji { filter: grayscale(0); transform: scale(1.1); }
+  .mood-ring .label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  /* ======= CALENDAR EVENT ======= */
+  .event-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .event-row:last-child { border-bottom: none; }
+  .event-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 36px;
+  }
+  .event-date-day {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .event-date-month {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-tertiary);
+    font-family: 'DM Mono', monospace;
+    margin-top: 2px;
+  }
+  .event-info { flex: 1; }
+  .event-info-title {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .event-info-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .event-category {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--primary-glow);
+    color: var(--primary);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  /* ======= MOCK SCREEN LAYOUT ======= */
+  .mock-screen {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .mock-screen-statusbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 20px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-family: 'DM Mono', monospace;
+  }
+  .mock-screen-content {
+    padding: 16px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mock-screen-tabs {
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 4px;
+  }
+  .mock-screen-tab {
+    padding: 10px 0 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    border-bottom: 2px solid transparent;
+    cursor: default;
+    letter-spacing: 0.5px;
+  }
+  .mock-screen-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+
+  /* ---- Divider ---- */
+  .divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 48px 0;
+  }
+
+  /* ---- Typography demo ---- */
+  .typo-demo { margin-bottom: 60px; }
+  .typo-grid {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 4px 16px;
+    align-items: baseline;
+  }
+  .typo-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-align: right;
+    padding-top: 8px;
+  }
+  .typo-sample {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .typo-sample.display {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 32px;
+    letter-spacing: -1px;
+    line-height: 1.2;
+  }
+  .typo-sample.body {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+
+  .system-summary {
+    margin-top: 60px;
+    padding: 32px;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-glow);
+  }
+  .system-summary h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .system-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+  .system-group h4 {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .system-group code {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 2;
+  }
+  .swatch {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-right: 6px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+</style>
+</head>
+<body>
+<div class="ambient-bg"></div>
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Design System · v2</div>
+    <h1>CoupleSpace</h1>
+    <p>Um sistema de componentes com personalidade — feito para dois. Cada elemento pensado para o universo compartilhado do casal, com tipografia expressiva, cores que acolhem e detalhes que surpreendem.</p>
+  </div>
+
+  <!-- Typography -->
+  <div class="typo-demo">
+    <div class="section-title">
+      <span class="section-title-number">01</span>
+      <h2>Tipografia</h2>
+      <div class="section-title-line"></div>
+    </div>
+    <div class="typo-grid">
+      <span class="typo-tag">Display</span>
+      <div class="typo-sample display">Space Grotesk · 32/1.2 · Peso 600</div>
+      <span class="typo-tag">Body</span>
+      <div class="typo-sample body">Space Grotesk · 15/1.5 · Peso 400 · Cor secundária para leitura confortável</div>
+      <span class="typo-tag">Label</span>
+      <div class="typo-sample" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-tertiary);">DM Mono · 10/1 · Tracking 3 · Uppercase · Cor terciária</div>
+      <span class="typo-tag">Accent</span>
+      <div class="typo-sample" style="font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:var(--text-secondary);">Playfair Display itálico · 14 · Para momentos especiais</div>
+    </div>
+  </div>
+
+  <!-- Componentes -->
+  <div class="section-title">
+    <span class="section-title-number">02</span>
+    <h2>Componentes</h2>
+    <div class="section-title-line"></div>
+  </div>
+
+  <div class="grid">
+    <!-- CosmicCard -->
+    <div class="showcase">
+      <div class="showcase-label">CosmicCard</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="cosmic-card">
+          <div class="cosmic-card-title">Espaço do Casal</div>
+          <div class="cosmic-card-text">22 memórias · 3 dias conectados · 1 música favorita</div>
+        </div>
+        <div class="cosmic-card vivid">
+          <div class="cosmic-card-title">✨ Em destaque</div>
+          <div class="cosmic-card-text" style="color:var(--text-secondary);">Aniversário de 6 meses · 15 de Julho</div>
+        </div>
+        <div class="cosmic-card glow">
+          <div class="cosmic-card-title">Com glow</div>
+          <div class="cosmic-card-text">Borda gradiente sutil para cards que precisam de destaque</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CosmicTextField -->
+    <div class="showcase">
+      <div class="showcase-label">CosmicTextField</div>
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="cosmic-field">
+          <div class="cosmic-field-label">Email</div>
+          <div class="cosmic-input-wrap">
+            <span class="cosmic-input-icon">✉</span>
+            <input class="cosmic-input" placeholder="seu@universo.com" style="padding-left:44px;">
+          </div>
+        </div>
+        <div class="cosmic-field">
+          <div class="cosmic-field-label">Chave Cósmica</div>
+          <div class="cosmic-input-wrap">
+            <span class="cosmic-input-icon">✦</span>
+            <input class="cosmic-input" placeholder="senha compartilhada" type="password" style="padding-left:44px;">
+          </div>
+        </div>
+        <div class="cosmic-field">
+          <div class="cosmic-field-label">Mensagem</div>
+          <textarea class="cosmic-input" placeholder="O que você está sentindo?" rows="2" style="resize:none;padding-top:12px;"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Buttons -->
+    <div class="showcase">
+      <div class="showcase-label">CosmicButton</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <button class="cosmic-btn primary">Viajar para o espaço</button>
+        <button class="cosmic-btn secondary">Salvar rascunho</button>
+        <div style="display:flex;gap:8px;">
+          <button class="cosmic-btn ghost">Cancelar</button>
+          <button class="cosmic-btn ghost">Compartilhar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Header -->
+    <div class="showcase">
+      <div class="showcase-label">CosmicSectionHeader</div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="cosmic-section-header">
+          <span class="cosmic-section-header-label">Memórias Recentes</span>
+          <div class="cosmic-section-header-dot"></div>
+          <div class="cosmic-section-header-line"></div>
+        </div>
+        <div class="cosmic-section-header">
+          <span class="cosmic-section-header-label">Mensagens</span>
+          <div class="cosmic-section-header-dot"></div>
+          <div class="cosmic-section-header-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- TopBar + Chat -->
+    <div class="showcase" style="padding:0;overflow:hidden;">
+      <div style="padding:28px 28px 0;">
+        <div class="showcase-label">CosmicTopBar + Chat</div>
+      </div>
+      <div class="cosmic-bar" style="border-radius:0;margin-top:12px;">
+        <div class="cosmic-bar-left">
+          <div class="cosmic-bar-icon">←</div>
+          <div class="cosmic-bar-title">Luna</div>
+        </div>
+        <div class="cosmic-bar-right">
+          <div class="cosmic-bar-icon">♡</div>
+          <div class="cosmic-bar-avatar">L</div>
+        </div>
+      </div>
+      <div style="padding:16px 20px 20px;display:flex;flex-direction:column;gap:10px;">
+        <div class="chat-bubble received">
+          <div class="chat-bubble-sender">Luna</div>
+          Oi amor, saudade 💫
+          <div class="chat-bubble-time">14:23</div>
+        </div>
+        <div class="chat-bubble sent">
+          Também estou com saudade! Vamos sair hoje?
+          <div class="chat-bubble-time">14:25</div>
+        </div>
+        <div class="chat-bubble received">
+          <div class="chat-bubble-sender">Luna</div>
+          Claro! Te encontro às 19h no nosso lugar ✨
+          <div class="chat-bubble-time">14:26</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendar events -->
+    <div class="showcase">
+      <div class="showcase-label">Calendário</div>
+      <div style="display:flex;flex-direction:column;">
+        <div class="event-row">
+          <div class="event-date">
+            <span class="event-date-day">15</span>
+            <span class="event-date-month">Jul</span>
+          </div>
+          <div class="event-info">
+            <div class="event-info-title">Aniversário de 6 meses</div>
+            <div class="event-info-desc">Jantar no Terraço</div>
+          </div>
+          <span class="event-category">❤</span>
+        </div>
+        <div class="event-row">
+          <div class="event-date">
+            <span class="event-date-day">22</span>
+            <span class="event-date-month">Jul</span>
+          </div>
+          <div class="event-info">
+            <div class="event-info-title">Cinema</div>
+            <div class="event-info-desc">Sessão das 20h</div>
+          </div>
+          <span class="event-category">★</span>
+        </div>
+        <div class="event-row">
+          <div class="event-date">
+            <span class="event-date-day">28</span>
+            <span class="event-date-month">Jul</span>
+          </div>
+          <div class="event-info">
+            <div class="event-info-title">Fim de semana na praia</div>
+            <div class="event-info-desc">Reservar hotel</div>
+          </div>
+          <span class="event-category">✦</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stardust Background -->
+  <div class="section-title" style="margin-top:40px;">
+    <span class="section-title-number">03</span>
+    <h2>StardustBackground</h2>
+    <div class="section-title-line"></div>
+  </div>
+  <div class="grid">
+    <div class="showcase" style="grid-column:1/-1;">
+      <div class="showcase-label">Ambient · Fundo estrelado com gradientes suaves</div>
+      <div class="stardust-demo">
+        <div class="stardust-demo-content">
+          <span class="big">✦</span>
+          <p style="color:var(--text-tertiary);font-size:10px;letter-spacing:3px;">STARDUST BACKGROUND</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px;">
+        <div class="cosmic-card inset">
+          <div style="font-size:11px;color:var(--text-tertiary);font-family:'DM Mono',monospace;letter-spacing:1px;">Sobreposição</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">Qualquer conteúdo por cima do fundo</div>
+        </div>
+        <div class="cosmic-card inset">
+          <div style="font-size:11px;color:var(--text-tertiary);font-family:'DM Mono',monospace;letter-spacing:1px;">Animação</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">Estrelas pulsando em loop infinito</div>
+        </div>
+        <div class="cosmic-card inset">
+          <div style="font-size:11px;color:var(--text-tertiary);font-family:'DM Mono',monospace;letter-spacing:1px;">Uso único</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">LoginScreen · agora em core/components/</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Design System Summary -->
+  <div class="system-summary">
+    <h3>Tokens do Sistema</h3>
+    <div class="system-grid">
+      <div class="system-group">
+        <h4>Colors</h4>
+        <code><span class="swatch" style="background:#B87CFF;"></span>Primary — #B87CFF</code>
+        <code><span class="swatch" style="background:#00E5CC;"></span>Accent — #00E5CC</code>
+        <code><span class="swatch" style="background:#FFB87C;"></span>Warm — #FFB87C</code>
+        <code><span class="swatch" style="background:#FF7CB8;"></span>Pink — #FF7CB8</code>
+        <code><span class="swatch" style="background:#1A1D2E;"></span>Card — #1A1D2E</code>
+        <code><span class="swatch" style="background:#0A0C14;"></span>Bg — #0A0C14</code>
+      </div>
+      <div class="system-group">
+        <h4>Radius</h4>
+        <code>sm — 8px</code>
+        <code>md — 16px</code>
+        <code>lg — 24px</code>
+        <code>xl — 32px</code>
+      </div>
+      <div class="system-group">
+        <h4>Typography</h4>
+        <code>Display — Space Grotesk 600</code>
+        <code>Body — Space Grotesk 400</code>
+        <code>Label — DM Mono 500, 3px tracking</code>
+        <code>Accent — Playfair Display itálico</code>
+      </div>
+      <div class="system-group">
+        <h4>Effects</h4>
+        <code>Glow: box-shadow + gradient border</code>
+        <code>Backdrop: blur(16px) em top bars</code>
+        <code>Hover: translateY(-1px) + glow</code>
+        <code>Focus: 3px ring primary-glow</code>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
