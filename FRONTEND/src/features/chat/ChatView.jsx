@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { Send, ChevronDown, Reply, Trash2, X, SmilePlus } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Send, ChevronDown, Reply, Trash2, X, SmilePlus, Settings } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useAuthStore from '../../stores/authStore'
 import useChatStore from '../../stores/chatStore'
@@ -371,17 +372,19 @@ function EmptyState() {
 }
 
 export default function ChatView() {
+  const navigate = useNavigate()
   const { pairId } = usePairing()
   const { user } = useAuthStore()
   const {
     messages, loading, sending, error,
     partnerTyping, isAtBottom, offlineQueue,
     replyTo, showDeleteConfirm, deleteTarget, deleteForEveryone, showReactionPicker,
+    settings,
     initializeChat, sendMessage,
     setReplyTo, cancelReply,
     openDeleteConfirm, closeDeleteConfirm, confirmDelete,
     setShowReactionPicker, addReaction,
-    setTyping, setIsAtBottom,
+    setTyping, setIsAtBottom, setIsInChat,
     syncOfflineQueue, cleanup
   } = useChatStore()
 
@@ -463,6 +466,22 @@ export default function ChatView() {
     setReplyTo(message)
   }
 
+  useEffect(() => {
+    setIsInChat(true)
+    return () => setIsInChat(false)
+  }, [setIsInChat])
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = () => {
+      if (settings.theme === 'system') {
+        useChatStore.getState().applyTheme('system')
+      }
+    }
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [settings.theme])
+
   if (!pairId) return null
 
   return (
@@ -484,6 +503,13 @@ export default function ChatView() {
             </span>
           </div>
         </div>
+        <button
+          className="chat-header-settings"
+          onClick={() => navigate('/chat/settings')}
+          aria-label="Chat settings"
+        >
+          <Settings size={20} />
+        </button>
       </div>
 
       {error && (

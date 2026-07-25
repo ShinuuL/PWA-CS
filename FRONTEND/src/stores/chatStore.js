@@ -2,6 +2,42 @@ import { create } from 'zustand'
 import { supabase } from '../shared/lib/supabase'
 import useAuthStore from './authStore'
 
+const DEFAULT_SETTINGS = {
+  theme: 'system',
+  fontSize: 16,
+  notificationSounds: true,
+  messagePreview: true,
+  readReceipts: true
+}
+
+function loadSettings() {
+  try {
+    const stored = localStorage.getItem('couplespace-chat-settings')
+    return stored ? { ...DEFAULT_SETTINGS, ...JSON.parse(stored) } : DEFAULT_SETTINGS
+  } catch {
+    return DEFAULT_SETTINGS
+  }
+}
+
+function saveSettings(settings) {
+  try {
+    localStorage.setItem('couplespace-chat-settings', JSON.stringify(settings))
+  } catch { /* ignore */ }
+}
+
+function applyThemeToDOM(theme) {
+  const root = document.documentElement
+  if (theme === 'light') {
+    root.classList.remove('dark')
+    root.classList.add('light')
+  } else if (theme === 'dark') {
+    root.classList.remove('light')
+    root.classList.add('dark')
+  } else {
+    root.classList.remove('light', 'dark')
+  }
+}
+
 const useChatStore = create((set, get) => ({
   messages: [],
   loading: false,
@@ -20,11 +56,18 @@ const useChatStore = create((set, get) => ({
   deleteForEveryone: false,
   showReactionPicker: null,
 
+  settings: loadSettings(),
+  notificationPermission: typeof Notification !== 'undefined' ? Notification.permission : 'default',
+  isInChat: false,
+
   initializeChat: async (pairId) => {
     const { user } = useAuthStore.getState()
     if (!user || !pairId) return
 
     set({ loading: true, pairId, error: null })
+
+    const { settings } = get()
+    applyThemeToDOM(settings.theme)
 
     try {
       const { data: messages, error } = await supabase
@@ -62,6 +105,15 @@ const useChatStore = create((set, get) => ({
               })
             } else {
               set({ messages: [...state.messages, newMsg] })
+              if (!state.isInChat) {
+                const { settings: s } = state
+                if (s.notificationSounds || s.messagePreview) {
+                  get().showNotification(
+                    newMsg.profiles?.display_name || 'Partner',
+                    s.messagePreview ? newMsg.content : 'New message'
+                  )
+                }
+              }
             }
           } else if (eventType === 'UPDATE') {
             set({
@@ -314,6 +366,50 @@ const useChatStore = create((set, get) => ({
 
   setIsAtBottom: (isAtBottom) => set({ isAtBottom }),
 
+  updateSetting: (key, value) => {
+    const { settings } = get()
+    const newSettings = { ...settings, [key]: value }
+    saveSettings(newSettings)
+    set({ settings: newSettings })
+    if (key === 'theme') {
+      applyThemeToDOM(value)
+    }
+  },
+
+  applyTheme: (theme) => {
+    applyThemeToDOM(theme)
+    const { settings } = get()
+    saveSettings({ ...settings, theme })
+    set({ settings: { ...settings, theme } })
+  },
+
+  setNotificationPermission: (permission) => set({ notificationPermission: permission }),
+
+  requestNotificationPermission: async () => {
+    if (typeof Notification === 'undefined') return 'denied'
+    const permission = await Notification.requestPermission()
+    set({ notificationPermission: permission })
+    return permission
+  },
+
+  setIsInChat: (isInChat) => set({ isInChat }),
+
+  showNotification: (title, body) => {
+    const { settings, notificationPermission } = get()
+    if (notificationPermission !== 'granted') return
+    if (!settings.notificationSounds && !settings.messagePreview) return
+
+    try {
+      new Notification(title, {
+        body: settings.messagePreview ? body : 'New message',
+        icon: '/icons/icon-192.png',
+        badge: '/icons/icon-192.png',
+        tag: 'couplespace-message',
+        renotify: true
+      })
+    } catch { /* notification not supported */ }
+  },
+
   cleanup: () => {
     const { subscription, typingTimeout } = get()
     if (subscription) {
@@ -322,7 +418,8 @@ const useChatStore = create((set, get) => ({
     if (typingTimeout) clearTimeout(typingTimeout)
     set({
       subscription: null, typingTimeout: null, messages: [], pairId: null,
-      replyTo: null, showDeleteConfirm: false, deleteTarget: null, showReactionPicker: null
+      replyTo: null, showDeleteConfirm: false, deleteTarget: null, showReactionPicker: null,
+      isInChat: false
     })
   }
 }))
