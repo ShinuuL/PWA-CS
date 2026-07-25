@@ -41,11 +41,12 @@ Plans:
   3. User can react to any message with an emoji and partner sees the reaction
   4. Chat interface works smoothly on mobile devices with proper sizing and touch targets
   5. Messages persist and load full history when reopening chat
-**Plans**: TBD
+**Plans**: 3 plans created
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01: Chat Schema + Core Real-time Messaging — Database migration, Zustand chat store with Supabase Realtime, core ChatView with message list, bubbles, input, date separators, delivery indicators, auto-scroll
+- [ ] 02-02: Replies + Reactions + Delete + Typing — QuotePreview, reply mode, ContextMenu, DeleteConfirmDialog, ReactionPicker, ReactionChip, TypingIndicator with animations
+- [ ] 02-03: Chat Settings + Notifications + Mobile Polish — Chat settings page (theme, font size, notifications, read receipts), push notifications, final mobile touch target audit
 
 ### Phase 3: Voice & Image Sharing
 **Goal**: Couples can exchange voice messages and images within their chat, and build a shared photo album
@@ -102,7 +103,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Pairing | 3/3 | Complete | 2026-07-24 |
-| 2. Real-Time Chat | 0/2 | Not started | - |
+| 2. Real-Time Chat | 0/3 | Planned | - |
 | 3. Voice & Image Sharing | 0/2 | Not started | - |
 | 4. Homepage Dashboard | 0/2 | Not started | - |
 | 5. Shared Notes & Agenda | 0/2 | Not started | - |

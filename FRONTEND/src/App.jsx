@@ -10,9 +10,9 @@ import AuthCallback from './features/auth/AuthCallback'
 import ProfilePage from './features/profile/ProfilePage'
 import PartnerProfile from './features/profile/PartnerProfile'
 import SettingsPage from './features/settings/SettingsPage'
+import ChatView from './features/chat/ChatView'
 
 const HomePage = () => <div style={{ padding: '1.5rem' }}>Home (Phase 4)</div>
-const ChatPage = () => <div style={{ padding: '1.5rem' }}>Chat (Phase 2)</div>
 const AgendaPage = () => <div style={{ padding: '1.5rem' }}>Agenda (Phase 5)</div>
 
 function App() {
@@ -48,7 +48,7 @@ function App() {
             <ProtectedRoute>
               <AppShell>
                 <PairingGate>
-                  <ChatPage />
+                  <ChatView />
                 </PairingGate>
               </AppShell>
             </ProtectedRoute>
