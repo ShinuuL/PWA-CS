@@ -58,11 +58,11 @@ Plans:
   3. User can send images in chat that display inline as thumbnails
   4. User can upload photos to a shared album accessible from the homepage
   5. Mini photo album displays horizontally scrollable thumbnails on homepage
-**Plans**: TBD
+**Plans**: 2 plans created
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01: Voice Messages + Image Sharing in Chat — DB migration, storage bucket, voice recording (hold-to-record, waveform, slide-to-cancel), image compression, inline media components, chatStore extensions, ChatView integration
+- [ ] 03-02: Shared Photo Album — album_photos table, album-photos bucket, albumStore, AlbumPage with upload/grid, MiniAlbum on homepage, drawer navigation
 
 ### Phase 4: Homepage Dashboard
 **Goal**: Couples have a single view showing their relationship at a glance — the daily ritual that drives retention
