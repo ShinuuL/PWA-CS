@@ -24,9 +24,9 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Chat
 
 - [ ] **CHAT-01**: User can send and receive real-time text messages
-- [ ] **CHAT-02**: User can record and send voice messages (WhatsApp-style: hold to record, slide to cancel)
-- [ ] **CHAT-03**: Voice messages play inline with waveform display
-- [ ] **CHAT-04**: User can send images in chat
+- [x] **CHAT-02**: User can record and send voice messages (WhatsApp-style: hold to record, slide to cancel)
+- [x] **CHAT-03**: Voice messages play inline with waveform display
+- [x] **CHAT-04**: User can send images in chat
 - [ ] **CHAT-05**: User can reply to (quote) a specific message
 - [ ] **CHAT-06**: User can react to messages with emojis
 - [ ] **CHAT-07**: Chat interface is optimized for mobile devices
@@ -111,9 +111,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHAT-05 | Phase 2 | Pending |
 | CHAT-06 | Phase 2 | Pending |
 | CHAT-07 | Phase 2 | Pending |
-| CHAT-02 | Phase 3 | Pending |
-| CHAT-03 | Phase 3 | Pending |
-| CHAT-04 | Phase 3 | Pending |
+| CHAT-02 | Phase 3 | Complete |
+| CHAT-03 | Phase 3 | Complete |
+| CHAT-04 | Phase 3 | Complete |
 | HOME-04 | Phase 3 | Pending |
 | HOME-05 | Phase 3 | Pending |
 | HOME-01 | Phase 4 | Pending |
@@ -128,6 +128,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AGND-04 | Phase 5 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 27 total
 - Mapped to phases: 27
 - Unmapped: 0 ✓
