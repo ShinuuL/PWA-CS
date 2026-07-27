@@ -39,12 +39,16 @@ CoupleSpace ships as a mobile-first PWA that gives couples a private shared spac
   3. Partner's mood status is visible on the dashboard in real-time
   4. Homepage is the primary view after login with a clear, mobile-first layout
 
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
+**Wave 1**
 
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — Database foundation (moods table + random photo RPC) and MemoryHero component
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 04-02-PLAN.md — Mood system (store, selector, partner display, modal) and dashboard assembly
 
 ### Phase 5: Shared Notes & Agenda
 
