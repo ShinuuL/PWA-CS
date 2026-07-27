@@ -1,16 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
-import MemoryHero from '../MemoryHero'
 
-const mockCheckPairStatus = vi.fn()
+const { mockCheckPairStatus, mockRpc } = vi.hoisted(() => ({
+  mockCheckPairStatus: vi.fn(),
+  mockRpc: vi.fn()
+}))
+
 vi.mock('../../pairing/usePairing', () => ({
   usePairing: () => ({ checkPairStatus: mockCheckPairStatus })
 }))
 
-const mockRpc = vi.fn()
-vi.mock('../../shared/lib/supabase', () => ({
+vi.mock('../../../shared/lib/supabase', () => ({
   supabase: { rpc: mockRpc }
 }))
+
+import MemoryHero from '../MemoryHero'
 
 describe('MemoryHero', () => {
   beforeEach(() => {
@@ -21,8 +25,8 @@ describe('MemoryHero', () => {
     mockCheckPairStatus.mockResolvedValue({ id: 'pair-1' })
     mockRpc.mockResolvedValue({ data: null, error: null })
 
-    render(<MemoryHero />)
-    expect(screen.getByTestId?.('memory-hero') || document.querySelector('.memory-hero')).toBeTruthy()
+    const { container } = render(<MemoryHero />)
+    expect(container.querySelector('.memory-hero--skeleton')).toBeTruthy()
   })
 
   it('shows empty state with Camera icon when no photos', async () => {
