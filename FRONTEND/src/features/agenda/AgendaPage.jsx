@@ -4,6 +4,7 @@ import useNotesStore from '../../stores/notesStore'
 import useAgendaStore from '../../stores/agendaStore'
 import SegmentedTabs from './SegmentedTabs'
 import EventsTab from './EventsTab'
+import NotesTab from './NotesTab'
 import './agenda.css'
 
 export default function AgendaPage() {
@@ -48,11 +49,7 @@ export default function AgendaPage() {
         )}
         {activeTab === 'notes' && (
           <div className="agenda__tab-content">
-            {/* NotesTab will be implemented in Task 2 */}
-            <div className="agenda__empty-state">
-              <p>Nenhuma nota ainda</p>
-              <span>Crie sua primeira nota compartilhada</span>
-            </div>
+            <NotesTab />
           </div>
         )}
       </div>
