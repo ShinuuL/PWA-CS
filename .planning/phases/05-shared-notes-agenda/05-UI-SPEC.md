@@ -41,7 +41,7 @@ Declared values (must be multiples of 4):
 | 2xl | 48px (3rem) | Empty state padding |
 | 3xl | 64px | Page-level spacing |
 
-**Exceptions:** Event row gap is 14px (from `cosmic-v2.html` line 521: `gap: 14px`) — not a multiple of 4, inherited from design reference. Category pill padding is 4px 10px (from `cosmic-v2.html` line 556: `padding: 4px 10px`).
+**Exceptions:** Event row gap is 12px (rounded from `cosmic-v2.html` line 521 original `gap: 14px` to align with 4px grid). Category pill horizontal padding is 8px (rounded from `cosmic-v2.html` line 556 original `10px` to align with 4px grid).
 
 **Source:** Extracted from existing CSS across `dashboard.css`, `album.css`, `index.css`, and `cosmic-v2.html`.
 
@@ -52,16 +52,16 @@ Declared values (must be multiples of 4):
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
 | Body | 14px (0.875rem) | 400 (regular) | 1.5 |
-| Label | 12px (0.75rem) | 500 (medium) | 1.4 |
+| Label | 12px (0.75rem) | 400 (regular) | 1.4 |
 | Heading | 16px (1rem) | 600 (semibold) | 1.2 |
-| Display | 18px (1.125rem) | 500 (medium) | 1.3 |
+| Display | 18px (1.125rem) | 400 (regular) | 1.3 |
 
-**Additional sizes used (from cosmic-v2.html event-row reference):**
-- Calendar day number: 16px weight 600 (same as Heading)
-- Calendar month label: 9px uppercase, weight 600, letter-spacing 1px, monospace — used only in event date blocks
-- Event category pill: 10px weight 600, letter-spacing 0.5px, monospace — used only in category badges
+**Special typography notes:**
+- Calendar day number: uses Heading size (16px) at weight 600
+- Calendar month label: uses Label size (12px) at weight 600, uppercase, letter-spacing 1px, monospace — used only in event date blocks
+- Event category pill: uses Label size (12px) at weight 600, letter-spacing 0.5px, monospace — used only in category badges
 
-**Source:** Existing CSS patterns (`dashboard.css` lines 57, 104, 163; `album.css` lines 49, 59, 173; `cosmic-v2.html` lines 532-563). Consolidated to 4 main sizes per template requirement.
+**Source:** Existing CSS patterns (`dashboard.css` lines 57, 104, 163; `album.css` lines 49, 59, 173; `cosmic-v2.html` lines 532-563). Consolidated to 4 main sizes per template requirement. All values are multiples of 4.
 
 ---
 
@@ -122,6 +122,13 @@ Declared values (must be multiples of 4):
 | Note edited label | Editada em {date} |
 
 **Source:** CONTEXT.md decisions D-04, D-09, D-11; `cosmic-v2.html` event-row patterns; existing app language (pt-BR).
+
+---
+
+## Visual Focal Points
+
+- **Events tab:** Calendar grid draws the eye first — it occupies the top portion of the screen and uses the accent color for today's cell and event-dot indicators against the secondary card background.
+- **Notes tab:** Note card list draws the eye first — cards fill the primary content area with white text on secondary-background surfaces, creating strong visual weight.
 
 ---
 
