@@ -14,11 +14,12 @@ import ChatView from './features/chat/ChatView'
 import ChatSettings from './features/chat/ChatSettings'
 import AlbumPage from './features/album/AlbumPage'
 import MiniAlbum from './features/album/MiniAlbum'
+import MemoryHero from './features/dashboard/MemoryHero'
+import './features/dashboard/dashboard.css'
 
 const HomePage = () => (
-  <div style={{ padding: '1.5rem' }}>
-    <h2 style={{ color: 'var(--color-text-primary)', marginBottom: '1rem' }}>Home</h2>
-    <MiniAlbum />
+  <div className="dashboard">
+    <MemoryHero />
   </div>
 )
 const AgendaPage = () => <div style={{ padding: '1.5rem' }}>Agenda (Phase 5)</div>
