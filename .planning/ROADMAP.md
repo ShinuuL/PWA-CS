@@ -63,12 +63,12 @@ Plans:
   4. Events display in a date-organized view visible to both partners
   5. User can set a reminder for an event
 
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
+- [ ] 05-01-PLAN.md — Database migration (shared_notes + agenda_events tables), Zustand stores (notesStore, agendaStore), AgendaPage with SegmentedTabs
+- [ ] 05-02-PLAN.md — EventsTab (CalendarGrid with swipe, EventRow, EventForm), NotesTab (NoteCard, NoteEditor), full agenda.css
 
 ## Progress
 
