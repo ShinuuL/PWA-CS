@@ -3,6 +3,7 @@ import { usePairing } from '../pairing/usePairing'
 import useNotesStore from '../../stores/notesStore'
 import useAgendaStore from '../../stores/agendaStore'
 import SegmentedTabs from './SegmentedTabs'
+import EventsTab from './EventsTab'
 import './agenda.css'
 
 export default function AgendaPage() {
@@ -42,16 +43,12 @@ export default function AgendaPage() {
       <div className="agenda__content">
         {activeTab === 'events' && (
           <div className="agenda__tab-content">
-            {/* EventsTab will be implemented in Plan 02 */}
-            <div className="agenda__empty-state">
-              <p>Nenhum evento</p>
-              <span>Adicione seu primeiro evento</span>
-            </div>
+            <EventsTab />
           </div>
         )}
         {activeTab === 'notes' && (
           <div className="agenda__tab-content">
-            {/* NotesTab will be implemented in Plan 02 */}
+            {/* NotesTab will be implemented in Task 2 */}
             <div className="agenda__empty-state">
               <p>Nenhuma nota ainda</p>
               <span>Crie sua primeira nota compartilhada</span>
