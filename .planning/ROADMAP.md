@@ -22,7 +22,7 @@ CoupleSpace ships as a mobile-first PWA that gives couples a private shared spac
 
 ### 📋 v1.1 Complete (Planned)
 
-- [ ] Phase 4: Homepage Dashboard (2 plans)
+- [x] Phase 4: Homepage Dashboard (2/2 plans) — completed 2026-07-27
 - [ ] Phase 5: Shared Notes & Agenda (2 plans)
 
 ## Phase Details
@@ -77,5 +77,5 @@ Plans:
 | 1. Foundation & Pairing | v1.0 | 3/3 | Complete | 2026-07-24 |
 | 2. Real-Time Chat | v1.0 | 3/3 | Complete | 2026-07-25 |
 | 3. Voice & Image Sharing | v1.0 | 2/2 | Complete | 2026-07-25 |
-| 4. Homepage Dashboard | v1.1 | 0/2 | Not started | - |
+| 4. Homepage Dashboard | v1.1 | 2/2 | Complete | 2026-07-27 |
 | 5. Shared Notes & Agenda | v1.1 | 0/2 | Not started | - |
