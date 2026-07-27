@@ -29,7 +29,10 @@ export default function MoodSelector() {
     <div className="mood-section">
       <h3 className="mood-section__title">How are you feeling?</h3>
       {myMood?.mood_type === 'custom' && myMood?.custom_text && (
-        <div className="mood-section__custom-text">&ldquo;{myMood.custom_text}&rdquo;</div>
+        <div className="mood-section__custom-text">
+          <span className="mood-card__emoji">✏️</span>
+          <span>&ldquo;{myMood.custom_text}&rdquo;</span>
+        </div>
       )}
       <div className="mood-grid">
         {MOODS.map((mood) => (
