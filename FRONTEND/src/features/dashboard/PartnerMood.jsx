@@ -40,7 +40,7 @@ export default function PartnerMood() {
               </span>
             </div>
             <div className="partner-mood__emoji">
-              {getMoodEmoji(partnerMood.mood_type)}
+              {partnerMood.custom_emoji || getMoodEmoji(partnerMood.mood_type)}
             </div>
             {partnerMood.custom_text && (
               <div className="partner-mood__text">

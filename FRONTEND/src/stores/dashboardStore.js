@@ -52,7 +52,6 @@ const useDashboardStore = create((set, get) => ({
           filter: `pair_id=eq.${pairId}`
         }, (payload) => {
           const { new: newMood } = payload
-          const state = get()
           if (newMood.user_id === user.id) {
             set({ myMood: newMood })
           } else {
@@ -67,7 +66,7 @@ const useDashboardStore = create((set, get) => ({
     }
   },
 
-  setMood: async (moodType, customText = null) => {
+  setMood: async (moodType, customText = null, customEmoji = null) => {
     const { user } = useAuthStore.getState()
     const { myMood, pairId } = get()
     if (!user || !pairId) return
@@ -80,6 +79,7 @@ const useDashboardStore = create((set, get) => ({
       user_id: user.id,
       mood_type: moodType,
       custom_text: customText,
+      custom_emoji: customEmoji,
       created_at: new Date().toISOString()
     }
     set({ myMood: optimisticMood })
@@ -91,6 +91,7 @@ const useDashboardStore = create((set, get) => ({
         user_id: user.id,
         mood_type: moodType,
         custom_text: customText,
+        custom_emoji: customEmoji,
         updated_at: new Date().toISOString()
       }, { onConflict: 'pair_id,user_id' })
 
