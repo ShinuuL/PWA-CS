@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from 'react'
-import { format, isSameDay } from 'date-fns'
+import { useState, useMemo } from 'react'
+import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Plus } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -9,8 +9,7 @@ import EventRow from './EventRow'
 import EventForm from './EventForm'
 
 export default function EventsTab() {
-  const { events, loading, error, createEvent, deleteEvent } = useAgendaStore()
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  const { events, loading, error, createEvent } = useAgendaStore()
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [showForm, setShowForm] = useState(false)
 

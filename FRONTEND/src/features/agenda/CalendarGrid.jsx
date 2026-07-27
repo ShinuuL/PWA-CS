@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import {
   startOfMonth, endOfMonth, startOfWeek, endOfWeek,
-  eachDayOfInterval, format, isSameMonth, isSameDay, addMonths, subMonths, isToday
+  eachDayOfInterval, format, isSameMonth, addMonths, subMonths, isToday
 } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { motion } from 'motion/react'
@@ -9,7 +9,6 @@ import { motion } from 'motion/react'
 const WEEKDAY_HEADERS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb']
 
 export default function CalendarGrid({ currentMonth, onMonthChange, events = [], onDayClick }) {
-  const [dragStartX, setDragStartX] = useState(0)
 
   const calendarDays = useMemo(() => {
     const firstDay = startOfMonth(currentMonth)
