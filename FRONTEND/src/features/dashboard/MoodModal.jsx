@@ -18,17 +18,17 @@ export default function MoodModal({ onClose }) {
   return (
     <div className="mood-modal-overlay" onClick={onClose}>
       <div className="mood-modal" onClick={(e) => e.stopPropagation()}>
-        <h3 className="mood-modal__title">How are you feeling</h3>
+        <h3 className="mood-modal__title">Como você está se sentindo?</h3>
         <input
           className="mood-modal__emoji-input"
-          placeholder="Pick an emoji"
+          placeholder="Escolha um emoji"
           value={emoji}
           onChange={(e) => setEmoji(e.target.value)}
           maxLength={4}
         />
         <textarea
           className="mood-modal__input"
-          placeholder="Tell your partner how you feel"
+          placeholder="Conte ao seu parceiro como você se sente"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
@@ -37,13 +37,13 @@ export default function MoodModal({ onClose }) {
             className="mood-modal__btn mood-modal__btn--secondary"
             onClick={onClose}
           >
-            Cancel
+            Cancelar
           </button>
           <button
             className="mood-modal__btn mood-modal__btn--primary"
             onClick={handleSave}
           >
-            Save
+            Salvar
           </button>
         </div>
       </div>

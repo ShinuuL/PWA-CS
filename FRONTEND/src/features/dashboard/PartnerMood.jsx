@@ -36,7 +36,7 @@ export default function PartnerMood() {
                 alt={profile?.display_name}
               />
               <span className="partner-mood__name">
-                {profile?.display_name || 'Partner'} is feeling
+                {profile?.display_name || 'Parceiro(a)'} está se sentindo
               </span>
             </div>
             <div className="partner-mood__emoji">
@@ -57,7 +57,7 @@ export default function PartnerMood() {
             exit={{ opacity: 0 }}
           >
             <span className="partner-mood__empty-emoji">💭</span>
-            <span>Ask how they&apos;re feeling...</span>
+            <span>Pergunte como ele(a) está...</span>
           </motion.div>
         )}
       </AnimatePresence>

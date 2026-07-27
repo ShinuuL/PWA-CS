@@ -26,7 +26,7 @@ export default function MiniAlbum() {
     return (
       <div className="mini-album">
         <div className="mini-album__header">
-          <h3 className="mini-album__title">Our Album</h3>
+          <h3 className="mini-album__title">Nosso Álbum</h3>
         </div>
         <div className="mini-album__scroll">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -41,7 +41,7 @@ export default function MiniAlbum() {
     return (
       <div className="mini-album">
         <div className="mini-album__header">
-          <h3 className="mini-album__title">Our Album</h3>
+          <h3 className="mini-album__title">Nosso Álbum</h3>
         </div>
         <div
           className="mini-album__empty"
@@ -52,7 +52,7 @@ export default function MiniAlbum() {
             <Camera size={32} />
           </div>
           <div className="mini-album__empty-text">
-            Add your first photo together
+            Adicione sua primeira foto juntos
           </div>
         </div>
       </div>
@@ -63,12 +63,12 @@ export default function MiniAlbum() {
     <>
       <div className="mini-album">
         <div className="mini-album__header">
-          <h3 className="mini-album__title">Our Album</h3>
+          <h3 className="mini-album__title">Nosso Álbum</h3>
           <button
             className="mini-album__see-all"
             onClick={() => navigate('/album')}
           >
-            See All
+            Ver Tudo
           </button>
         </div>
         <div className="mini-album__scroll">

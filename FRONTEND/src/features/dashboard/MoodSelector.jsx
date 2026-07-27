@@ -27,7 +27,7 @@ export default function MoodSelector() {
 
   return (
     <div className="mood-section">
-      <h3 className="mood-section__title">How are you feeling?</h3>
+      <h3 className="mood-section__title">Como você está se sentindo?</h3>
       {myMood?.mood_type === 'custom' && myMood?.custom_text && (
         <div className="mood-section__custom-text">
           {myMood.custom_emoji && (

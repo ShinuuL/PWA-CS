@@ -38,7 +38,7 @@ export default function MemoryHero() {
     return (
       <div className="memory-hero memory-hero--empty">
         <Camera size={48} />
-        <p>Add your first photo together</p>
+        <p>Adicione sua primeira foto juntos</p>
       </div>
     )
   }
