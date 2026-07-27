@@ -14,7 +14,7 @@ import ChatView from './features/chat/ChatView'
 import ChatSettings from './features/chat/ChatSettings'
 import AlbumPage from './features/album/AlbumPage'
 import HomePage from './features/dashboard/HomePage'
-const AgendaPage = () => <div style={{ padding: '1.5rem' }}>Agenda (Phase 5)</div>
+import AgendaPage from './features/agenda/AgendaPage'
 
 function App() {
   const { initialize, loading } = useAuthStore()

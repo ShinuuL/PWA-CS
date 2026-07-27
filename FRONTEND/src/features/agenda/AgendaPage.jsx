@@ -1,0 +1,64 @@
+import { useState, useEffect } from 'react'
+import { usePairing } from '../pairing/usePairing'
+import useNotesStore from '../../stores/notesStore'
+import useAgendaStore from '../../stores/agendaStore'
+import SegmentedTabs from './SegmentedTabs'
+import './agenda.css'
+
+export default function AgendaPage() {
+  const { checkPairStatus } = usePairing()
+  const initializeAgenda = useAgendaStore((s) => s.initializeAgenda)
+  const cleanupAgenda = useAgendaStore((s) => s.cleanup)
+  const initializeNotes = useNotesStore((s) => s.initializeNotes)
+  const cleanupNotes = useNotesStore((s) => s.cleanup)
+
+  const [activeTab, setActiveTab] = useState('events')
+
+  useEffect(() => {
+    let cancelled = false
+    checkPairStatus().then((pair) => {
+      if (!cancelled && pair) {
+        initializeAgenda(pair.id)
+        initializeNotes(pair.id)
+      }
+    })
+    return () => {
+      cancelled = true
+      cleanupAgenda()
+      cleanupNotes()
+    }
+  }, [checkPairStatus, initializeAgenda, cleanupAgenda, initializeNotes, cleanupNotes])
+
+  const tabs = [
+    { id: 'events', label: 'Eventos' },
+    { id: 'notes', label: 'Notas' }
+  ]
+
+  return (
+    <div className="agenda">
+      <div className="agenda__tabs">
+        <SegmentedTabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+      </div>
+      <div className="agenda__content">
+        {activeTab === 'events' && (
+          <div className="agenda__tab-content">
+            {/* EventsTab will be implemented in Plan 02 */}
+            <div className="agenda__empty-state">
+              <p>Nenhum evento</p>
+              <span>Adicione seu primeiro evento</span>
+            </div>
+          </div>
+        )}
+        {activeTab === 'notes' && (
+          <div className="agenda__tab-content">
+            {/* NotesTab will be implemented in Plan 02 */}
+            <div className="agenda__empty-state">
+              <p>Nenhuma nota ainda</p>
+              <span>Crie sua primeira nota compartilhada</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
