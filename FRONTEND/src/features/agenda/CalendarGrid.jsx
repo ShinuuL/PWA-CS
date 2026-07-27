@@ -4,7 +4,7 @@ import {
   eachDayOfInterval, format, isSameMonth, addMonths, subMonths, isToday
 } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { motion } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
 
 const WEEKDAY_HEADERS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb']
 
@@ -36,6 +36,8 @@ export default function CalendarGrid({ currentMonth, onMonthChange, events = [],
     }
   }
 
+  const monthKey = format(currentMonth, 'yyyy-MM')
+
   return (
     <div className="calendar-grid">
       <div className="calendar-grid__month-label">
@@ -46,33 +48,42 @@ export default function CalendarGrid({ currentMonth, onMonthChange, events = [],
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         onDragEnd={handleDragEnd}
-        style={{ touchAction: 'pan-y' }}
+        style={{ touchAction: 'pan-y', overflow: 'hidden' }}
       >
         <div className="calendar-grid__weekdays">
           {WEEKDAY_HEADERS.map(day => (
             <div key={day} className="calendar-grid__weekday">{day}</div>
           ))}
         </div>
-        <div className="calendar-grid__days">
-          {calendarDays.map((day, i) => {
-            const dayKey = format(day, 'yyyy-MM-dd')
-            const isCurrentMonth = isSameMonth(day, currentMonth)
-            const isTodayCell = isToday(day)
-            const hasEvent = daysWithEvents[dayKey]
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={monthKey}
+            className="calendar-grid__days"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -30 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          >
+            {calendarDays.map((day, i) => {
+              const dayKey = format(day, 'yyyy-MM-dd')
+              const isCurrentMonth = isSameMonth(day, currentMonth)
+              const isTodayCell = isToday(day)
+              const hasEvent = daysWithEvents[dayKey]
 
-            return (
-              <button
-                key={i}
-                className={`calendar-grid__day ${!isCurrentMonth ? 'calendar-grid__day--outside' : ''} ${isTodayCell ? 'calendar-grid__day--today' : ''}`}
-                onClick={() => onDayClick && onDayClick(day)}
-                type="button"
-              >
-                <span className="calendar-grid__day-number">{format(day, 'd')}</span>
-                {hasEvent && <span className="calendar-grid__day-dot" />}
-              </button>
-            )
-          })}
-        </div>
+              return (
+                <button
+                  key={i}
+                  className={`calendar-grid__day ${!isCurrentMonth ? 'calendar-grid__day--outside' : ''} ${isTodayCell ? 'calendar-grid__day--today' : ''}`}
+                  onClick={() => onDayClick && onDayClick(day)}
+                  type="button"
+                >
+                  <span className="calendar-grid__day-number">{format(day, 'd')}</span>
+                  {hasEvent && <span className="calendar-grid__day-dot" />}
+                </button>
+              )
+            })}
+          </motion.div>
+        </AnimatePresence>
       </motion.div>
     </div>
   )
