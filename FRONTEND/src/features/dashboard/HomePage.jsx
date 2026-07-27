@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { usePairing } from '../pairing/usePairing'
 import useDashboardStore from '../../stores/dashboardStore'
+import './dashboard.css'
 
 import MemoryHero from './MemoryHero'
 import MoodSelector from './MoodSelector'
