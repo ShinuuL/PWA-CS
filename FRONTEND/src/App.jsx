@@ -13,15 +13,7 @@ import SettingsPage from './features/settings/SettingsPage'
 import ChatView from './features/chat/ChatView'
 import ChatSettings from './features/chat/ChatSettings'
 import AlbumPage from './features/album/AlbumPage'
-import MiniAlbum from './features/album/MiniAlbum'
-import MemoryHero from './features/dashboard/MemoryHero'
-import './features/dashboard/dashboard.css'
-
-const HomePage = () => (
-  <div className="dashboard">
-    <MemoryHero />
-  </div>
-)
+import HomePage from './features/dashboard/HomePage'
 const AgendaPage = () => <div style={{ padding: '1.5rem' }}>Agenda (Phase 5)</div>
 
 function App() {
