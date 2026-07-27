@@ -639,22 +639,13 @@ function SegmentedTabs({ tabs, activeTab, onTabChange }) {
 | A4 | date-fns v4 `ptBR` locale is imported from `date-fns/locale` (not `date-fns/locale/pt-BR`) | Calendar formatting | Import path may differ — verify at implementation time |
 | A5 | The cosmic-v2.html event-row CSS (lines 845-883) is the design reference for event display | Event styling | If design changed, event row layout may differ |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Push notification implementation scope**
-   - What we know: Decision D-10 says "in-app indicator + browser push notifications"
-   - What's unclear: Whether to implement full push (requires VAPID keys, server-side subscription storage, Service Worker push handler) or just in-app for Phase 5
-   - Recommendation: Implement in-app indicator only in Phase 5. Push notifications require server infrastructure (FastAPI planned but not built) and have poor Safari support. Defer to Phase 7 when backend exists.
+1. **Push notification implementation scope** — RESOLVED: Implement in-app indicator only in Phase 5. Push notifications require server-side infrastructure (VAPID keys, subscription storage, Service Worker push handler) which depends on FastAPI backend not yet built. Additionally, Safari and Firefox have poor support for Notification Triggers API. Defer push notifications to Phase 7 when backend exists. In-app indicator covers the core need. (Ref: Assumptions A1, A2; Architectural Responsibility Map tier 2 for Reminders)
 
-2. **Calendar week start day**
-   - What we know: Brazilian locale typically starts week on Sunday (pt-BR)
-   - What's unclear: Whether the calendar grid should start on Sunday or Monday
-   - Recommendation: Start on Sunday (standard for pt-BR). Use `weekStartsOn: 0` in date-fns.
+2. **Calendar week start day** — RESOLVED: Start on Sunday (`weekStartsOn: 0` in date-fns). Brazilian locale (pt-BR) standard is Sunday-start weeks. Use `startOfWeek(firstDay, { weekStartsOn: 0 })` and `endOfWeek(lastDay, { weekStartsOn: 0 })` in CalendarGrid.
 
-3. **Note collaboration conflict handling**
-   - What we know: Both partners can edit any note (D-07)
-   - What's unclear: What happens when both edit the same note simultaneously — last-write-wins or conflict resolution?
-   - Recommendation: Last-write-wins with Realtime sync. Simple and fits the "shared space" philosophy. No operational transform needed.
+3. **Note collaboration conflict handling** — RESOLVED: Last-write-wins with Realtime sync. Both partners can edit any note (D-07); when simultaneous edits occur, the last Supabase write wins and Realtime broadcasts the update to both clients. No operational transform needed — fits the "shared space" philosophy. The `updated_at` timestamp lets users see when a note was last modified.
 
 ## Environment Availability
 
