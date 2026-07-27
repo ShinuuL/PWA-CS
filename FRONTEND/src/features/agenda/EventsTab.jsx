@@ -62,7 +62,6 @@ export default function EventsTab() {
         currentMonth={currentMonth}
         onMonthChange={setCurrentMonth}
         events={events}
-        onDayClick={setSelectedDate}
       />
       {groupedEvents.length === 0 ? (
         <div className="events-tab__empty">
