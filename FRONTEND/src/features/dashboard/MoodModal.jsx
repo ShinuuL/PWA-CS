@@ -5,10 +5,12 @@ export default function MoodModal({ onClose }) {
   const [text, setText] = useState('')
   const setMood = useDashboardStore((s) => s.setMood)
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (text.trim()) {
-      setMood('custom', text.trim())
-      onClose()
+      const result = await setMood('custom', text.trim())
+      if (!result?.error) {
+        onClose()
+      }
     }
   }
 
