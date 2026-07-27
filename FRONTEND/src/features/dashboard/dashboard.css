@@ -107,6 +107,14 @@
   margin-bottom: 1rem;
 }
 
+.mood-section__custom-text {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
 /* ===== Mood Grid ===== */
 .mood-grid {
   display: grid;
