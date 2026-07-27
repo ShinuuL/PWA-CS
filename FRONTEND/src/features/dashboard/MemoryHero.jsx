@@ -43,6 +43,8 @@ export default function MemoryHero() {
     )
   }
 
+  const dateStr = photo.created_at ? format(new Date(photo.created_at), 'MMMM d, yyyy') : null
+
   return (
     <div className="memory-hero">
       <img
@@ -54,9 +56,9 @@ export default function MemoryHero() {
         {photo.caption && (
           <div className="memory-hero__caption-text">{photo.caption}</div>
         )}
-        <div className="memory-hero__caption-date">
-          {format(new Date(photo.created_at), 'MMMM d, yyyy')}
-        </div>
+        {dateStr && (
+          <div className="memory-hero__caption-date">{dateStr}</div>
+        )}
       </div>
     </div>
   )
