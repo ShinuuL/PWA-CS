@@ -2,64 +2,89 @@
 
 ## Project Context
 
-CoupleSpace is a mobile-first PWA for couples to communicate, share moments, and manage experiences together. Built with React (frontend), Python/FastAPI (backend), Supabase (auth/DB/storage), hosted on Vercel.
+CoupleSpace is a mobile-first PWA for couples to communicate, share moments, and manage experiences together. **Core value:** real-time private chat between couples.
 
-**Core value:** Chat between couples — real-time private messaging is the foundation.
+## Repository Structure
 
-## GSD Workflow
+The repo root is **not** the app. The frontend lives in `FRONTEND/`.
 
-This project uses the GSD (Get Stuff Done) workflow for structured development.
+```
+D:\Dev\PWA CS\
+├── FRONTEND/          # React app (all source, deps, config)
+│   ├── src/
+│   │   ├── features/  # auth, chat, album, pairing, profile, settings
+│   │   ├── shared/    # components/ (AppShell, ProtectedRoute, Header, Drawer), lib/ (supabase.js)
+│   │   ├── stores/    # Zustand stores (authStore, chatStore, albumStore)
+│   │   └── test/      # Vitest setup + tests
+│   ├── supabase/migrations/  # SQL migrations (run against Supabase project)
+│   └── .env.local     # Required: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+├── docs/              # cosmic-v2.html design ref, Features.md, Roadmap.md, UIUX.md
+├── .planning/         # GSD workflow state (ROADMAP.md, phases/, milestones/)
+└── .ai/               # Agent role definitions (planner, coder, verifier, reviewer)
+```
 
-### Current State
+## Developer Commands
 
-- **Phase:** 1 — Foundation & Pairing
-- **Roadmap:** 5 phases total
-- **Requirements:** 27 v1 requirements defined
+All commands run from `FRONTEND/` directory:
 
-### Commands
+```bash
+cd FRONTEND
+npm run dev          # Vite dev server with HMR
+npm run build        # Production build → dist/
+npm run lint         # oxlint (React + oxc plugins)
+npm run test         # Vitest in watch mode
+npm run test:run     # Vitest single run
+npm run preview      # Preview production build locally
+```
 
-- `/gsd-progress` — Check current progress and next steps
-- `/gsd-discuss-phase N` — Gather context for phase N
-- `/gsd-plan-phase N` — Create detailed plan for phase N
-- `/gsd-execute-phase N` — Execute plans in phase N
-- `/gsd-verify-work` — Validate completed work
-- `/gsd-ship` — Create PR and prepare for merge
+There is **no TypeScript** — the project uses plain JSX. There is **no backend** in this repo yet (FastAPI is planned but not scaffolded).
 
-### Workflow Rules
+## Environment Setup
 
-1. Every task follows: Planner → Coder → Verifier → Reviewer
-2. Never invent APIs, parameters, or libraries — use official docs
-3. All implementations must compile, respect architecture, follow project patterns
-4. Never expose credentials, remove validations, or ignore critical errors
-5. Never change requirements or implement unsolicited features
-6. Prioritize stability always
+Copy `FRONTEND/.env.example` to `FRONTEND/.env.local` and fill in:
+- `VITE_SUPABASE_URL` — your Supabase project URL
+- `VITE_SUPABASE_ANON_KEY` — your Supabase anon/public key
 
-## Tech Stack
-
-- **Frontend:** React 19.2 + Vite + vite-plugin-pwa
-- **Backend:** Python 3.12+ / FastAPI 0.139+
-- **Database/Auth/Storage:** Supabase
-- **Hosting:** Vercel (full stack)
-- **Styling:** TBD (based on cosmic-v2.html design reference)
-- **Animations:** Motion for React 12.42+
+Supabase CLI migrations live in `FRONTEND/supabase/migrations/`. Apply them via the Supabase dashboard or CLI against your project.
 
 ## Architecture
 
-- Supabase-first: All CRUD and real-time operations go through Supabase client SDK
-- FastAPI only for: external API proxying (Spotify, Google Calendar), audio processing, server-side secrets
-- PairID as universal access key: every table (except users/pairs) gets pair_id column with RLS
-- Chat uses Supabase Realtime (postgres_changes) — no custom WebSocket server needed
+- **Supabase-first**: All CRUD and realtime go through the Supabase JS client (`src/shared/lib/supabase.js`). No custom API layer.
+- **Zustand stores**: Auth, chat, and album state managed via Zustand (`src/stores/`). Stores call Supabase directly.
+- **Feature-based organization**: Each feature (`auth/`, `chat/`, `album/`, `pairing/`, `profile/`, `settings/`) has its own directory with component(s), CSS, and hooks.
+- **Protected routes**: `ProtectedRoute` wraps all authenticated views. `PairingGate` wraps features requiring a paired partner.
+- **PWA**: Configured via `vite-plugin-pwa` in `vite.config.js`. Service worker registered in `main.jsx`. Workbox caches Supabase storage with `StaleWhileRevalidate`.
 
-## Design System
+## Code Conventions
 
-- Reference: `cosmic-v2.html` (to be validated before implementation)
-- Mobile-first approach
-- Romantic, minimal, modern aesthetic
-- Card-based components with rounded borders, shadows, smooth animations
+- **JSX, not TSX**: All components are `.jsx` files
+- **CSS files co-located**: Each component has a matching `.css` file (e.g., `chat.css`, `auth.css`)
+- **lucide-react** for icons
+- **motion** (framer-motion) for animations
+- **date-fns** for date formatting
+- **react-router-dom v7** for routing
+- **oxlint** for linting (React hooks rules enforced)
+- **vitest + @testing-library/react** for testing
+
+## Current State
+
+- **v1.0 MVP shipped** (Phases 1-3 complete): Foundation, pairing, real-time chat, voice/image sharing
+- **Next up**: Phase 4 (Homepage Dashboard), Phase 5 (Shared Notes & Agenda)
+- See `.planning/ROADMAP.md` for full roadmap
+
+## GSD Workflow
+
+This project uses GSD for structured development. Key commands:
+
+- `/gsd-progress` — Check current progress
+- `/gsd-plan-phase N` — Plan a phase
+- `/gsd-execute-phase N` — Execute a phase
+- `/gsd-verify-work` — Validate completed work
+- `/gsd-ship` — Create PR
 
 ## Documentation
 
 - `docs/Features.md` — Feature definitions
 - `docs/Roadmap.md` — Future features (v2+)
 - `docs/UIUX.md` — UI/UX guidelines
-- `docs/DOCUMENTÇÃO PWA(Progressive Web App.md` — PWA development standards
+- `docs/cosmic-v2.html` — Design reference (validate before implementing new UI)

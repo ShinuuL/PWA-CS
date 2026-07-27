@@ -39,9 +39,8 @@ result: pass
 
 ### 5. Calendar Swipe Navigation
 expected: Swipe left on the calendar grid — advances to next month. Swipe right — goes to previous month. Month label updates accordingly.
-result: issue
-reported: "works but animation is very fast, wants smoother transition"
-severity: cosmetic
+result: pass
+fix_commit: cc2c389
 
 ### 6. Create a Note
 expected: Switch to Notas tab. Tap "Criar nota" or FAB. A form appears with title (required) and body (optional) fields. Fill in title — submit enables. Submit — note appears in the list with title, body preview, and creation date.
@@ -126,8 +125,8 @@ coverage_id: D7
 ## Summary
 
 total: 20
-passed: 18
-issues: 2
+passed: 19
+issues: 1
 pending: 0
 skipped: 0
 
@@ -135,10 +134,11 @@ skipped: 0
 
 - gap_id: G-05-5
   truth: "Calendar swipe has smooth transition animation"
-  status: failed
-  reason: "User reported: animation is very fast, wants smoother transition"
+  status: resolved
+  reason: "Fixed: added AnimatePresence + motion.div with spring transition for smooth month slide"
   severity: cosmetic
   test: 5
+  fix_commit: cc2c389
 
 ## Deferred Follow-Ups
 

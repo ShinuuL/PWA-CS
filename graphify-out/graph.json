@@ -1,0 +1,5898 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "agent_pipeline_hyperedge",
+        "label": "Agent Pipeline: Planner-Coder-Verifier-Reviewer Workflow",
+        "nodes": [
+          "concept_orchestrator_role",
+          "concept_agent_pipeline",
+          "concept_verifier_role",
+          "concept_reviewer_role"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": ".ai/orchestrator.md"
+      },
+      {
+        "id": "supabase_infrastructure_hyperedge",
+        "label": "Supabase Infrastructure: Auth + Database + Storage + Realtime",
+        "nodes": [
+          "concept_supabase_first",
+          "concept_supabase_auth",
+          "concept_supabase_database",
+          "concept_supabase_storage",
+          "concept_supabase_realtime"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": ".planning/PROJECT.md"
+      },
+      {
+        "id": "foundation_phase1_hyperedge",
+        "label": "Phase 1 Foundation: Scaffold + Auth + Profile + Pairing + App Shell",
+        "nodes": [
+          ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+          ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan",
+          ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan",
+          "concept_feature_auth",
+          "concept_feature_pairing",
+          "concept_feature_profile"
+        ],
+        "relation": "implement",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-PLAN.md"
+      },
+      {
+        "id": "phase2_chat_feature_set",
+        "label": "Phase 2 Real-Time Chat Feature Set",
+        "nodes": [
+          "concept_whatsapp_style_chat",
+          "concept_supabase_realtime_sync",
+          "concept_offline_message_queue",
+          "concept_delivery_read_indicators",
+          "concept_typing_indicators",
+          "concept_message_grouping",
+          "concept_auto_scroll_new_messages_button",
+          "concept_inline_quote_reply",
+          "concept_emoji_reaction_system",
+          "concept_message_deletion",
+          "concept_chat_settings_system",
+          "concept_push_notifications"
+        ],
+        "relation": "implement",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md"
+      },
+      {
+        "id": "phase3_media_feature_set",
+        "label": "Phase 3 Voice, Image & Album Feature Set",
+        "nodes": [
+          "concept_hold_to_record_voice",
+          "concept_live_waveform_visualization",
+          "concept_client_side_image_compression",
+          "concept_shared_photo_album",
+          "concept_supabase_storage_pair_scoped_rls",
+          "concept_mediarecorder_api",
+          "concept_react_audio_visualize"
+        ],
+        "relation": "implement",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md"
+      },
+      {
+        "id": "core_architecture_patterns",
+        "label": "Core Architecture Patterns",
+        "nodes": [
+          "concept_supabase_first_pattern",
+          "concept_pair_id_access_key",
+          "concept_optimistic_ui_pattern",
+          "concept_pwa_shell_workbox",
+          "concept_fastapi_proxy_layer",
+          "concept_feature_based_structure"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": ".planning/research/ARCHITECTURE.md"
+      },
+      {
+        "id": "hyper_supabase_services",
+        "label": "Supabase Full Service Stack",
+        "source_file": ".planning/research/STACK.md",
+        "relation": "conceptually_related_to",
+        "nodes": [
+          "concept_supabase",
+          "concept_supabase_auth",
+          "concept_supabase_realtime",
+          "concept_supabase_storage",
+          "concept_supabase_postgres",
+          "concept_rls"
+        ]
+      },
+      {
+        "id": "hyper_core_stack",
+        "label": "Core Technology Stack Decision",
+        "source_file": ".planning/research/STACK.md",
+        "relation": "conceptually_related_to",
+        "nodes": [
+          "concept_react_19",
+          "concept_vite_6",
+          "concept_supabase",
+          "concept_fastapi",
+          "concept_vercel",
+          "concept_zustand",
+          "concept_vite_pwa_plugin",
+          "concept_motion"
+        ]
+      },
+      {
+        "id": "hyper_anti_patterns",
+        "label": "Rejected Technologies (Anti-Patterns)",
+        "source_file": ".planning/research/STACK.md",
+        "relation": "rationale_for",
+        "nodes": [
+          "concept_anti_pattern_redux",
+          "concept_anti_pattern_cra",
+          "concept_anti_pattern_nextjs",
+          "concept_anti_pattern_firebase",
+          "concept_anti_pattern_socketio",
+          "concept_anti_pattern_axios"
+        ]
+      },
+      {
+        "id": "hyper_explicitly_not_building",
+        "label": "Explicitly NOT Building (Anti-Features)",
+        "source_file": ".planning/research/SUMMARY.md",
+        "relation": "rationale_for",
+        "nodes": [
+          "concept_explicitly_not_building",
+          "concept_no_ai_coaching",
+          "concept_no_video_calling",
+          "concept_no_social_features"
+        ]
+      },
+      {
+        "id": "hyper_risk_trio",
+        "label": "Critical Risk Trio",
+        "source_file": ".planning/research/SUMMARY.md",
+        "relation": "rationale_for",
+        "nodes": [
+          "concept_dual_user_churn",
+          "concept_privacy_breach_catastrophe",
+          "concept_ios_pwa_limitations"
+        ]
+      },
+      {
+        "id": "hyper_phase_ordering",
+        "label": "Phase Ordering Dependency Chain",
+        "source_file": ".planning/research/SUMMARY.md",
+        "relation": "references",
+        "nodes": [
+          "phase_1_foundation",
+          "phase_2_chat",
+          "phase_3_media",
+          "phase_4_homepage",
+          "phase_5_agenda",
+          "phase_6_polish"
+        ]
+      },
+      {
+        "id": "hyper_chat_feature_cluster",
+        "label": "Chat Feature Cluster",
+        "source_file": "docs/Features.md",
+        "relation": "conceptually_related_to",
+        "nodes": [
+          "feature_chat",
+          "feature_message_reply",
+          "feature_emoji_reactions",
+          "feature_voice_messages",
+          "feature_image_sharing",
+          "feature_pairing",
+          "concept_supabase_realtime"
+        ]
+      },
+      {
+        "id": "hyper_homepage_feature_cluster",
+        "label": "Homepage Feature Cluster",
+        "source_file": "docs/Features.md",
+        "relation": "conceptually_related_to",
+        "nodes": [
+          "feature_homepage",
+          "feature_mood_tracker",
+          "feature_mini_album",
+          "feature_spotify_integration",
+          "concept_anniversary_counter",
+          "concept_daily_rituals"
+        ]
+      },
+      {
+        "id": "hyper_agenda_feature_cluster",
+        "label": "Agenda Feature Cluster",
+        "source_file": "docs/Features.md",
+        "relation": "conceptually_related_to",
+        "nodes": [
+          "feature_agenda",
+          "feature_google_calendar",
+          "feature_date_reminders",
+          "concept_google_calendar_api"
+        ]
+      },
+      {
+        "id": "hyper_developer_experience",
+        "label": "Developer Experience Toolchain",
+        "source_file": "AGENTS.md",
+        "relation": "conceptually_related_to",
+        "nodes": [
+          "concept_oxlint",
+          "concept_vitest",
+          "concept_oxc_plugin_react",
+          "concept_css_colocated",
+          "concept_jsx_no_typescript",
+          "concept_gsd_workflow"
+        ]
+      },
+      {
+        "id": "hyper_pwa_infra",
+        "label": "PWA Infrastructure",
+        "source_file": ".planning/research/STACK.md",
+        "relation": "conceptually_related_to",
+        "nodes": [
+          "concept_vite_pwa_plugin",
+          "concept_workbox",
+          "concept_manifest_pwa",
+          "concept_app_shell",
+          "concept_offline_first",
+          "concept_push_notifications",
+          "concept_ios_pwa_limitations"
+        ]
+      },
+      {
+        "id": "hyper_ui_identity",
+        "label": "UI Identity System",
+        "source_file": "docs/UIUX.md",
+        "relation": "conceptually_related_to",
+        "nodes": [
+          "docs_uiux_cosmic_v2",
+          "docs_uiux_mobile_first",
+          "docs_uiux_card_components",
+          "concept_press_start_2p",
+          "concept_theme_color_purple",
+          "concept_css_colocated"
+        ]
+      },
+      {
+        "id": "hyper_churn_retention_design",
+        "label": "Churn & Retention Design Pattern",
+        "source_file": ".planning/research/SUMMARY.md",
+        "relation": "conceptually_related_to",
+        "nodes": [
+          "concept_dual_user_churn",
+          "concept_four_horsemen_of_churn",
+          "concept_couply_case_study",
+          "concept_daily_rituals",
+          "concept_random_memory_highlight"
+        ]
+      },
+      {
+        "id": "hyper_roadmap_features",
+        "label": "Future Roadmap Features (v2+)",
+        "source_file": "docs/Roadmap.md",
+        "relation": "conceptually_related_to",
+        "nodes": [
+          "docs_roadmap_realtime_location",
+          "docs_roadmap_virtual_pet",
+          "docs_roadmap_minigames"
+        ]
+      },
+      {
+        "id": "hyper_repo_structure",
+        "label": "Repository Structure & Architecture",
+        "source_file": "AGENTS.md",
+        "relation": "conceptually_related_to",
+        "nodes": [
+          "doc_agents_md",
+          "concept_feature_based_org",
+          "concept_protected_routes",
+          "concept_supabase_first",
+          "concept_pair_id",
+          "concept_css_colocated",
+          "concept_jsx_no_typescript"
+        ]
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "label": "AlbumGrid",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/album/AlbumGrid.jsx",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "frontend_src_features_album_albumgrid_albumgrid",
+      "community": 26,
+      "norm_label": "albumgrid"
+    },
+    {
+      "label": "AlbumPage",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/album/AlbumPage.jsx",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "frontend_src_features_album_albumpage_albumpage",
+      "community": 27,
+      "norm_label": "albumpage"
+    },
+    {
+      "label": "AlbumUpload",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/album/AlbumUpload.jsx",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "frontend_src_features_album_albumupload_albumupload",
+      "community": 28,
+      "norm_label": "albumupload"
+    },
+    {
+      "label": "MiniAlbum",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/album/MiniAlbum.jsx",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "frontend_src_features_album_minialbum_minialbum",
+      "community": 29,
+      "norm_label": "minialbum"
+    },
+    {
+      "label": "AuthCallback",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/auth/AuthCallback.jsx",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "frontend_src_features_auth_authcallback_authcallback",
+      "community": 30,
+      "norm_label": "authcallback"
+    },
+    {
+      "label": "LoginPage",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/auth/LoginPage.jsx",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "frontend_src_features_auth_loginpage_loginpage",
+      "community": 31,
+      "norm_label": "loginpage"
+    },
+    {
+      "label": "useAuth",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/auth/useAuth.js",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "frontend_src_features_auth_useauth_useauth",
+      "community": 32,
+      "norm_label": "useauth"
+    },
+    {
+      "label": "ChatSettings",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/chat/ChatSettings.jsx",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "frontend_src_features_chat_chatsettings_chatsettings",
+      "community": 33,
+      "norm_label": "chatsettings"
+    },
+    {
+      "label": "ChatView",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/chat/ChatView.jsx",
+      "source_location": "L397",
+      "_origin": "ast",
+      "id": "frontend_src_features_chat_chatview_chatview",
+      "community": 34,
+      "norm_label": "chatview"
+    },
+    {
+      "label": "ImageMessage",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/chat/ImageMessage.jsx",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "frontend_src_features_chat_imagemessage_imagemessage",
+      "community": 35,
+      "norm_label": "imagemessage"
+    },
+    {
+      "label": "ImagePicker",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/chat/ImagePicker.jsx",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "frontend_src_features_chat_imagepicker_imagepicker",
+      "community": 36,
+      "norm_label": "imagepicker"
+    },
+    {
+      "label": "ImageViewer",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/chat/ImageViewer.jsx",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "frontend_src_features_chat_imageviewer_imageviewer",
+      "community": 37,
+      "norm_label": "imageviewer"
+    },
+    {
+      "label": "VoiceMessage",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/chat/VoiceMessage.jsx",
+      "source_location": "L31",
+      "_origin": "ast",
+      "id": "frontend_src_features_chat_voicemessage_voicemessage",
+      "community": 38,
+      "norm_label": "voicemessage"
+    },
+    {
+      "label": "VoiceRecorder",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/chat/VoiceRecorder.jsx",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "frontend_src_features_chat_voicerecorder_voicerecorder",
+      "community": 39,
+      "norm_label": "voicerecorder"
+    },
+    {
+      "label": "EnterCode",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/pairing/EnterCode.jsx",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "frontend_src_features_pairing_entercode_entercode",
+      "community": 40,
+      "norm_label": "entercode"
+    },
+    {
+      "label": "GenerateCode",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/pairing/GenerateCode.jsx",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "frontend_src_features_pairing_generatecode_generatecode",
+      "community": 41,
+      "norm_label": "generatecode"
+    },
+    {
+      "label": "PairingGate",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/pairing/PairingGate.jsx",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "frontend_src_features_pairing_pairinggate_pairinggate",
+      "community": 42,
+      "norm_label": "pairinggate"
+    },
+    {
+      "label": "usePairing",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/pairing/usePairing.js",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "frontend_src_features_pairing_usepairing_usepairing",
+      "community": 43,
+      "norm_label": "usepairing"
+    },
+    {
+      "label": "AvatarUpload",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/profile/AvatarUpload.jsx",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "frontend_src_features_profile_avatarupload_avatarupload",
+      "community": 44,
+      "norm_label": "avatarupload"
+    },
+    {
+      "label": "PartnerProfile",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/profile/PartnerProfile.jsx",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "frontend_src_features_profile_partnerprofile_partnerprofile",
+      "community": 45,
+      "norm_label": "partnerprofile"
+    },
+    {
+      "label": "ProfilePage",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/profile/ProfilePage.jsx",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "frontend_src_features_profile_profilepage_profilepage",
+      "community": 46,
+      "norm_label": "profilepage"
+    },
+    {
+      "label": "SettingsPage",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/features/settings/SettingsPage.jsx",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "frontend_src_features_settings_settingspage_settingspage",
+      "community": 47,
+      "norm_label": "settingspage"
+    },
+    {
+      "label": "AppShell",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/shared/components/AppShell.jsx",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "frontend_src_shared_components_appshell_appshell",
+      "community": 48,
+      "norm_label": "appshell"
+    },
+    {
+      "label": "Drawer",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/shared/components/Drawer.jsx",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "frontend_src_shared_components_drawer_drawer",
+      "community": 49,
+      "norm_label": "drawer"
+    },
+    {
+      "label": "Header",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/shared/components/Header.jsx",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "frontend_src_shared_components_header_header",
+      "community": 50,
+      "norm_label": "header"
+    },
+    {
+      "label": "ProtectedRoute",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/shared/components/ProtectedRoute.jsx",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "frontend_src_shared_components_protectedroute_protectedroute",
+      "community": 51,
+      "norm_label": "protectedroute"
+    },
+    {
+      "label": "LiveWaveform",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/shared/components/Waveform.jsx",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "frontend_src_shared_components_waveform_livewaveform",
+      "community": 52,
+      "norm_label": "livewaveform"
+    },
+    {
+      "label": "PlaybackWaveform",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/shared/components/Waveform.jsx",
+      "source_location": "L50",
+      "_origin": "ast",
+      "id": "frontend_src_shared_components_waveform_playbackwaveform",
+      "community": 53,
+      "norm_label": "playbackwaveform"
+    },
+    {
+      "label": "compressImage",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/shared/lib/imageCompress.js",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "frontend_src_shared_lib_imagecompress_compressimage",
+      "community": 54,
+      "norm_label": "compressimage"
+    },
+    {
+      "label": "useVoiceRecorder",
+      "file_type": "code",
+      "source_file": "FRONTEND/src/shared/lib/mediaRecorder.js",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "frontend_src_shared_lib_mediarecorder_usevoicerecorder",
+      "community": 55,
+      "norm_label": "usevoicerecorder"
+    },
+    {
+      "label": "Global Engineering Policy",
+      "file_type": "document",
+      "source_file": ".ai/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".ai_agents",
+      "community": 8,
+      "norm_label": "global engineering policy"
+    },
+    {
+      "label": "Documentation Agent",
+      "file_type": "document",
+      "source_file": ".ai/DOCUMENTADOR.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".ai_documentador",
+      "community": 12,
+      "norm_label": "documentation agent"
+    },
+    {
+      "label": "Reviewer Agent",
+      "file_type": "document",
+      "source_file": ".ai/Reviewer.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".ai_reviewer",
+      "community": 8,
+      "norm_label": "reviewer agent"
+    },
+    {
+      "label": "Verifier (QA) Agent",
+      "file_type": "document",
+      "source_file": ".ai/Verifier.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".ai_verifier",
+      "community": 8,
+      "norm_label": "verifier (qa) agent"
+    },
+    {
+      "label": "Orchestrator Agent",
+      "file_type": "document",
+      "source_file": ".ai/orchestrator.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".ai_orchestrator",
+      "community": 8,
+      "norm_label": "orchestrator agent"
+    },
+    {
+      "label": "Milestones",
+      "file_type": "document",
+      "source_file": ".planning/MILESTONES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones",
+      "community": 9,
+      "norm_label": "milestones"
+    },
+    {
+      "label": "CoupleSpace Project",
+      "file_type": "document",
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_project",
+      "community": 9,
+      "norm_label": "couplespace project"
+    },
+    {
+      "label": "Requirements",
+      "file_type": "document",
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_requirements",
+      "community": 9,
+      "norm_label": "requirements"
+    },
+    {
+      "label": "Roadmap",
+      "file_type": "document",
+      "source_file": ".planning/ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_roadmap",
+      "community": 9,
+      "norm_label": "roadmap"
+    },
+    {
+      "label": "Project State",
+      "file_type": "document",
+      "source_file": ".planning/STATE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_state",
+      "community": 9,
+      "norm_label": "project state"
+    },
+    {
+      "label": "v1.0 Requirements Archive",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_requirements",
+      "community": 9,
+      "norm_label": "v1.0 requirements archive"
+    },
+    {
+      "label": "v1.0 Milestone Roadmap",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_roadmap",
+      "community": 9,
+      "norm_label": "v1.0 milestone roadmap"
+    },
+    {
+      "label": "Plan 01-01: Project Scaffold & Supabase Foundation",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+      "community": 0,
+      "norm_label": "plan 01-01: project scaffold & supabase foundation"
+    },
+    {
+      "label": "Plan 01-01 Summary",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-SUMMARY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_summary",
+      "community": 0,
+      "norm_label": "plan 01-01 summary"
+    },
+    {
+      "label": "Plan 01-02: Authentication & Pairing System",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02-PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan",
+      "community": 0,
+      "norm_label": "plan 01-02: authentication & pairing system"
+    },
+    {
+      "label": "Plan 01-02 Summary",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02-SUMMARY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_summary",
+      "community": 0,
+      "norm_label": "plan 01-02 summary"
+    },
+    {
+      "label": "Plan 01-03: Profile Management & App Shell",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-03-PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan",
+      "community": 0,
+      "norm_label": "plan 01-03: profile management & app shell"
+    },
+    {
+      "label": "Plan 01-03 Summary",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-03-SUMMARY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_summary",
+      "community": 0,
+      "norm_label": "plan 01-03 summary"
+    },
+    {
+      "label": "Phase 1 Context",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_context",
+      "community": 0,
+      "norm_label": "phase 1 context"
+    },
+    {
+      "label": "Phase 1 Discussion Log",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-DISCUSSION-LOG.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_discussion_log",
+      "community": 0,
+      "norm_label": "phase 1 discussion log"
+    },
+    {
+      "label": "Phase 1 Research",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "community": 0,
+      "norm_label": "phase 1 research"
+    },
+    {
+      "label": "Phase 1 UAT",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-UAT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_uat",
+      "community": 0,
+      "norm_label": "phase 1 uat"
+    },
+    {
+      "label": "CoupleSpace",
+      "file_type": "concept",
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_couple_space",
+      "community": 0,
+      "norm_label": "couplespace"
+    },
+    {
+      "label": "Agent Pipeline Workflow",
+      "file_type": "rationale",
+      "source_file": ".ai/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_agent_pipeline",
+      "community": 8,
+      "norm_label": "agent pipeline workflow"
+    },
+    {
+      "label": "Orchestrator Role",
+      "file_type": "concept",
+      "source_file": ".ai/orchestrator.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_orchestrator_role",
+      "community": 8,
+      "norm_label": "orchestrator role"
+    },
+    {
+      "label": "Verifier (QA) Role",
+      "file_type": "concept",
+      "source_file": ".ai/Verifier.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_verifier_role",
+      "community": 8,
+      "norm_label": "verifier (qa) role"
+    },
+    {
+      "label": "Reviewer Role",
+      "file_type": "concept",
+      "source_file": ".ai/Reviewer.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_reviewer_role",
+      "community": 8,
+      "norm_label": "reviewer role"
+    },
+    {
+      "label": "Documentation Agent Role",
+      "file_type": "concept",
+      "source_file": ".ai/DOCUMENTADOR.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_documentador_role",
+      "community": 12,
+      "norm_label": "documentation agent role"
+    },
+    {
+      "label": "Supabase-First Architecture",
+      "file_type": "rationale",
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_supabase_first",
+      "community": 0,
+      "norm_label": "supabase-first architecture"
+    },
+    {
+      "label": "PairID Universal Access Key",
+      "file_type": "rationale",
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_pair_id_system",
+      "community": 0,
+      "norm_label": "pairid universal access key"
+    },
+    {
+      "label": "Google OAuth Only Decision",
+      "file_type": "rationale",
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_google_oauth_only",
+      "community": 0,
+      "norm_label": "google oauth only decision"
+    },
+    {
+      "label": "React PWA First Decision",
+      "file_type": "rationale",
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_react_pwa_first",
+      "community": 0,
+      "norm_label": "react pwa first decision"
+    },
+    {
+      "label": "Side Drawer Navigation",
+      "file_type": "rationale",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_side_drawer_nav",
+      "community": 0,
+      "norm_label": "side drawer navigation"
+    },
+    {
+      "label": "Milestone-Based Development",
+      "file_type": "concept",
+      "source_file": ".planning/ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_milestone_based_dev",
+      "community": 9,
+      "norm_label": "milestone-based development"
+    },
+    {
+      "label": "RLS Pair Isolation Pattern",
+      "file_type": "rationale",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_rls_pair_isolation",
+      "community": 0,
+      "norm_label": "rls pair isolation pattern"
+    },
+    {
+      "label": "Custom Canvas Waveform Decision",
+      "file_type": "rationale",
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_canvas_waveform",
+      "community": 0,
+      "norm_label": "custom canvas waveform decision"
+    },
+    {
+      "label": "PendingTempIds Optimistic Messages",
+      "file_type": "rationale",
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_pending_temp_ids",
+      "community": 1,
+      "norm_label": "pendingtempids optimistic messages"
+    },
+    {
+      "label": "Cosmic V2 Design Reference",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_cosmic_v2_design",
+      "community": 0,
+      "norm_label": "cosmic v2 design reference"
+    },
+    {
+      "label": "Vite PWA Configuration Pattern",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_vite_pwa_config",
+      "community": 0,
+      "norm_label": "vite pwa configuration pattern"
+    },
+    {
+      "label": "Zustand State Management",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_zustand_state",
+      "community": 0,
+      "norm_label": "zustand state management"
+    },
+    {
+      "label": "Avatar Upload Pattern",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_avatar_upload_pattern",
+      "community": 0,
+      "norm_label": "avatar upload pattern"
+    },
+    {
+      "label": "ProtectedRoute Pattern",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02_plan",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_protected_route",
+      "community": 0,
+      "norm_label": "protectedroute pattern"
+    },
+    {
+      "label": "PairingGate Pattern",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02_plan",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_pairing_gate",
+      "community": 0,
+      "norm_label": "pairinggate pattern"
+    },
+    {
+      "label": "Authentication Feature",
+      "file_type": "concept",
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_auth",
+      "community": 1,
+      "norm_label": "authentication feature"
+    },
+    {
+      "label": "Real-Time Chat Feature",
+      "file_type": "concept",
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_chat",
+      "community": 1,
+      "norm_label": "real-time chat feature"
+    },
+    {
+      "label": "Couple Pairing Feature",
+      "file_type": "concept",
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_pairing",
+      "community": 0,
+      "norm_label": "couple pairing feature"
+    },
+    {
+      "label": "Profile Management Feature",
+      "file_type": "concept",
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_profile",
+      "community": 0,
+      "norm_label": "profile management feature"
+    },
+    {
+      "label": "Voice Messages Feature",
+      "file_type": "concept",
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_voice_messages",
+      "community": 0,
+      "norm_label": "voice messages feature"
+    },
+    {
+      "label": "Image Sharing Feature",
+      "file_type": "concept",
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_image_sharing",
+      "community": 1,
+      "norm_label": "image sharing feature"
+    },
+    {
+      "label": "Shared Photo Album Feature",
+      "file_type": "concept",
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_shared_album",
+      "community": 1,
+      "norm_label": "shared photo album feature"
+    },
+    {
+      "label": "Homepage Dashboard Feature",
+      "file_type": "concept",
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_homepage",
+      "community": 21,
+      "norm_label": "homepage dashboard feature"
+    },
+    {
+      "label": "Shared Notes Feature",
+      "file_type": "concept",
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_notes",
+      "community": 22,
+      "norm_label": "shared notes feature"
+    },
+    {
+      "label": "Shared Agenda Feature",
+      "file_type": "concept",
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_agenda",
+      "community": 20,
+      "norm_label": "shared agenda feature"
+    },
+    {
+      "label": "Supabase Auth",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_supabase_auth",
+      "community": 1,
+      "norm_label": "supabase auth"
+    },
+    {
+      "label": "Supabase Database",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_supabase_database",
+      "community": 0,
+      "norm_label": "supabase database"
+    },
+    {
+      "label": "Supabase Storage",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_supabase_storage",
+      "community": 1,
+      "norm_label": "supabase storage"
+    },
+    {
+      "label": "Supabase Realtime",
+      "file_type": "concept",
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_supabase_realtime",
+      "community": 1,
+      "norm_label": "supabase realtime"
+    },
+    {
+      "label": "Supabase + FastAPI Hybrid Decision",
+      "file_type": "rationale",
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_fastapi_hybrid",
+      "community": 0,
+      "norm_label": "supabase + fastapi hybrid decision"
+    },
+    {
+      "label": "Mobile-First Design Principle",
+      "file_type": "rationale",
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_mobile_first",
+      "community": 0,
+      "norm_label": "mobile-first design principle"
+    },
+    {
+      "label": "Feature-Based Code Organization",
+      "file_type": "rationale",
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_based_org",
+      "community": 2,
+      "norm_label": "feature-based code organization"
+    },
+    {
+      "label": "Plan 02-01: DB Schema + Chat Store + Core ChatView",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-01-PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_02_real_time_chat_02_01_plan_md",
+      "community": 4,
+      "norm_label": "plan 02-01: db schema + chat store + core chatview"
+    },
+    {
+      "label": "Summary: Plan 02-01 Complete",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-01-SUMMARY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_02_real_time_chat_02_01_summary_md",
+      "community": 4,
+      "norm_label": "summary: plan 02-01 complete"
+    },
+    {
+      "label": "Plan 02-02: Replies + Reactions + Delete + Typing",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-02-PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_02_real_time_chat_02_02_plan_md",
+      "community": 4,
+      "norm_label": "plan 02-02: replies + reactions + delete + typing"
+    },
+    {
+      "label": "Summary: Plan 02-02 Complete",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-02-SUMMARY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_02_real_time_chat_02_02_summary_md",
+      "community": 4,
+      "norm_label": "summary: plan 02-02 complete"
+    },
+    {
+      "label": "Plan 02-03: Settings + Notifications + Mobile Polish",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-03-PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_02_real_time_chat_02_03_plan_md",
+      "community": 4,
+      "norm_label": "plan 02-03: settings + notifications + mobile polish"
+    },
+    {
+      "label": "Summary: Plan 02-03 Complete",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-03-SUMMARY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_02_real_time_chat_02_03_summary_md",
+      "community": 4,
+      "norm_label": "summary: plan 02-03 complete"
+    },
+    {
+      "label": "Phase 2 Context",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "community": 4,
+      "norm_label": "phase 2 context"
+    },
+    {
+      "label": "Phase 2 Discussion Log",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-DISCUSSION-LOG.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_02_real_time_chat_02_discussion_log_md",
+      "community": 4,
+      "norm_label": "phase 2 discussion log"
+    },
+    {
+      "label": "Phase 2 UAT Checklist",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-UAT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_02_real_time_chat_02_uat_md",
+      "community": 56,
+      "norm_label": "phase 2 uat checklist"
+    },
+    {
+      "label": "Phase 2 UI Design Contract",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-UI-SPEC.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_02_real_time_chat_02_ui_spec_md",
+      "community": 4,
+      "norm_label": "phase 2 ui design contract"
+    },
+    {
+      "label": "Plan 03-01: Voice & Image Sharing Implementation",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-01-PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_01_plan_md",
+      "community": 5,
+      "norm_label": "plan 03-01: voice & image sharing implementation"
+    },
+    {
+      "label": "Summary: Plan 03-01 Complete",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-01-SUMMARY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_01_summary_md",
+      "community": 5,
+      "norm_label": "summary: plan 03-01 complete"
+    },
+    {
+      "label": "Plan 03-02: Shared Photo Album",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-02-PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_02_plan_md",
+      "community": 5,
+      "norm_label": "plan 03-02: shared photo album"
+    },
+    {
+      "label": "Summary: Plan 03-02 Complete",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-02-SUMMARY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_02_summary_md",
+      "community": 5,
+      "norm_label": "summary: plan 03-02 complete"
+    },
+    {
+      "label": "Phase 3 Context",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_context_md",
+      "community": 5,
+      "norm_label": "phase 3 context"
+    },
+    {
+      "label": "Phase 3 Discussion Log",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-DISCUSS-LOG.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_discuss_log_md",
+      "community": 5,
+      "norm_label": "phase 3 discussion log"
+    },
+    {
+      "label": "Phase 3 Research: Voice & Image Technical Research",
+      "file_type": "paper",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_research_md",
+      "community": 5,
+      "norm_label": "phase 3 research: voice & image technical research"
+    },
+    {
+      "label": "Phase 3 UAT Results",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-UAT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_uat_md",
+      "community": 5,
+      "norm_label": "phase 3 uat results"
+    },
+    {
+      "label": "Phase 3 Validation Strategy",
+      "file_type": "document",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-VALIDATION.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_validation_md",
+      "community": 5,
+      "norm_label": "phase 3 validation strategy"
+    },
+    {
+      "label": "Architecture Patterns Research",
+      "file_type": "paper",
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_research_architecture_md",
+      "community": 7,
+      "norm_label": "architecture patterns research"
+    },
+    {
+      "label": "Feature Landscape Research",
+      "file_type": "paper",
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_research_features_md",
+      "community": 10,
+      "norm_label": "feature landscape research"
+    },
+    {
+      "label": "Domain Pitfalls Research",
+      "file_type": "paper",
+      "source_file": ".planning/research/PITFALLS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "planning_research_pitfalls_md",
+      "community": 7,
+      "norm_label": "domain pitfalls research"
+    },
+    {
+      "label": "Supabase-First for CRUD + Realtime",
+      "file_type": "rationale",
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_supabase_first_pattern",
+      "community": 7,
+      "norm_label": "supabase-first for crud + realtime"
+    },
+    {
+      "label": "PairID as Universal Access Key",
+      "file_type": "rationale",
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_pair_id_access_key",
+      "community": 7,
+      "norm_label": "pairid as universal access key"
+    },
+    {
+      "label": "Optimistic UI with Supabase Realtime Reconciliation",
+      "file_type": "rationale",
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_optimistic_ui_pattern",
+      "community": 7,
+      "norm_label": "optimistic ui with supabase realtime reconciliation"
+    },
+    {
+      "label": "PWA Shell with Workbox Offline Strategy",
+      "file_type": "rationale",
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_pwa_shell_workbox",
+      "community": 7,
+      "norm_label": "pwa shell with workbox offline strategy"
+    },
+    {
+      "label": "FastAPI as Business Logic + API Proxy Layer",
+      "file_type": "rationale",
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_fastapi_proxy_layer",
+      "community": 7,
+      "norm_label": "fastapi as business logic + api proxy layer"
+    },
+    {
+      "label": "Feature-Based Component Structure",
+      "file_type": "rationale",
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_feature_based_structure",
+      "community": 7,
+      "norm_label": "feature-based component structure"
+    },
+    {
+      "label": "WhatsApp-Style Chat Interface",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_whatsapp_style_chat",
+      "community": 4,
+      "norm_label": "whatsapp-style chat interface"
+    },
+    {
+      "label": "Supabase Realtime Message Synchronization",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_supabase_realtime_sync",
+      "community": 4,
+      "norm_label": "supabase realtime message synchronization"
+    },
+    {
+      "label": "Offline Message Queue with Sync",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_offline_message_queue",
+      "community": 7,
+      "norm_label": "offline message queue with sync"
+    },
+    {
+      "label": "Delivery and Read Status Indicators",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_delivery_read_indicators",
+      "community": 4,
+      "norm_label": "delivery and read status indicators"
+    },
+    {
+      "label": "Typing Indicators",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_typing_indicators",
+      "community": 4,
+      "norm_label": "typing indicators"
+    },
+    {
+      "label": "Message Grouping by Sender and Time Gap",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_message_grouping",
+      "community": 4,
+      "norm_label": "message grouping by sender and time gap"
+    },
+    {
+      "label": "Auto-Scroll with New Messages Button",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_auto_scroll_new_messages_button",
+      "community": 4,
+      "norm_label": "auto-scroll with new messages button"
+    },
+    {
+      "label": "Inline Quote Reply System",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_inline_quote_reply",
+      "community": 4,
+      "norm_label": "inline quote reply system"
+    },
+    {
+      "label": "Emoji Reaction System with Toggle",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_emoji_reaction_system",
+      "community": 4,
+      "norm_label": "emoji reaction system with toggle"
+    },
+    {
+      "label": "Message Deletion for Self and Everyone",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_message_deletion",
+      "community": 4,
+      "norm_label": "message deletion for self and everyone"
+    },
+    {
+      "label": "Chat Settings with Theme, Font, Notifications",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_chat_settings_system",
+      "community": 3,
+      "norm_label": "chat settings with theme, font, notifications"
+    },
+    {
+      "label": "Push Notifications for Background Messages",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_push_notifications",
+      "community": 3,
+      "norm_label": "push notifications for background messages"
+    },
+    {
+      "label": "Hold-to-Record Voice Messages",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_hold_to_record_voice",
+      "community": 5,
+      "norm_label": "hold-to-record voice messages"
+    },
+    {
+      "label": "Live Waveform Visualization During Recording",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_live_waveform_visualization",
+      "community": 5,
+      "norm_label": "live waveform visualization during recording"
+    },
+    {
+      "label": "Client-Side Image Compression via Canvas API",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_client_side_image_compression",
+      "community": 5,
+      "norm_label": "client-side image compression via canvas api"
+    },
+    {
+      "label": "Shared Photo Album with Mini and Full Views",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_shared_photo_album",
+      "community": 5,
+      "norm_label": "shared photo album with mini and full views"
+    },
+    {
+      "label": "Supabase Storage with Pair-Scoped RLS",
+      "file_type": "rationale",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_supabase_storage_pair_scoped_rls",
+      "community": 7,
+      "norm_label": "supabase storage with pair-scoped rls"
+    },
+    {
+      "label": "Four Horsemen of Churn in Couple Apps",
+      "file_type": "rationale",
+      "source_file": ".planning/research/PITFALLS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_four_horsemen_churn",
+      "community": 10,
+      "norm_label": "four horsemen of churn in couple apps"
+    },
+    {
+      "label": "Homepage Dashboard as Primary View Differentiator",
+      "file_type": "concept",
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_homepage_dashboard_differentiator",
+      "community": 10,
+      "norm_label": "homepage dashboard as primary view differentiator"
+    },
+    {
+      "label": "Table Stakes Couple App Features",
+      "file_type": "concept",
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_table_stakes_features",
+      "community": 10,
+      "norm_label": "table stakes couple app features"
+    },
+    {
+      "label": "Anti-Features to Explicitly Not Build",
+      "file_type": "rationale",
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_anti_features",
+      "community": 10,
+      "norm_label": "anti-features to explicitly not build"
+    },
+    {
+      "label": "Voice Message Recording and Playback Flow",
+      "file_type": "concept",
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_voice_message_flow",
+      "community": 5,
+      "norm_label": "voice message recording and playback flow"
+    },
+    {
+      "label": "Real-Time Chat Message Flow",
+      "file_type": "concept",
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_real_time_chat_flow",
+      "community": 7,
+      "norm_label": "real-time chat message flow"
+    },
+    {
+      "label": "System Scalability Considerations",
+      "file_type": "concept",
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_system_scalability",
+      "community": 7,
+      "norm_label": "system scalability considerations"
+    },
+    {
+      "label": "Privacy by Design for Relationship Data",
+      "file_type": "rationale",
+      "source_file": ".planning/research/PITFALLS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_privacy_by_design",
+      "community": 7,
+      "norm_label": "privacy by design for relationship data"
+    },
+    {
+      "label": "Mobile-First PWA Design",
+      "file_type": "rationale",
+      "source_file": ".planning/research/PITFALLS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_mobile_first_pwa",
+      "community": 7,
+      "norm_label": "mobile-first pwa design"
+    },
+    {
+      "label": "Daily Habits for Couple App Retention",
+      "file_type": "rationale",
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_daily_habits_retention",
+      "community": 10,
+      "norm_label": "daily habits for couple app retention"
+    },
+    {
+      "label": "react-audio-visualize Library for Waveforms",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_react_audio_visualize",
+      "community": 5,
+      "norm_label": "react-audio-visualize library for waveforms"
+    },
+    {
+      "label": "Browser MediaRecorder API for Voice Capture",
+      "file_type": "concept",
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-RESEARCH.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_mediarecorder_api",
+      "community": 5,
+      "norm_label": "browser mediarecorder api for voice capture"
+    },
+    {
+      "label": "STACK.md - Technology Stack",
+      "file_type": "document",
+      "source_file": ".planning/research/STACK.md",
+      "id": "doc_stack_md",
+      "community": 6,
+      "norm_label": "stack.md - technology stack"
+    },
+    {
+      "label": "SUMMARY.md - Project Research Summary",
+      "file_type": "document",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "doc_summary_md",
+      "community": 6,
+      "norm_label": "summary.md - project research summary"
+    },
+    {
+      "label": "AGENTS.md - CoupleSpace Agent Config",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "id": "doc_agents_md",
+      "community": 6,
+      "norm_label": "agents.md - couplespace agent config"
+    },
+    {
+      "label": "FRONTEND/README.md - React + Vite Setup",
+      "file_type": "document",
+      "source_file": "FRONTEND/README.md",
+      "id": "doc_frontend_readme",
+      "community": 25,
+      "norm_label": "frontend/readme.md - react + vite setup"
+    },
+    {
+      "label": "index.html - PWA Entry Point",
+      "file_type": "code",
+      "source_file": "FRONTEND/index.html",
+      "id": "doc_index_html",
+      "community": 6,
+      "norm_label": "index.html - pwa entry point"
+    },
+    {
+      "label": "Features.md - Feature Definitions",
+      "file_type": "document",
+      "source_file": "docs/Features.md",
+      "id": "doc_features_md",
+      "community": 6,
+      "norm_label": "features.md - feature definitions"
+    },
+    {
+      "label": "Roadmap.md - Future Features",
+      "file_type": "document",
+      "source_file": "docs/Roadmap.md",
+      "id": "doc_roadmap_md",
+      "community": 6,
+      "norm_label": "roadmap.md - future features"
+    },
+    {
+      "label": "UIUX.md - UI/UX Guidelines",
+      "file_type": "document",
+      "source_file": "docs/UIUX.md",
+      "id": "doc_uiux_md",
+      "community": 6,
+      "norm_label": "uiux.md - ui/ux guidelines"
+    },
+    {
+      "label": "CoupleSpace",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_couplespace",
+      "community": 2,
+      "norm_label": "couplespace"
+    },
+    {
+      "label": "React 19.2",
+      "file_type": "concept",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_react_19",
+      "community": 2,
+      "norm_label": "react 19.2"
+    },
+    {
+      "label": "Vite 6.x",
+      "file_type": "concept",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_vite_6",
+      "community": 2,
+      "norm_label": "vite 6.x"
+    },
+    {
+      "label": "Supabase v1.26",
+      "file_type": "concept",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_supabase",
+      "community": 1,
+      "norm_label": "supabase v1.26"
+    },
+    {
+      "label": "FastAPI 0.139",
+      "file_type": "concept",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_fastapi",
+      "community": 3,
+      "norm_label": "fastapi 0.139"
+    },
+    {
+      "label": "Zustand 5.x State Management",
+      "file_type": "concept",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_zustand",
+      "community": 1,
+      "norm_label": "zustand 5.x state management"
+    },
+    {
+      "label": "vite-plugin-pwa 0.21",
+      "file_type": "concept",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_vite_pwa_plugin",
+      "community": 2,
+      "norm_label": "vite-plugin-pwa 0.21"
+    },
+    {
+      "label": "Workbox 7.x",
+      "file_type": "concept",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_workbox",
+      "community": 2,
+      "norm_label": "workbox 7.x"
+    },
+    {
+      "label": "Motion 12.42 (framer-motion)",
+      "file_type": "concept",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_motion",
+      "community": 2,
+      "norm_label": "motion 12.42 (framer-motion)"
+    },
+    {
+      "label": "Postgres 17 (via Supabase)",
+      "file_type": "concept",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_supabase_postgres",
+      "community": 1,
+      "norm_label": "postgres 17 (via supabase)"
+    },
+    {
+      "label": "Vercel Hosting",
+      "file_type": "concept",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_vercel",
+      "community": 2,
+      "norm_label": "vercel hosting"
+    },
+    {
+      "label": "Row Level Security (RLS)",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_rls",
+      "community": 1,
+      "norm_label": "row level security (rls)"
+    },
+    {
+      "label": "PairID Universal Access Key",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_pair_id",
+      "community": 1,
+      "norm_label": "pairid universal access key"
+    },
+    {
+      "label": "No Redux (overkill)",
+      "file_type": "rationale",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_anti_pattern_redux",
+      "community": 17,
+      "norm_label": "no redux (overkill)"
+    },
+    {
+      "label": "No Create React App (deprecated)",
+      "file_type": "rationale",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_anti_pattern_cra",
+      "community": 14,
+      "norm_label": "no create react app (deprecated)"
+    },
+    {
+      "label": "No Next.js (unnecessary SSR)",
+      "file_type": "rationale",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_anti_pattern_nextjs",
+      "community": 16,
+      "norm_label": "no next.js (unnecessary ssr)"
+    },
+    {
+      "label": "No Firebase (two BaaS = confusion)",
+      "file_type": "rationale",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_anti_pattern_firebase",
+      "community": 15,
+      "norm_label": "no firebase (two baas = confusion)"
+    },
+    {
+      "label": "No Socket.io (Supabase Realtime handles it)",
+      "file_type": "rationale",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_anti_pattern_socketio",
+      "community": 18,
+      "norm_label": "no socket.io (supabase realtime handles it)"
+    },
+    {
+      "label": "No Axios (fetch suffices)",
+      "file_type": "rationale",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_anti_pattern_axios",
+      "community": 13,
+      "norm_label": "no axios (fetch suffices)"
+    },
+    {
+      "label": "Dual-User Churn Risk",
+      "file_type": "rationale",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_dual_user_churn",
+      "community": 3,
+      "norm_label": "dual-user churn risk"
+    },
+    {
+      "label": "Privacy Breach Catastrophe Risk",
+      "file_type": "rationale",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_privacy_breach_catastrophe",
+      "community": 1,
+      "norm_label": "privacy breach catastrophe risk"
+    },
+    {
+      "label": "iOS PWA Limitations",
+      "file_type": "rationale",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_ios_pwa_limitations",
+      "community": 2,
+      "norm_label": "ios pwa limitations"
+    },
+    {
+      "label": "Four Horsemen of Churn",
+      "file_type": "rationale",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_four_horsemen_of_churn",
+      "community": 3,
+      "norm_label": "four horsemen of churn"
+    },
+    {
+      "label": "Chat Feature",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_chat",
+      "community": 1,
+      "norm_label": "chat feature"
+    },
+    {
+      "label": "Homepage Dashboard Feature",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_homepage",
+      "community": 3,
+      "norm_label": "homepage dashboard feature"
+    },
+    {
+      "label": "Agenda/Calendar Feature",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_agenda",
+      "community": 3,
+      "norm_label": "agenda/calendar feature"
+    },
+    {
+      "label": "Mood Tracker",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_mood_tracker",
+      "community": 3,
+      "norm_label": "mood tracker"
+    },
+    {
+      "label": "Spotify Now-Playing Integration",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_spotify_integration",
+      "community": 3,
+      "norm_label": "spotify now-playing integration"
+    },
+    {
+      "label": "Mini Photo Album",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_mini_album",
+      "community": 1,
+      "norm_label": "mini photo album"
+    },
+    {
+      "label": "Voice Message Recording & Playback",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_voice_messages",
+      "community": 1,
+      "norm_label": "voice message recording & playback"
+    },
+    {
+      "label": "Image Sharing in Chat",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_image_sharing",
+      "community": 1,
+      "norm_label": "image sharing in chat"
+    },
+    {
+      "label": "Message Reply/Quote",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_message_reply",
+      "community": 1,
+      "norm_label": "message reply/quote"
+    },
+    {
+      "label": "Emoji Reactions",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_emoji_reactions",
+      "community": 1,
+      "norm_label": "emoji reactions"
+    },
+    {
+      "label": "Couple Pairing System",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_pairing",
+      "community": 1,
+      "norm_label": "couple pairing system"
+    },
+    {
+      "label": "Google Calendar Integration",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_google_calendar",
+      "community": 3,
+      "norm_label": "google calendar integration"
+    },
+    {
+      "label": "Important Date Reminders",
+      "file_type": "concept",
+      "source_file": "docs/Features.md",
+      "id": "feature_date_reminders",
+      "community": 3,
+      "norm_label": "important date reminders"
+    },
+    {
+      "label": "Real-Time Location Sharing (v2+)",
+      "file_type": "concept",
+      "source_file": "docs/Roadmap.md",
+      "id": "docs_roadmap_realtime_location",
+      "community": 2,
+      "norm_label": "real-time location sharing (v2+)"
+    },
+    {
+      "label": "Virtual Pet (v2+)",
+      "file_type": "concept",
+      "source_file": "docs/Roadmap.md",
+      "id": "docs_roadmap_virtual_pet",
+      "community": 2,
+      "norm_label": "virtual pet (v2+)"
+    },
+    {
+      "label": "Minigames (v2+)",
+      "file_type": "concept",
+      "source_file": "docs/Roadmap.md",
+      "id": "docs_roadmap_minigames",
+      "community": 2,
+      "norm_label": "minigames (v2+)"
+    },
+    {
+      "label": "Daily Rituals & Ambient Presence",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_daily_rituals",
+      "community": 3,
+      "norm_label": "daily rituals & ambient presence"
+    },
+    {
+      "label": "Random Memory Highlight",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_random_memory_highlight",
+      "community": 3,
+      "norm_label": "random memory highlight"
+    },
+    {
+      "label": "24-Hour Photo Stories",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_photo_stories",
+      "community": 23,
+      "norm_label": "24-hour photo stories"
+    },
+    {
+      "label": "Daily Question of the Day",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_daily_question",
+      "community": 19,
+      "norm_label": "daily question of the day"
+    },
+    {
+      "label": "Anniversary/Days Counter",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_anniversary_counter",
+      "community": 3,
+      "norm_label": "anniversary/days counter"
+    },
+    {
+      "label": "Optimistic UI with Supabase Realtime Reconciliation",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_optimistic_ui",
+      "community": 1,
+      "norm_label": "optimistic ui with supabase realtime reconciliation"
+    },
+    {
+      "label": "PWA Shell with Workbox Offline Strategy",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_offline_first",
+      "community": 2,
+      "norm_label": "pwa shell with workbox offline strategy"
+    },
+    {
+      "label": "cosmic-v2.html Design Reference",
+      "file_type": "document",
+      "source_file": "docs/UIUX.md",
+      "id": "docs_uiux_cosmic_v2",
+      "community": 6,
+      "norm_label": "cosmic-v2.html design reference"
+    },
+    {
+      "label": "Mobile-First Design Approach",
+      "file_type": "concept",
+      "source_file": "docs/UIUX.md",
+      "id": "docs_uiux_mobile_first",
+      "community": 6,
+      "norm_label": "mobile-first design approach"
+    },
+    {
+      "label": "Card-Based UI Components",
+      "file_type": "concept",
+      "source_file": "docs/UIUX.md",
+      "id": "docs_uiux_card_components",
+      "community": 6,
+      "norm_label": "card-based ui components"
+    },
+    {
+      "label": "React SPA App Shell",
+      "file_type": "concept",
+      "source_file": "docs/UIUX.md",
+      "id": "concept_app_shell",
+      "community": 6,
+      "norm_label": "react spa app shell"
+    },
+    {
+      "label": "Press Start 2P Font",
+      "file_type": "concept",
+      "source_file": "FRONTEND/index.html",
+      "id": "concept_press_start_2p",
+      "community": 6,
+      "norm_label": "press start 2p font"
+    },
+    {
+      "label": "Theme Color #B87CFF (Purple)",
+      "file_type": "concept",
+      "source_file": "FRONTEND/index.html",
+      "id": "concept_theme_color_purple",
+      "community": 6,
+      "norm_label": "theme color #b87cff (purple)"
+    },
+    {
+      "label": "PWA Manifest (manifest.webmanifest)",
+      "file_type": "concept",
+      "source_file": "FRONTEND/index.html",
+      "id": "concept_manifest_pwa",
+      "community": 6,
+      "norm_label": "pwa manifest (manifest.webmanifest)"
+    },
+    {
+      "label": "GSD Workflow System",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "id": "concept_gsd_workflow",
+      "community": 2,
+      "norm_label": "gsd workflow system"
+    },
+    {
+      "label": "ProtectedRoute & PairingGate",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "id": "concept_protected_routes",
+      "community": 1,
+      "norm_label": "protectedroute & pairinggate"
+    },
+    {
+      "label": "JSX (No TypeScript)",
+      "file_type": "rationale",
+      "source_file": "AGENTS.md",
+      "id": "concept_jsx_no_typescript",
+      "community": 2,
+      "norm_label": "jsx (no typescript)"
+    },
+    {
+      "label": "oxlint Linter (React + oxc plugins)",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "id": "concept_oxlint",
+      "community": 2,
+      "norm_label": "oxlint linter (react + oxc plugins)"
+    },
+    {
+      "label": "Vitest + @testing-library/react",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "id": "concept_vitest",
+      "community": 2,
+      "norm_label": "vitest + @testing-library/react"
+    },
+    {
+      "label": "Co-located CSS Files",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "id": "concept_css_colocated",
+      "community": 2,
+      "norm_label": "co-located css files"
+    },
+    {
+      "label": "react-router-dom v7",
+      "file_type": "concept",
+      "source_file": ".planning/research/STACK.md",
+      "id": "concept_react_router_v7",
+      "community": 2,
+      "norm_label": "react-router-dom v7"
+    },
+    {
+      "label": "lucide-react Icons",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "id": "concept_lucide_react",
+      "community": 2,
+      "norm_label": "lucide-react icons"
+    },
+    {
+      "label": "date-fns Date Utilities",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "id": "concept_date_fns",
+      "community": 2,
+      "norm_label": "date-fns date utilities"
+    },
+    {
+      "label": "@vitejs/plugin-react (Oxc)",
+      "file_type": "concept",
+      "source_file": "FRONTEND/README.md",
+      "id": "concept_oxc_plugin_react",
+      "community": 2,
+      "norm_label": "@vitejs/plugin-react (oxc)"
+    },
+    {
+      "label": "React Compiler (disabled)",
+      "file_type": "concept",
+      "source_file": "FRONTEND/README.md",
+      "id": "concept_react_compiler",
+      "community": 24,
+      "norm_label": "react compiler (disabled)"
+    },
+    {
+      "label": "Phase 1: Foundation & Auth",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "phase_1_foundation",
+      "community": 1,
+      "norm_label": "phase 1: foundation & auth"
+    },
+    {
+      "label": "Phase 2: Chat Core",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "phase_2_chat",
+      "community": 1,
+      "norm_label": "phase 2: chat core"
+    },
+    {
+      "label": "Phase 3: Media & Voice",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "phase_3_media",
+      "community": 1,
+      "norm_label": "phase 3: media & voice"
+    },
+    {
+      "label": "Phase 4: Homepage Dashboard",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "phase_4_homepage",
+      "community": 3,
+      "norm_label": "phase 4: homepage dashboard"
+    },
+    {
+      "label": "Phase 5: Shared Life (Agenda)",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "phase_5_agenda",
+      "community": 3,
+      "norm_label": "phase 5: shared life (agenda)"
+    },
+    {
+      "label": "Phase 6: Polish & Delight",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "phase_6_polish",
+      "community": 3,
+      "norm_label": "phase 6: polish & delight"
+    },
+    {
+      "label": "Google Calendar API v3",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_google_calendar_api",
+      "community": 3,
+      "norm_label": "google calendar api v3"
+    },
+    {
+      "label": "Spotify Web API",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_spotify_web_api",
+      "community": 3,
+      "norm_label": "spotify web api"
+    },
+    {
+      "label": "MediaRecorder API",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_media_recorder_api",
+      "community": 1,
+      "norm_label": "mediarecorder api"
+    },
+    {
+      "label": "Web Push API + VAPID",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_web_push_api",
+      "community": 2,
+      "norm_label": "web push api + vapid"
+    },
+    {
+      "label": "Messages Encrypted at Rest",
+      "file_type": "rationale",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_stored_at_rest",
+      "community": 1,
+      "norm_label": "messages encrypted at rest"
+    },
+    {
+      "label": "Supabase Kizuna (reference app)",
+      "file_type": "concept",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_supabase_kizuna",
+      "community": 0,
+      "norm_label": "supabase kizuna (reference app)"
+    },
+    {
+      "label": "Couply Case Study (500K downloads, churn)",
+      "file_type": "rationale",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_couply_case_study",
+      "community": 3,
+      "norm_label": "couply case study (500k downloads, churn)"
+    },
+    {
+      "label": "Explicitly NOT Building (Anti-Features)",
+      "file_type": "rationale",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_explicitly_not_building",
+      "community": 11,
+      "norm_label": "explicitly not building (anti-features)"
+    },
+    {
+      "label": "No AI Relationship Coaching",
+      "file_type": "rationale",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_no_ai_coaching",
+      "community": 11,
+      "norm_label": "no ai relationship coaching"
+    },
+    {
+      "label": "No Video Calling",
+      "file_type": "rationale",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_no_video_calling",
+      "community": 11,
+      "norm_label": "no video calling"
+    },
+    {
+      "label": "No Social Features/Community",
+      "file_type": "rationale",
+      "source_file": ".planning/research/SUMMARY.md",
+      "id": "concept_no_social_features",
+      "community": 11,
+      "norm_label": "no social features/community"
+    }
+  ],
+  "links": [
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".ai/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_agent_pipeline",
+      "target": ".ai_agents"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".ai/DOCUMENTADOR.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_documentador_role",
+      "target": ".ai_documentador"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".ai/Reviewer.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_reviewer_role",
+      "target": ".ai_reviewer"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".ai/Verifier.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_verifier_role",
+      "target": ".ai_verifier"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".ai/orchestrator.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".ai_orchestrator",
+      "target": "concept_agent_pipeline"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".ai/orchestrator.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_orchestrator_role",
+      "target": ".ai_orchestrator"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/MILESTONES.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones",
+      "target": ".planning_milestones_v1.0_requirements"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/MILESTONES.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones",
+      "target": ".planning_milestones_v1.0_roadmap"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_roadmap",
+      "target": ".planning_milestones"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/STATE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_state",
+      "target": ".planning_milestones"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_project",
+      "target": ".planning_requirements"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_project",
+      "target": ".planning_roadmap"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_project",
+      "target": "concept_couple_space"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/STATE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_state",
+      "target": ".planning_project"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-REQUIREMENTS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_requirements",
+      "target": ".planning_requirements"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_roadmap",
+      "target": ".planning_requirements"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_roadmap",
+      "target": ".planning_roadmap"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_milestone_based_dev",
+      "target": ".planning_roadmap"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_roadmap",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_roadmap",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_roadmap",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-SUMMARY.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_summary"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_context"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+      "target": "concept_feature_auth"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+      "target": "concept_feature_pairing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+      "target": "concept_feature_profile"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+      "target": "concept_supabase_first"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+      "target": "concept_vite_pwa_config"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+      "target": "concept_zustand_state"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-03-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-UAT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_uat",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_summary"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02-SUMMARY.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_summary"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan",
+      "target": "concept_feature_auth"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan",
+      "target": "concept_feature_pairing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan",
+      "target": "concept_google_oauth_only"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan",
+      "target": "concept_pairing_gate"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan",
+      "target": "concept_supabase_database"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-03-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-UAT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_uat",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_summary"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-03-SUMMARY.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_summary"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-03-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan",
+      "target": "concept_avatar_upload_pattern"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-03-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan",
+      "target": "concept_feature_profile"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-03-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan",
+      "target": "concept_protected_route"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-03-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan",
+      "target": "concept_side_drawer_nav"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-03-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan",
+      "target": "concept_supabase_storage"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-UAT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_uat",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_summary"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_context",
+      "target": "concept_cosmic_v2_design"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_context",
+      "target": "concept_mobile_first"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_context",
+      "target": "concept_pair_id_system"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_context",
+      "target": "concept_side_drawer_nav"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-DISCUSSION-LOG.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_discussion_log",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_context"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_context"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": "concept_avatar_upload_pattern"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": "concept_cosmic_v2_design"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": "concept_feature_based_org"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": "concept_mobile_first"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": "concept_rls_pair_isolation"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": "concept_supabase_auth"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": "concept_supabase_database"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": "concept_supabase_realtime"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": "concept_supabase_storage"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": "concept_vite_pwa_config"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": ".planning_milestones_v1.0_phases_01-foundation-pairing_01_research",
+      "target": "concept_zustand_state"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_couple_space",
+      "target": "concept_canvas_waveform"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_couple_space",
+      "target": "concept_cosmic_v2_design"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_couple_space",
+      "target": "concept_fastapi_hybrid"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_couple_space",
+      "target": "concept_google_oauth_only"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_couple_space",
+      "target": "concept_mobile_first"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_couple_space",
+      "target": "concept_pair_id_system"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_couple_space",
+      "target": "concept_pending_temp_ids"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_couple_space",
+      "target": "concept_react_pwa_first"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_couple_space",
+      "target": "concept_supabase_first"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".ai/orchestrator.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_orchestrator_role",
+      "target": "concept_reviewer_role"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".ai/orchestrator.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_orchestrator_role",
+      "target": "concept_verifier_role"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".ai/orchestrator.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_verifier_role",
+      "target": "concept_reviewer_role"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_react_19",
+      "target": "concept_supabase_first"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_supabase_first",
+      "target": "concept_rls_pair_isolation"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_supabase_first",
+      "target": "concept_supabase_auth"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_supabase_first",
+      "target": "concept_supabase_database"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_supabase_first",
+      "target": "concept_supabase_realtime"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_supabase_first",
+      "target": "concept_supabase_storage"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_supabase_kizuna",
+      "target": "concept_supabase_first"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_pair_id_system",
+      "target": "concept_rls_pair_isolation"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_react_pwa_first",
+      "target": "concept_vite_pwa_config"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_react_pwa_first",
+      "target": "concept_zustand_state"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_feature_voice_messages",
+      "target": "concept_canvas_waveform"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_feature_chat",
+      "target": "concept_pending_temp_ids"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_protected_route",
+      "target": "concept_pairing_gate"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_feature_auth",
+      "target": "concept_supabase_auth"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_feature_chat",
+      "target": "concept_supabase_realtime"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_feature_pairing",
+      "target": "concept_supabase_database"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_feature_profile",
+      "target": "concept_supabase_storage"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_feature_image_sharing",
+      "target": "concept_supabase_storage"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".planning/REQUIREMENTS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_feature_shared_album",
+      "target": "concept_supabase_storage"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_supabase",
+      "target": "concept_supabase_auth"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source": "concept_supabase_auth",
+      "target": "concept_pair_id"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_1_foundation",
+      "target": "concept_supabase_auth"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_supabase",
+      "target": "concept_supabase_storage"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source": "concept_supabase_storage",
+      "target": "feature_image_sharing"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source": "concept_supabase_storage",
+      "target": "feature_voice_messages"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_3_media",
+      "target": "concept_supabase_storage"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_supabase",
+      "target": "concept_supabase_realtime"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source": "concept_supabase_realtime",
+      "target": "concept_optimistic_ui"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md",
+      "source": "concept_supabase_realtime",
+      "target": "feature_chat"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_2_chat",
+      "target": "concept_supabase_realtime"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "AGENTS.md",
+      "source": "concept_css_colocated",
+      "target": "concept_feature_based_org"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-RESEARCH.md",
+      "source": "concept_feature_based_org",
+      "target": "concept_couplespace"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_01_plan_md",
+      "target": "planning_milestones_v1_0_phases_02_real_time_chat_02_01_summary_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_01_plan_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_01_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_02_plan_md",
+      "target": "planning_milestones_v1_0_phases_02_real_time_chat_02_01_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "planning_milestones_v1_0_phases_02_real_time_chat_02_01_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-UI-SPEC.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_ui_spec_md",
+      "target": "planning_milestones_v1_0_phases_02_real_time_chat_02_01_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_02_plan_md",
+      "target": "planning_milestones_v1_0_phases_02_real_time_chat_02_02_summary_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-03-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_03_plan_md",
+      "target": "planning_milestones_v1_0_phases_02_real_time_chat_02_02_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "planning_milestones_v1_0_phases_02_real_time_chat_02_02_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-UI-SPEC.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_ui_spec_md",
+      "target": "planning_milestones_v1_0_phases_02_real_time_chat_02_02_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-03-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_03_plan_md",
+      "target": "planning_milestones_v1_0_phases_02_real_time_chat_02_03_summary_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "planning_milestones_v1_0_phases_02_real_time_chat_02_03_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_auto_scroll_new_messages_button"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_chat_settings_system"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_delivery_read_indicators"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_emoji_reaction_system"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_inline_quote_reply"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_message_deletion"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_message_grouping"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_offline_message_queue"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_push_notifications"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_supabase_realtime_sync"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_typing_indicators"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md",
+      "target": "concept_whatsapp_style_chat"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-DISCUSSION-LOG.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_02_real_time_chat_02_discussion_log_md",
+      "target": "planning_milestones_v1_0_phases_02_real_time_chat_02_context_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_01_plan_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_01_summary_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_01_plan_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_context_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-01-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_01_plan_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_research_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_02_plan_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_01_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-UAT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_uat_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_01_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-VALIDATION.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_validation_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_01_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-01-SUMMARY.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_01_summary_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_02_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_02_plan_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_02_summary_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-02-PLAN.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_02_plan_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_context_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-UAT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_uat_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_02_plan_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_context_md",
+      "target": "concept_client_side_image_compression"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_context_md",
+      "target": "concept_hold_to_record_voice"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_context_md",
+      "target": "concept_live_waveform_visualization"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_context_md",
+      "target": "concept_shared_photo_album"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-DISCUSS-LOG.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_discuss_log_md",
+      "target": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_context_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_research_md",
+      "target": "concept_mediarecorder_api"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_research_md",
+      "target": "concept_react_audio_visualize"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_milestones_v1_0_phases_03_voice_image_sharing_03_research_md",
+      "target": "concept_supabase_storage_pair_scoped_rls"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_architecture_md",
+      "target": "concept_fastapi_proxy_layer"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_architecture_md",
+      "target": "concept_feature_based_structure"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_architecture_md",
+      "target": "concept_optimistic_ui_pattern"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_architecture_md",
+      "target": "concept_pair_id_access_key"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_architecture_md",
+      "target": "concept_pwa_shell_workbox"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_architecture_md",
+      "target": "concept_real_time_chat_flow"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_architecture_md",
+      "target": "concept_supabase_first_pattern"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_architecture_md",
+      "target": "concept_system_scalability"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_architecture_md",
+      "target": "concept_voice_message_flow"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_features_md",
+      "target": "concept_anti_features"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_features_md",
+      "target": "concept_daily_habits_retention"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_features_md",
+      "target": "concept_homepage_dashboard_differentiator"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_features_md",
+      "target": "concept_table_stakes_features"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/PITFALLS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_pitfalls_md",
+      "target": "concept_four_horsemen_churn"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/PITFALLS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_pitfalls_md",
+      "target": "concept_mobile_first_pwa"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/PITFALLS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "planning_research_pitfalls_md",
+      "target": "concept_privacy_by_design"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_fastapi_proxy_layer",
+      "target": "concept_supabase_first_pattern"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_supabase_first_pattern",
+      "target": "concept_pair_id_access_key"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/research/PITFALLS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_privacy_by_design",
+      "target": "concept_pair_id_access_key"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_optimistic_ui_pattern",
+      "target": "concept_offline_message_queue"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_real_time_chat_flow",
+      "target": "concept_optimistic_ui_pattern"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_pwa_shell_workbox",
+      "target": "concept_mobile_first_pwa"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_pwa_shell_workbox",
+      "target": "concept_offline_message_queue"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_whatsapp_style_chat",
+      "target": "concept_message_grouping"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_emoji_reaction_system",
+      "target": "concept_supabase_realtime_sync"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_real_time_chat_flow",
+      "target": "concept_supabase_realtime_sync"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_supabase_realtime_sync",
+      "target": "concept_delivery_read_indicators"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_supabase_realtime_sync",
+      "target": "concept_offline_message_queue"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_supabase_realtime_sync",
+      "target": "concept_typing_indicators"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_inline_quote_reply",
+      "target": "concept_emoji_reaction_system"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_inline_quote_reply",
+      "target": "concept_message_deletion"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_message_deletion",
+      "target": "concept_privacy_by_design"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_chat_settings_system",
+      "target": "concept_push_notifications"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_6_polish",
+      "target": "concept_push_notifications"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_hold_to_record_voice",
+      "target": "concept_live_waveform_visualization"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_hold_to_record_voice",
+      "target": "concept_mediarecorder_api"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_voice_message_flow",
+      "target": "concept_hold_to_record_voice"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-RESEARCH.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_live_waveform_visualization",
+      "target": "concept_react_audio_visualize"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_client_side_image_compression",
+      "target": "concept_shared_photo_album"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_homepage_dashboard_differentiator",
+      "target": "concept_shared_photo_album"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".planning/research/PITFALLS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_privacy_by_design",
+      "target": "concept_supabase_storage_pair_scoped_rls"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_four_horsemen_churn",
+      "target": "concept_anti_features"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/PITFALLS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_four_horsemen_churn",
+      "target": "concept_daily_habits_retention"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".planning/research/FEATURES.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_four_horsemen_churn",
+      "target": "concept_homepage_dashboard_differentiator"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "doc_summary_md",
+      "target": "doc_stack_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "doc_summary_md",
+      "target": "doc_features_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source": "doc_agents_md",
+      "target": "doc_features_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source": "doc_agents_md",
+      "target": "doc_roadmap_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source": "doc_agents_md",
+      "target": "doc_uiux_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source": "doc_agents_md",
+      "target": "docs_uiux_cosmic_v2"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "FRONTEND/index.html",
+      "source": "doc_index_html",
+      "target": "concept_manifest_pwa"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "FRONTEND/index.html",
+      "source": "doc_index_html",
+      "target": "concept_press_start_2p"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "FRONTEND/index.html",
+      "source": "doc_index_html",
+      "target": "concept_theme_color_purple"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "doc_features_md",
+      "target": "docs_uiux_mobile_first"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Roadmap.md",
+      "source": "doc_roadmap_md",
+      "target": "doc_features_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/UIUX.md",
+      "source": "doc_uiux_md",
+      "target": "docs_uiux_cosmic_v2"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_couplespace",
+      "target": "concept_fastapi"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_couplespace",
+      "target": "concept_react_19"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_couplespace",
+      "target": "concept_supabase"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_couplespace",
+      "target": "concept_vercel"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_couplespace",
+      "target": "concept_vite_6"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source": "concept_gsd_workflow",
+      "target": "concept_couplespace"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Roadmap.md",
+      "source": "docs_roadmap_minigames",
+      "target": "concept_couplespace"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Roadmap.md",
+      "source": "docs_roadmap_realtime_location",
+      "target": "concept_couplespace"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Roadmap.md",
+      "source": "docs_roadmap_virtual_pet",
+      "target": "concept_couplespace"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/UIUX.md",
+      "source": "docs_uiux_mobile_first",
+      "target": "concept_couplespace"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source": "concept_jsx_no_typescript",
+      "target": "concept_react_19"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source": "concept_oxlint",
+      "target": "concept_react_19"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_react_19",
+      "target": "concept_date_fns"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_react_19",
+      "target": "concept_lucide_react"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_react_19",
+      "target": "concept_motion"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_react_19",
+      "target": "concept_react_router_v7"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_react_19",
+      "target": "concept_vite_6"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_react_19",
+      "target": "concept_zustand"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source": "concept_vitest",
+      "target": "concept_react_19"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_vite_6",
+      "target": "concept_oxc_plugin_react"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_vite_6",
+      "target": "concept_vite_pwa_plugin"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_fastapi",
+      "target": "concept_supabase"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_supabase",
+      "target": "concept_rls"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_supabase",
+      "target": "concept_supabase_postgres"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_1_foundation",
+      "target": "concept_supabase"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_fastapi",
+      "target": "concept_google_calendar_api"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_fastapi",
+      "target": "concept_spotify_web_api"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_fastapi",
+      "target": "feature_google_calendar"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_fastapi",
+      "target": "feature_spotify_integration"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_fastapi",
+      "target": "feature_voice_messages"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_zustand",
+      "target": "feature_agenda"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_zustand",
+      "target": "feature_chat"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_zustand",
+      "target": "feature_homepage"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_vite_pwa_plugin",
+      "target": "concept_manifest_pwa"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_vite_pwa_plugin",
+      "target": "concept_workbox"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_1_foundation",
+      "target": "concept_vite_pwa_plugin"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_workbox",
+      "target": "concept_offline_first"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/STACK.md",
+      "source": "concept_supabase_postgres",
+      "target": "concept_rls"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_rls",
+      "target": "concept_pair_id"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_rls",
+      "target": "concept_privacy_breach_catastrophe"
+    },
+    {
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_couply_case_study",
+      "target": "concept_dual_user_churn"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_daily_rituals",
+      "target": "concept_dual_user_churn"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_four_horsemen_of_churn",
+      "target": "concept_dual_user_churn"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_stored_at_rest",
+      "target": "concept_privacy_breach_catastrophe"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_ios_pwa_limitations",
+      "target": "concept_offline_first"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_web_push_api",
+      "target": "concept_ios_pwa_limitations"
+    },
+    {
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_couply_case_study",
+      "target": "concept_four_horsemen_of_churn"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_chat",
+      "target": "feature_emoji_reactions"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_chat",
+      "target": "feature_image_sharing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_chat",
+      "target": "feature_message_reply"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_chat",
+      "target": "feature_pairing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_chat",
+      "target": "feature_voice_messages"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_2_chat",
+      "target": "feature_chat"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_daily_rituals",
+      "target": "feature_homepage"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_homepage",
+      "target": "concept_anniversary_counter"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_homepage",
+      "target": "feature_mini_album"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_homepage",
+      "target": "feature_mood_tracker"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_homepage",
+      "target": "feature_spotify_integration"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_4_homepage",
+      "target": "feature_homepage"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_agenda",
+      "target": "feature_date_reminders"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_agenda",
+      "target": "feature_google_calendar"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_5_agenda",
+      "target": "feature_agenda"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "docs/Features.md",
+      "source": "feature_mood_tracker",
+      "target": "concept_daily_rituals"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_4_homepage",
+      "target": "feature_mood_tracker"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_spotify_integration",
+      "target": "concept_spotify_web_api"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_6_polish",
+      "target": "feature_spotify_integration"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_3_media",
+      "target": "feature_mini_album"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/Features.md",
+      "source": "feature_voice_messages",
+      "target": "concept_media_recorder_api"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_3_media",
+      "target": "feature_voice_messages"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_3_media",
+      "target": "feature_image_sharing"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "AGENTS.md",
+      "source": "concept_protected_routes",
+      "target": "feature_pairing"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_1_foundation",
+      "target": "feature_pairing"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_5_agenda",
+      "target": "feature_google_calendar"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_5_agenda",
+      "target": "feature_date_reminders"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_4_homepage",
+      "target": "concept_random_memory_highlight"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_4_homepage",
+      "target": "concept_anniversary_counter"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_2_chat",
+      "target": "concept_optimistic_ui"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "FRONTEND/index.html",
+      "source": "concept_press_start_2p",
+      "target": "docs_uiux_cosmic_v2"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "FRONTEND/index.html",
+      "source": "concept_theme_color_purple",
+      "target": "docs_uiux_cosmic_v2"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/UIUX.md",
+      "source": "docs_uiux_card_components",
+      "target": "docs_uiux_cosmic_v2"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/UIUX.md",
+      "source": "concept_app_shell",
+      "target": "concept_manifest_pwa"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/UIUX.md",
+      "source": "concept_app_shell",
+      "target": "concept_press_start_2p"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/UIUX.md",
+      "source": "concept_app_shell",
+      "target": "concept_theme_color_purple"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_2_chat",
+      "target": "phase_1_foundation"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_3_media",
+      "target": "phase_2_chat"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_4_homepage",
+      "target": "phase_3_media"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_5_agenda",
+      "target": "phase_4_homepage"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "phase_6_polish",
+      "target": "phase_5_agenda"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_explicitly_not_building",
+      "target": "concept_no_ai_coaching"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_explicitly_not_building",
+      "target": "concept_no_social_features"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/SUMMARY.md",
+      "source": "concept_explicitly_not_building",
+      "target": "concept_no_video_calling"
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "agent_pipeline_hyperedge",
+      "label": "Agent Pipeline: Planner-Coder-Verifier-Reviewer Workflow",
+      "nodes": [
+        "concept_orchestrator_role",
+        "concept_agent_pipeline",
+        "concept_verifier_role",
+        "concept_reviewer_role"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".ai/orchestrator.md"
+    },
+    {
+      "id": "supabase_infrastructure_hyperedge",
+      "label": "Supabase Infrastructure: Auth + Database + Storage + Realtime",
+      "nodes": [
+        "concept_supabase_first",
+        "concept_supabase_auth",
+        "concept_supabase_database",
+        "concept_supabase_storage",
+        "concept_supabase_realtime"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/PROJECT.md"
+    },
+    {
+      "id": "foundation_phase1_hyperedge",
+      "label": "Phase 1 Foundation: Scaffold + Auth + Profile + Pairing + App Shell",
+      "nodes": [
+        ".planning_milestones_v1.0_phases_01-foundation-pairing_01-01_plan",
+        ".planning_milestones_v1.0_phases_01-foundation-pairing_01-02_plan",
+        ".planning_milestones_v1.0_phases_01-foundation-pairing_01-03_plan",
+        "concept_feature_auth",
+        "concept_feature_pairing",
+        "concept_feature_profile"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/01-foundation-pairing/01-01-PLAN.md"
+    },
+    {
+      "id": "phase2_chat_feature_set",
+      "label": "Phase 2 Real-Time Chat Feature Set",
+      "nodes": [
+        "concept_whatsapp_style_chat",
+        "concept_supabase_realtime_sync",
+        "concept_offline_message_queue",
+        "concept_delivery_read_indicators",
+        "concept_typing_indicators",
+        "concept_message_grouping",
+        "concept_auto_scroll_new_messages_button",
+        "concept_inline_quote_reply",
+        "concept_emoji_reaction_system",
+        "concept_message_deletion",
+        "concept_chat_settings_system",
+        "concept_push_notifications"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/02-real-time-chat/02-CONTEXT.md"
+    },
+    {
+      "id": "phase3_media_feature_set",
+      "label": "Phase 3 Voice, Image & Album Feature Set",
+      "nodes": [
+        "concept_hold_to_record_voice",
+        "concept_live_waveform_visualization",
+        "concept_client_side_image_compression",
+        "concept_shared_photo_album",
+        "concept_supabase_storage_pair_scoped_rls",
+        "concept_mediarecorder_api",
+        "concept_react_audio_visualize"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/milestones/v1.0-phases/03-voice-image-sharing/03-CONTEXT.md"
+    },
+    {
+      "id": "core_architecture_patterns",
+      "label": "Core Architecture Patterns",
+      "nodes": [
+        "concept_supabase_first_pattern",
+        "concept_pair_id_access_key",
+        "concept_optimistic_ui_pattern",
+        "concept_pwa_shell_workbox",
+        "concept_fastapi_proxy_layer",
+        "concept_feature_based_structure"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".planning/research/ARCHITECTURE.md"
+    },
+    {
+      "id": "hyper_supabase_services",
+      "label": "Supabase Full Service Stack",
+      "source_file": ".planning/research/STACK.md",
+      "relation": "conceptually_related_to",
+      "nodes": [
+        "concept_supabase",
+        "concept_supabase_auth",
+        "concept_supabase_realtime",
+        "concept_supabase_storage",
+        "concept_supabase_postgres",
+        "concept_rls"
+      ]
+    },
+    {
+      "id": "hyper_core_stack",
+      "label": "Core Technology Stack Decision",
+      "source_file": ".planning/research/STACK.md",
+      "relation": "conceptually_related_to",
+      "nodes": [
+        "concept_react_19",
+        "concept_vite_6",
+        "concept_supabase",
+        "concept_fastapi",
+        "concept_vercel",
+        "concept_zustand",
+        "concept_vite_pwa_plugin",
+        "concept_motion"
+      ]
+    },
+    {
+      "id": "hyper_anti_patterns",
+      "label": "Rejected Technologies (Anti-Patterns)",
+      "source_file": ".planning/research/STACK.md",
+      "relation": "rationale_for",
+      "nodes": [
+        "concept_anti_pattern_redux",
+        "concept_anti_pattern_cra",
+        "concept_anti_pattern_nextjs",
+        "concept_anti_pattern_firebase",
+        "concept_anti_pattern_socketio",
+        "concept_anti_pattern_axios"
+      ]
+    },
+    {
+      "id": "hyper_explicitly_not_building",
+      "label": "Explicitly NOT Building (Anti-Features)",
+      "source_file": ".planning/research/SUMMARY.md",
+      "relation": "rationale_for",
+      "nodes": [
+        "concept_explicitly_not_building",
+        "concept_no_ai_coaching",
+        "concept_no_video_calling",
+        "concept_no_social_features"
+      ]
+    },
+    {
+      "id": "hyper_risk_trio",
+      "label": "Critical Risk Trio",
+      "source_file": ".planning/research/SUMMARY.md",
+      "relation": "rationale_for",
+      "nodes": [
+        "concept_dual_user_churn",
+        "concept_privacy_breach_catastrophe",
+        "concept_ios_pwa_limitations"
+      ]
+    },
+    {
+      "id": "hyper_phase_ordering",
+      "label": "Phase Ordering Dependency Chain",
+      "source_file": ".planning/research/SUMMARY.md",
+      "relation": "references",
+      "nodes": [
+        "phase_1_foundation",
+        "phase_2_chat",
+        "phase_3_media",
+        "phase_4_homepage",
+        "phase_5_agenda",
+        "phase_6_polish"
+      ]
+    },
+    {
+      "id": "hyper_chat_feature_cluster",
+      "label": "Chat Feature Cluster",
+      "source_file": "docs/Features.md",
+      "relation": "conceptually_related_to",
+      "nodes": [
+        "feature_chat",
+        "feature_message_reply",
+        "feature_emoji_reactions",
+        "feature_voice_messages",
+        "feature_image_sharing",
+        "feature_pairing",
+        "concept_supabase_realtime"
+      ]
+    },
+    {
+      "id": "hyper_homepage_feature_cluster",
+      "label": "Homepage Feature Cluster",
+      "source_file": "docs/Features.md",
+      "relation": "conceptually_related_to",
+      "nodes": [
+        "feature_homepage",
+        "feature_mood_tracker",
+        "feature_mini_album",
+        "feature_spotify_integration",
+        "concept_anniversary_counter",
+        "concept_daily_rituals"
+      ]
+    },
+    {
+      "id": "hyper_agenda_feature_cluster",
+      "label": "Agenda Feature Cluster",
+      "source_file": "docs/Features.md",
+      "relation": "conceptually_related_to",
+      "nodes": [
+        "feature_agenda",
+        "feature_google_calendar",
+        "feature_date_reminders",
+        "concept_google_calendar_api"
+      ]
+    },
+    {
+      "id": "hyper_developer_experience",
+      "label": "Developer Experience Toolchain",
+      "source_file": "AGENTS.md",
+      "relation": "conceptually_related_to",
+      "nodes": [
+        "concept_oxlint",
+        "concept_vitest",
+        "concept_oxc_plugin_react",
+        "concept_css_colocated",
+        "concept_jsx_no_typescript",
+        "concept_gsd_workflow"
+      ]
+    },
+    {
+      "id": "hyper_pwa_infra",
+      "label": "PWA Infrastructure",
+      "source_file": ".planning/research/STACK.md",
+      "relation": "conceptually_related_to",
+      "nodes": [
+        "concept_vite_pwa_plugin",
+        "concept_workbox",
+        "concept_manifest_pwa",
+        "concept_app_shell",
+        "concept_offline_first",
+        "concept_push_notifications",
+        "concept_ios_pwa_limitations"
+      ]
+    },
+    {
+      "id": "hyper_ui_identity",
+      "label": "UI Identity System",
+      "source_file": "docs/UIUX.md",
+      "relation": "conceptually_related_to",
+      "nodes": [
+        "docs_uiux_cosmic_v2",
+        "docs_uiux_mobile_first",
+        "docs_uiux_card_components",
+        "concept_press_start_2p",
+        "concept_theme_color_purple",
+        "concept_css_colocated"
+      ]
+    },
+    {
+      "id": "hyper_churn_retention_design",
+      "label": "Churn & Retention Design Pattern",
+      "source_file": ".planning/research/SUMMARY.md",
+      "relation": "conceptually_related_to",
+      "nodes": [
+        "concept_dual_user_churn",
+        "concept_four_horsemen_of_churn",
+        "concept_couply_case_study",
+        "concept_daily_rituals",
+        "concept_random_memory_highlight"
+      ]
+    },
+    {
+      "id": "hyper_roadmap_features",
+      "label": "Future Roadmap Features (v2+)",
+      "source_file": "docs/Roadmap.md",
+      "relation": "conceptually_related_to",
+      "nodes": [
+        "docs_roadmap_realtime_location",
+        "docs_roadmap_virtual_pet",
+        "docs_roadmap_minigames"
+      ]
+    },
+    {
+      "id": "hyper_repo_structure",
+      "label": "Repository Structure & Architecture",
+      "source_file": "AGENTS.md",
+      "relation": "conceptually_related_to",
+      "nodes": [
+        "doc_agents_md",
+        "concept_feature_based_org",
+        "concept_protected_routes",
+        "concept_supabase_first",
+        "concept_pair_id",
+        "concept_css_colocated",
+        "concept_jsx_no_typescript"
+      ]
+    }
+  ],
+  "built_at_commit": "8af638e18c99ecc7e8a2baf5fdceb4a3b1804339"
+}

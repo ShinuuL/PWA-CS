@@ -7,7 +7,7 @@ CoupleSpace ships as a mobile-first PWA that gives couples a private shared spac
 ## Milestones
 
 - ✅ **v1.0 MVP** — Phases 1-3 (shipped 2026-07-25)
-- 📋 **v1.1 Complete** — Phases 4-5 (planned)
+- ✅ **v1.1 Complete** — Phases 4-5 (shipped 2026-07-28)
 
 ## Phases
 
@@ -23,7 +23,7 @@ CoupleSpace ships as a mobile-first PWA that gives couples a private shared spac
 ### 📋 v1.1 Complete (Planned)
 
 - [x] Phase 4: Homepage Dashboard (2/2 plans) — completed 2026-07-27
-- [ ] Phase 5: Shared Notes & Agenda (2 plans)
+- [x] Phase 5: Shared Notes & Agenda (3/3 plans) — completed 2026-07-28
 
 ## Phase Details
 
@@ -63,12 +63,13 @@ Plans:
   4. Events display in a date-organized view visible to both partners
   5. User can set a reminder for an event
 
-**Plans**: 2 plans
+**Plans**: 3 plans
 
 Plans:
 
-- [ ] 05-01-PLAN.md — Database migration (shared_notes + agenda_events tables), Zustand stores (notesStore, agendaStore), AgendaPage with SegmentedTabs
-- [ ] 05-02-PLAN.md — EventsTab (CalendarGrid with swipe, EventRow, EventForm), NotesTab (NoteCard, NoteEditor), full agenda.css
+- [x] 05-01-PLAN.md — Database migration (shared_notes + agenda_events tables), Zustand stores (notesStore, agendaStore), AgendaPage with SegmentedTabs
+- [x] 05-02-PLAN.md — EventsTab (CalendarGrid with swipe, EventRow, EventForm), NotesTab (NoteCard, NoteEditor), full agenda.css
+- [x] 05-GAP-01-PLAN.md — Calendar swipe animation smoothing (gap closure)
 
 ## Progress
 
@@ -78,4 +79,4 @@ Plans:
 | 2. Real-Time Chat | v1.0 | 3/3 | Complete | 2026-07-25 |
 | 3. Voice & Image Sharing | v1.0 | 2/2 | Complete | 2026-07-25 |
 | 4. Homepage Dashboard | v1.1 | 2/2 | Complete | 2026-07-27 |
-| 5. Shared Notes & Agenda | v1.1 | 0/2 | Not started | - |
+| 5. Shared Notes & Agenda | v1.1 | 3/3 | Complete | 2026-07-28 |

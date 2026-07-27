@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: MVP
-current_phase: 04
+current_phase: 05
+current_phase_name: shared-notes-agenda
 status: phase_complete
-stopped_at: Phase 5 context gathered
-last_updated: "2026-07-27T21:32:56.835Z"
+stopped_at: Phase 5 gap closure complete
+last_updated: "2026-07-28T00:15:00.000Z"
 progress:
-  total_phases: 2
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-current_phase_name: homepage-dashboard
-last_activity: 2026-07-27
-last_activity_desc: Phase 4 Homepage Dashboard complete
+  total_phases: 5
+  completed_phases: 5
+  total_plans: 5
+  completed_plans: 5
+last_activity: 2026-07-28
+last_activity_desc: Phase 5 Shared Notes & Agenda complete (gap G-05-5 resolved)
 ---
 
 # Project State
@@ -23,13 +23,13 @@ last_activity_desc: Phase 4 Homepage Dashboard complete
 See: .planning/PROJECT.md (updated 2026-07-25)
 
 **Core value:** Chat between couples — real-time private messaging is the foundation
-**Current focus:** Phase 5 — Shared Notes & Agenda (next phase)
+**Current focus:** Phase 05 — shared-notes-agenda
 
 ## Current Position
 
 Milestone: v1.1 — Complete
-Phase: 04 complete ✅
-Progress: [███████████░] 80% (4/5 phases complete)
+Phase: 05 (shared-notes-agenda) — COMPLETE
+Progress: [████████████] 100% (5/5 phases complete)
 
 ## Milestone Summary
 
@@ -47,6 +47,15 @@ Progress: [███████████░] 80% (4/5 phases complete)
 - 3/3 HOME requirements done
 - Mood system with Supabase Realtime
 - Full dashboard layout with MemoryHero, MoodSelector, PartnerMood, MiniAlbum
+
+**v1.2 Shared Notes & Agenda** complete 2026-07-28:
+
+- 1 phase (Shared Notes & Agenda)
+- 3 plans completed (2 execution + 1 gap closure)
+- 7/7 NOTE+AGND requirements done
+- Shared notes with CRUD, Realtime sync, delete confirmation
+- Shared calendar with month-view grid, swipe navigation, event CRUD, event indicators
+- Smooth calendar swipe animation (gap closure)
 
 ## Accumulated Context
 
@@ -69,8 +78,8 @@ All v1.0 decisions validated as ✓ Good.
 
 ## Session Continuity
 
-**Resume file:** .planning/phases/05-shared-notes-agenda/05-CONTEXT.md
+**Resume file:** .planning/phases/05-shared-notes-agenda/05-UI-SPEC.md
 
-Last session: 2026-07-27T21:32:56.827Z
-Stopped at: Phase 5 context gathered
+Last session: 2026-07-27T22:02:54.045Z
+Stopped at: Phase 5 UI-SPEC approved
 Next: `/gsd-discuss-phase 5` to start Phase 5 context gathering
