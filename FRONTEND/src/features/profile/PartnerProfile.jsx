@@ -51,9 +51,14 @@ export default function PartnerProfile() {
     return (
       <div className="profile-page">
         <h2>Your Partner</h2>
-        <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', marginTop: '2rem' }}>
-          No partner paired yet.
-        </p>
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <h3 style={{ color: 'var(--color-text-primary)', marginBottom: '0.5rem' }}>
+            No partner paired yet
+          </h3>
+          <p style={{ color: 'var(--color-text-secondary)' }}>
+            Pair with your partner to see their profile
+          </p>
+        </div>
       </div>
     )
   }
