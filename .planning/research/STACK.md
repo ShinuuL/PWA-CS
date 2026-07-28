@@ -1,133 +1,88 @@
-# Technology Stack
+# Stack Research — v2.0 Profile & Shared Utilities
 
-**Project:** CoupleSpace
-**Researched:** 2026-07-24
-**Overall confidence:** HIGH
+## Current Stack (Validated)
 
-## Recommended Stack
+React 19 + Vite 8 + PWA (vite-plugin-pwa 1.3, Workbox 7.4), Supabase JS 2.110 (auth, DB, storage, realtime), Zustand 5 stores, lucide-react icons, motion (framer-motion) 12.42, date-fns 4.4, react-router-dom 7.18, react-hot-toast 2.6. PWA already has service worker registration and Supabase storage caching. Avatar upload exists (basic file picker, no crop). Agenda events have a `reminder` column but it's a UI-only string — no actual push delivery. No presence system. No task/todo system.
 
-### Core Framework
+## Required Additions
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| React | 19.2.x (latest: 19.2.8) | UI framework | Pre-decided by project. Latest stable with full Server Components support, Actions API, and improved Suspense. The React 19.2 line is production-ready and actively maintained. |
-| Vite | 6.x | Build tool & dev server | Fastest React dev experience. Replaces CRA (deprecated). Native ESM, instant HMR, optimized builds. PWA plugin ecosystem is built around Vite. |
-| Motion (for React) | 12.42.x | Animations | Pre-decided by project docs. Formerly `framer-motion`; now install as `motion` with import from `motion/react`. Production-grade, 154M+ monthly npm downloads. |
-
-### Backend
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Python | 3.12+ | Runtime | Required by FastAPI. 3.12 is the recommended stable version for production. |
-| FastAPI | 0.139.x (latest: 0.139.2) | API framework | Pre-decided by project. High-performance async Python framework. Handles complex logic (audio processing, Google Calendar integration) that Supabase alone can't do. |
-| Uvicorn | Latest standard | ASGI server | Pre-decided by project. Lightweight, production-grade ASGI server. Use `pip install "fastapi[standard]"` which includes uvicorn. |
-
-### Database & Auth (Supabase)
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Supabase | v1.26.x (latest: 1.26.07) | Backend-as-a-Service | Pre-decided by project. Provides: |
-| — Supabase Auth | Built-in | Google OAuth | Google OAuth integration out of the box, session management, JWT tokens |
-| — Supabase Database | Postgres 17 | Data storage | Relational DB with real-time capabilities for chat |
-| — Supabase Storage | Built-in | File uploads | Voice messages, images, shared photos |
-| — Supabase Realtime | Built-in | Live chat | WebSocket-based real-time messaging between paired couples |
-| — supabase-js | Latest | Client SDK | Type-safe client for React frontend |
-
-### Hosting
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Vercel | — | Frontend + Backend hosting | Pre-decided. React PWA frontend + FastAPI as serverless functions. Zero-config deploy, auto-scaling, global CDN. |
-| Docker | — | Local development | Docker Compose for local backend development and testing (per project docs). |
-
-### PWA Infrastructure
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| vite-plugin-pwa | 0.21.x+ | PWA generation | Generates service worker + manifest from config. Workbox-based. Auto-update support. Zero-config for basic PWA. |
-| Workbox | 7.x (via plugin) | Service worker caching | Pre-caches app shell, implements caching strategies for offline support. |
-
-### Supporting Libraries
-
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| react-router-dom | 7.x | Client-side routing | Always — for page navigation (chat, homepage, agenda) |
-| @supabase/supabase-js | 2.x | Supabase client | Always — for auth, DB queries, storage, realtime |
-| @supabase/ssr | Latest | Supabase SSR integration | If using server-side rendering features |
-| zustand | 5.x | State management | For complex client state (chat messages, user session). Lightweight, no boilerplate. |
-| date-fns | 4.x | Date utilities | For agenda/calendar views, date formatting |
-| react-hot-toast | 2.x | Toast notifications | Lightweight feedback notifications |
-| lucide-react | Latest | Icons | Clean, consistent icon set. Better than mixing icon libraries |
-
-## What NOT to Use
-
-| Technology | Why Not | What to Use Instead |
-|------------|---------|-------------------|
-| Create React App | Deprecated, no longer maintained | Vite with `@vitejs/plugin-react` |
-| Next.js | Project specifies React PWA first with FastAPI backend; Next.js adds unnecessary complexity and SSR overhead for a mobile-first PWA | Plain React + Vite |
-| Firebase | Project uses Supabase; two BaaS platforms = confusion | Supabase for everything |
-| Tailwind CSS (controversial) | Not in project docs; project has specific design system via `cosmic-v2.html`. Consider only if design system maps well to utility classes. | Follow the `cosmic-v2.html` design system; CSS modules or styled-components |
-| Redux | Overkill for this app size | Zustand (simpler, less boilerplate) |
-| Axios | Unnecessary — `fetch` API is sufficient for modern React | Native `fetch` + supabase-js handles HTTP |
-| Socket.io | Supabase Realtime handles WebSocket connections natively | Supabase Realtime channels |
-| express.js | Backend is FastAPI, not Node.js | FastAPI |
-
-## Installation
+### 1. Avatar Crop — `react-easy-crop` ^9.0
 
 ```bash
-# Frontend (in FRONTEND/ directory)
-npm create vite@latest . -- --template react
-npm install
-npm install react-router-dom @supabase/supabase-js zustand date-fns lucide-react
-npm install -D vite-plugin-pwa workbox-window
-
-# Backend (in BACKEND/ directory)
-pip install "fastapi[standard]"
-pip install python-multipart aiofiles  # for file uploads
-pip install google-api-python-client google-auth-oauthlib  # for Google Calendar
-pip install pydantic-settings  # for env config
-
-# Supabase client (already included above)
-# supabase-js is installed via npm
+cd FRONTEND && npm install react-easy-crop
 ```
 
-## Architecture Summary
+**Why this over alternatives:**
+- `react-image-crop` — older, less maintained, no built-in zoom/pan gestures. `react-easy-crop` has better mobile touch handling (pinch-to-zoom, drag-to-pan) which is critical for a couples app on phones.
+- `cropperjs` — imperative API, fights React's declarative model. `react-easy-crop` is headless and composable.
+- Build your own canvas crop — reinvents the wheel for zero benefit. The crop UI is a solved problem.
 
+**Integration:** Replace the raw `<input type="file">` in `AvatarUpload.jsx` with a modal that opens `react-easy-crop` after file selection. Use `getCroppedImg` (canvas-based, ships as a helper in the package) to produce the final blob before uploading to Supabase storage. The `avatars` bucket and RLS policies already exist — no backend changes.
+
+**What NOT to add:** No server-side image processing. Crop client-side, upload the final result. The `avatars` bucket is already public with upsert support.
+
+### 2. Online Presence — Supabase Realtime Presence (built-in)
+
+```bash
+# No new dependencies — already have @supabase/supabase-js
 ```
-Frontend (React/Vite)          Backend (FastAPI)           Supabase
-┌─────────────────────┐       ┌──────────────────┐       ┌─────────────────┐
-│ React 19.2 SPA      │◄─────►│ FastAPI 0.139.x  │◄─────►│ Auth (OAuth)    │
-│ vite-plugin-pwa     │       │ Uvicorn           │       │ Database (PG17) │
-│ supabase-js         │◄─────────────────────────────────│ Storage         │
-│ zustand             │       │ Audio processing  │       │ Realtime        │
-│ react-router        │       │ Google Calendar   │       │                 │
-└─────────────────────┘       └──────────────────┘       └─────────────────┘
-         │                                                         │
-         └─────────────────── Vercel ─────────────────────────────┘
+
+**Why this over alternatives:**
+- **Supabase Presence channels** — zero additional infra. You're already subscribed to Supabase Realtime for chat and agenda. Presence is a built-in channel feature: `supabase.channel('room').on('presence', { event: 'sync' }, ...).track({ user_id, online_at })`. Partner sees online/last-seen via `channel.presenceState()`.
+- Firebase Realtime Database presence — would require a second backend. Unnecessary.
+- Custom WebSocket server — overkill for 2 users. Supabase handles the connection.
+- Polling (setInterval heartbeat) — wasteful, battery-draining on mobile, not real-time.
+
+**Integration:** Create a `usePresence` hook in `src/shared/hooks/`. On mount (when user is authenticated + paired), track presence on `presence:{pairId}`. Update `profiles` table with `last_seen_at` timestamp on disconnect via the presence `leave` event. Expose `{ isOnline, lastSeen }` to partner profile components.
+
+**What NOT to add:** No Redis, no custom WebSocket server, no separate presence microservice. Supabase Presence is purpose-built for this.
+
+### 3. Push Notifications — Web Push API + Supabase Edge Functions
+
+```bash
+cd FRONTEND && npm install web-push  # No — this is Node.js only. Server-side only.
+# No new frontend deps needed — Web Push API is native browser API
 ```
 
-**Data flow:**
-1. Frontend uses `supabase-js` directly for auth, realtime chat, and storage
-2. Frontend calls FastAPI for complex operations (audio processing, Google Calendar API)
-3. FastAPI can also query Supabase directly using `supabase-py`
-4. All hosted on Vercel (frontend as static, backend as serverless functions)
+**Why this approach:**
+- **Web Push API (VAPID)** is the only viable push mechanism for PWAs. Apple added support in iOS 16.4 (2023), so it now works across all modern mobile browsers for installed PWAs.
+- **Supabase Edge Functions** for the push server — you already have Supabase as your backend. Edge Functions run Deno, can import `web-push` npm package, and have access to your DB for storing push subscriptions. No need for a separate Express/Node server.
+- `firebase-messaging` — requires Firebase project setup, adds Google dependency beyond your existing Supabase auth. Overkill.
+- `OneSignal` / `Pusher` — third-party SaaS, adds cost and vendor lock-in for a feature (couple reminders) that needs maybe 50 lines of server code.
 
-## Key Decisions
+**Integration flow:**
+1. **Frontend:** On login, register service worker push subscription via `PushManager.subscribe()`. Send the subscription JSON to a Supabase Edge Function endpoint. Store in a `push_subscriptions` table (user_id, subscription JSON, pair_id).
+2. **Edge Function:** When a reminder is created, schedule a `setTimeout` or use `pg_cron` (Supabase extension) to fire the push at the right time. Use `web-push` npm package to send the payload.
+3. **Service Worker:** Handle `push` event in the existing service worker (currently auto-generated by vite-plugin-pwa via workbox). Add a `push` event listener that shows a notification.
+4. **Manifest:** Add `"push"` to the permissions in the PWA manifest.
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Build tool | Vite | CRA is dead. Vite is the standard for React PWA. |
-| PWA plugin | vite-plugin-pwa | Only maintained PWA solution for Vite. Workbox-powered. |
-| State management | Zustand | Minimal boilerplate, perfect for mobile chat app. No provider wrapper needed. |
-| Real-time | Supabase Realtime | Built into the stack. No extra service. Handles chat channels via presence and broadcast. |
-| Icons | lucide-react | Consistent, lightweight, tree-shakeable. Matches modern UI aesthetic. |
-| HTTP client | fetch + supabase-js | No need for axios. supabase-js handles all Supabase communication. |
+**What NOT to add:** No Firebase, no OneSignal, no separate push server. You're already hosting on Supabase — use Edge Functions for the ~50 lines of push delivery code.
 
-## Sources
+### 4. Task Management — New tables + Zustand store (pattern already established)
 
-- React releases: https://github.com/react/react/releases (19.2.8, Jul 21 2026)
-- FastAPI PyPI: https://pypi.org/project/fastapi/ (0.139.2, Jul 16 2026)
-- Supabase GitHub: https://github.com/supabase/supabase/releases (v1.26.07, Jul 9 2026)
-- Motion for React: https://www.npmjs.com/package/motion (12.42.2, Jun 2026)
-- vite-plugin-pwa: https://vite-pwa-org.netlify.app/
-- Vercel deployment: https://vercel.com/docs
+```bash
+# No new dependencies — everything needed is already installed
+```
+
+**Why this approach:**
+- Follows the exact pattern of `agenda_events` / `agendaStore.js` — pair_id scoped, RLS policies, Supabase Realtime subscriptions for live sync. Consistent architecture means no learning curve.
+- **No task-specific library** (e.g., `react-beautiful-dnd` for drag-reorder). For v2.0, a simple checkbox list with due dates doesn't need drag-and-drop. Add it later if users request it. YAGNI.
+
+**Integration:**
+1. **New migration:** `shared_todos` table (id, pair_id, user_id, title, completed bool, due_date, assignee_id, created_at, updated_at) + RLS policies identical to `agenda_events` pattern.
+2. **New store:** `todoStore.js` mirroring `agendaStore.js` structure — optimistic updates, Supabase Realtime subscription per pair.
+3. **New feature dir:** `src/features/todos/` with `TodosPage.jsx`, `TodoItem.jsx`, `TodoForm.jsx`.
+4. **Route:** Add `/todos` route in `App.jsx`.
+
+**What NOT to add:** No drag-and-drop library. No Kanban board. No subtasks. Ship the minimal checklist first. No `react-beautiful-dnd`, `@dnd-kit`, or similar.
+
+## Summary
+
+| Capability | Add | Don't Add |
+|---|---|---|
+| Avatar crop | `react-easy-crop` ^9.0 | Server-side processing, cropperjs, canvas DIY |
+| Online presence | Supabase Realtime Presence (built-in, 0 deps) | Firebase, Redis, WebSocket server, polling |
+| Push notifications | Web Push API (native) + Supabase Edge Function + `web-push` npm (server) | Firebase Cloud Messaging, OneSignal, Pusher |
+| Task management | New DB tables + Zustand store (0 new deps) | Drag-and-drop lib, Kanban board, subtasks |
+
+**Total new frontend dependencies: 1** (`react-easy-crop`). Everything else is either already available or server-side only.

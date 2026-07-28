@@ -1,402 +1,438 @@
-# Architecture Patterns
+# Architecture Research — v2.0 Profile & Shared Utilities
 
-**Domain:** Couple-focused PWA (React + FastAPI + Supabase)
-**Researched:** 2026-07-24
-**Overall confidence:** HIGH — stack is well-established with strong community examples
+## Integration Points
 
-## Recommended Architecture
+### Profile Enhancement (Avatar Crop, Display Name, Online Status)
 
-### High-Level Overview
+**Existing:** `profiles` table already has `avatar_url` and `display_name`. `AvatarUpload.jsx` handles upload to `avatars` storage bucket. `authStore.js` fetches profile on auth change and exposes `profile` to all components. `ProfilePage.jsx` and `PartnerProfile.jsx` render profile data.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    CoupleSpace PWA (Vercel)                      │
-│                React SPA + Service Worker + Workbox              │
-│                                                                 │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────────┐   │
-│  │  Auth    │ │   Chat   │ │Homepage  │ │     Agenda       │   │
-│  │  Module  │ │  Module  │ │ Module   │ │     Module       │   │
-│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────────┬─────────┘   │
-│       │            │            │                  │              │
-│       └────────────┴────────────┴──────────────────┘              │
-│                            │                                     │
-│                   ┌────────┴────────┐                            │
-│                   │  API Client      │                            │
-│                   │  (Auth + Fetch)  │                            │
-│                   └───┬─────────┬───┘                            │
-└───────────────────────┼─────────┼────────────────────────────────┘
-                        │         │
-            ┌───────────┘         └───────────┐
-            ▼                                 ▼
-┌───────────────────────┐       ┌──────────────────────────────────┐
-│   Supabase Services   │       │      FastAPI Backend (Vercel)    │
-│                       │       │                                  │
-│  ┌─────────────┐      │       │  ┌──────────────────────────┐   │
-│  │  Postgres   │      │       │  │  Auth Middleware          │   │
-│  │  + RLS      │      │       │  │  (verify Supabase JWT)   │   │
-│  ├─────────────┤      │       │  ├──────────────────────────┤   │
-│  │  Auth       │◄─────┼───────┼──│  Business Logic           │   │
-│  │  (OAuth)    │      │       │  │  - Audio processing       │   │
-│  ├─────────────┤      │       │  │  - Spotify integration    │   │
-│  │  Realtime   │◄─────┼───────┼──│  - Calendar sync          │   │
-│  │  (postgres  │      │       │  │  - Notification dispatch  │   │
-│  │   changes)  │      │       │  ├──────────────────────────┤   │
-│  ├─────────────┤      │       │  │  External API Proxies     │   │
-│  │  Storage    │◄─────┼───────┼──│  - Spotify Web API        │   │
-│  │  (buckets)  │      │       │  │  - Google Calendar API    │   │
-│  └─────────────┘      │       │  └──────────────────────────┘   │
-│                       │       └──────────────────────────────────┘
-└───────────────────────┘
-```
+**Changes needed:**
+- **Avatar crop:** Client-side Canvas crop tool before upload. The existing `imageCompress.js` utility (`src/shared/lib/imageCompress.js`) already does Canvas-based compression — crop logic extends this pattern. No new storage bucket needed; reuses `avatars` bucket with `{user_id}/avatar.{ext}` path.
+- **Display name:** Already works. No schema change. Only UI refinement if needed.
+- **Online status:** Requires new `online_status` table (user-level, not pair-level) + Realtime subscription in `authStore` or a new `statusStore`. Partners subscribe to each other's status via Realtime. The existing `typing_status` table (`002_chat_schema.sql:32-39`) provides the exact pattern for per-user presence tracking.
 
-### Component Boundaries
+**Integration with existing components:**
+- `Header.jsx` — show partner online indicator
+- `Drawer.jsx` — show partner status
+- `PartnerProfile.jsx` — display online/last seen
+- `ChatView.jsx` — show typing + online status together
 
-| Component | Responsibility | Communicates With | Auth Model |
-|-----------|---------------|-------------------|------------|
-| **React SPA** | UI rendering, routing, PWA shell, service worker | FastAPI, Supabase (direct client) | Supabase anon key (client-side) |
-| **Service Worker** | Offline caching, asset precaching, background sync | Cache Storage, IndexedDB | None (browser-only) |
-| **Supabase Auth** | Google OAuth, session management, JWT issuance | Google OAuth, React SPA | OAuth tokens → JWT |
-| **Supabase Postgres** | All persistent data (users, pairs, messages, events, moods) | FastAPI (service-role), React (anon + RLS) | RLS policies enforce pair isolation |
-| **Supabase Realtime** | Live chat messages, mood updates, presence | React SPA (WebSocket) | JWT-authenticated channel subscriptions |
-| **Supabase Storage** | Voice messages, images, shared photos | React SPA (signed URLs), FastAPI (upload) | Bucket-level policies per pair |
-| **FastAPI Backend** | Complex business logic, API proxying, audio processing | Supabase (service-role), external APIs | Supabase JWT verification |
+### Shared Reminders (One-time, Push Notifications)
 
-### Data Flow
+**Existing:** `agenda_events` table has a `reminder` TEXT column but no push notification infrastructure. `chatStore.js:578-601` already has `requestNotificationPermission()` and `showNotification()` using the Web Notifications API.
 
-#### Authentication Flow
-```
-User → Google OAuth → Supabase Auth → JWT issued → Stored in browser
-    ↓
-React SPA holds JWT in memory (supabase-js manages session)
-    ↓
-All Supabase client calls include JWT → RLS policies enforce access
-All FastAPI calls include JWT → FastAPI verifies via Supabase Admin API
-```
+**Changes needed:**
+- **New table:** `shared_reminders` (pair-scoped, one-time fire)
+- **Push delivery:** Two options:
+  1. **Client-side (simpler):** Schedule via `setTimeout` + Web Notifications API (already partially in chatStore). Works when tab is open. Limited for offline.
+  2. **Edge Function + Push API (robust):** Supabase Edge Function fires at scheduled time, sends push via Push API. Requires service worker `push` event handler. Better for offline/background.
+- **Recommended:** Hybrid — client-side for immediate reminders, Edge Function for background delivery.
+- **Service worker:** Extend `sw.js` (or vite-plugin-pwa config) to handle `push` events and `notificationclick`.
 
-#### Real-Time Chat Flow
-```
-User A sends message → React SPA calls Supabase Realtime channel
-    ↓
-Message inserted into `messages` table (RLS: only pair members)
-    ↓
-Supabase Realtime broadcasts `postgres_changes` event
-    ↓
-User B's React SPA receives event → UI updates instantly
-    ↓
-(No FastAPI involvement for basic text messages)
-```
+**Integration with existing components:**
+- `AgendaPage.jsx` — new "Reminders" tab alongside "Events" and "Notes"
+- `Drawer.jsx` — optional badge for pending reminders
+- `HomePage.jsx` — upcoming reminder widget
 
-#### Voice Message Flow
-```
-User records audio → Browser MediaRecorder API captures blob
-    ↓
-React SPA uploads blob to Supabase Storage (voice-messages bucket)
-    ↓
-FastAPI processes: transcode to opus, generate waveform metadata
-    ↓
-Storage URL + metadata saved to messages table
-    ↓
-Other user receives Realtime notification → plays from signed URL
-```
+### Shared To-Do Lists
 
-#### Spotify Integration Flow
-```
-User authorizes Spotify → React SPA stores refresh token
-    ↓
-FastAPI polls Spotify API periodically (server-side token refresh)
-    ↓
-Current track data cached in Supabase (last_played table)
-    ↓
-React SPA reads from Supabase via Realtime subscription
-    ↓
-Homepage displays "Now Playing" widget
-```
+**Existing:** No to-do infrastructure. `shared_notes` table is freeform text, not structured checklists. `notesStore.js` handles CRUD + Realtime.
 
-#### Agenda/Calendar Flow
-```
-User creates event → React SPA calls FastAPI endpoint
-    ↓
-FastAPI validates, writes to Supabase events table
-    ↓
-FastAPI syncs to Google Calendar (if connected) via Calendar API
-    ↓
-Supabase Realtime notifies partner's device
-    ↓
-Both devices show updated agenda
-```
+**Changes needed:**
+- **New tables:** `todo_lists` (container) + `todo_items` (checklist items)
+- **New store:** `todoStore.js` following the exact pattern of `notesStore.js` / `agendaStore.js`
+- **Realtime:** Subscribe to both `todo_lists` and `todo_items` changes
 
-## Patterns to Follow
+**Integration with existing components:**
+- `AgendaPage.jsx` — new "To-Do" tab (3 tabs total, or replace SegmentedTabs with a different nav)
+- `HomePage.jsx` — overdue/upcoming todos widget
 
-### Pattern 1: Supabase-First for CRUD + Realtime
+---
 
-**What:** Let Supabase handle all direct database operations and real-time subscriptions. RLS policies enforce that users can only access their pair's data.
+## New Components
 
-**When:** Every data operation that maps to a single table read/write.
+### Supabase Tables
 
-**Why:** Reduces FastAPI surface area, leverages Supabase's optimized connection pooling, and Realtime works out of the box with postgres_changes.
-
-```typescript
-// React SPA — direct Supabase client call
-const { data } = await supabase
-  .from('messages')
-  .select('*')
-  .eq('pair_id', pairId)
-  .order('created_at', { ascending: true });
-
-// Realtime subscription
-supabase
-  .channel(`pair:${pairId}`)
-  .on('postgres_changes', {
-    event: 'INSERT',
-    schema: 'public',
-    table: 'messages',
-    filter: `pair_id=eq.${pairId}`
-  }, (payload) => {
-    addMessage(payload.new);
-  })
-  .subscribe();
-```
-
-### Pattern 2: FastAPI as Business Logic + API Proxy Layer
-
-**What:** FastAPI handles operations that require external API calls, complex transformations, or privileged access. It never stores data that Supabase can store.
-
-**When:** Spotify API calls, Google Calendar sync, audio transcoding, notification dispatch.
-
-**Why:** Keeps secrets server-side, handles rate limiting, processes heavy payloads without burdening the client.
-
-```python
-# FastAPI endpoint — proxies Spotify API
-@app.get("/api/spotify/now-playing")
-async def now_playing(user = Depends(verify_supabase_jwt)):
-    # Get user's Spotify tokens from Supabase
-    tokens = await get_spotify_tokens(user["id"])
-    if not tokens:
-        raise HTTPException(404, "Spotify not connected")
-    
-    # Call Spotify API server-side
-    track = await spotify_client.get_now_playing(tokens.access_token)
-    return {"track": track.name, "artist": track.artist, "album_art": track.album_art_url}
-```
-
-### Pattern 3: PairID as Universal Access Key
-
-**What:** Every data table includes a `pair_id` column. RLS policies filter by `pair_id IN (SELECT pair_id FROM pairs WHERE user_id = auth.uid())`.
-
-**When:** All tables except `users` and `pairs`.
-
-**Why:** Simplest authorization model — if you're in the pair, you see everything. No per-resource permission checks needed.
-
+#### 1. `online_status` (user-level presence)
 ```sql
--- RLS policy example
-CREATE POLICY "pair_members_can_read" ON messages
-  FOR SELECT USING (
-    pair_id IN (
-      SELECT id FROM pairs 
-      WHERE user_one = auth.uid() OR user_two = auth.uid()
+CREATE TABLE online_status (
+  id UUID REFERENCES auth.users NOT NULL PRIMARY KEY,
+  is_online BOOLEAN DEFAULT FALSE,
+  last_seen TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+- **RLS:** Users can read partner's status (via pairs lookup). Users can update only their own.
+- **Pattern:** Mirrors `typing_status` but user-scoped, not pair-scoped. Single row per user.
+- **Heartbeat:** Client updates `last_seen` every 30s via `setInterval` when tab is active. `is_online` set to `true` on visibility change to visible, `false` on unload/hidden.
+
+#### 2. `shared_reminders` (one-time reminders)
+```sql
+CREATE TABLE shared_reminders (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  pair_id UUID NOT NULL REFERENCES pairs(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT DEFAULT '',
+  remind_at TIMESTAMPTZ NOT NULL,
+  fired BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+- **RLS:** Standard pair-member pattern (SELECT/INSERT/UPDATE/DELETE).
+- **Index:** `idx_reminders_pair_fire ON shared_reminders (pair_id, remind_at) WHERE fired = FALSE`
+- **Edge Function:** `fire-reminders` runs on cron (pg_cron every minute), finds `remind_at <= NOW() AND fired = FALSE`, marks as fired, sends push.
+
+#### 3. `todo_lists` (list container)
+```sql
+CREATE TABLE todo_lists (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  pair_id UUID NOT NULL REFERENCES pairs(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+#### 4. `todo_items` (checklist entries)
+```sql
+CREATE TABLE todo_items (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  list_id UUID NOT NULL REFERENCES todo_lists(id) ON DELETE CASCADE,
+  pair_id UUID NOT NULL REFERENCES pairs(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  completed BOOLEAN DEFAULT FALSE,
+  due_date TIMESTAMPTZ,
+  assignee_id UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+- **RLS:** Pair-member access on both tables. `assignee_id` references `auth.users` but RLS still gates via pair membership.
+- **Index:** `idx_todo_items_list ON todo_items (list_id, completed)`
+
+### Storage Buckets
+
+No new buckets needed.
+- Avatars: reuses existing `avatars` bucket
+- Reminders/To-dos: pure data, no file uploads
+
+### Edge Functions
+
+#### 1. `fire-reminders` (Supabase Edge Function)
+```
+/supabase/functions/fire-reminders/index.ts
+```
+- Triggered by pg_cron every 60 seconds
+- Queries `shared_reminders` where `remind_at <= NOW() AND fired = FALSE`
+- Marks as `fired = TRUE`
+- Sends Web Push to both pair members via Push API
+- Requires VAPID keys stored as Supabase secrets
+
+#### 2. `send-push` (helper, called by fire-reminders)
+- Handles the actual Push API delivery
+- Stores push subscription in a `push_subscriptions` table (or uses existing profile data)
+
+### React Components
+
+#### Profile Feature (`src/features/profile/`)
+| File | Purpose |
+|------|---------|
+| `AvatarCrop.jsx` | Canvas-based crop tool (drag-to-crop circle overlay) |
+| `AvatarUpload.jsx` | **Extend existing** — add crop step before upload |
+| `OnlineStatus.jsx` | Dot indicator (green/gray) + "last seen" text |
+| `PartnerProfile.jsx` | **Extend** — add OnlineStatus component |
+
+#### Reminders Feature (`src/features/reminders/` — new directory)
+| File | Purpose |
+|------|---------|
+| `RemindersTab.jsx` | Tab content for AgendaPage (list + create form) |
+| `ReminderCard.jsx` | Single reminder display (title, time, countdown) |
+| `ReminderForm.jsx` | Create/edit reminder (datetime picker) |
+| `reminders.css` | Co-located styles |
+
+#### To-Do Feature (`src/features/todo/` — new directory)
+| File | Purpose |
+|------|---------|
+| `TodoTab.jsx` | Tab content for AgendaPage |
+| `TodoListCard.jsx` | List container with item count |
+| `TodoItem.jsx` | Single item (checkbox, due date, assignee) |
+| `TodoForm.jsx` | Create list or add item |
+| `todo.css` | Co-located styles |
+
+#### Shared Components
+| File | Purpose |
+|------|---------|
+| `src/shared/components/DateTimePicker.jsx` | Reusable datetime input (reminders + todo due dates) |
+| `src/shared/components/Avatar.jsx` | Reusable avatar display (initials fallback, online dot) — extracted from repeated pattern in ProfilePage, PartnerProfile, ChatView |
+
+### Zustand Stores
+
+| Store | Pattern Source | Realtime Tables |
+|-------|---------------|-----------------|
+| `statusStore.js` | `dashboardStore.js` | `online_status` |
+| `reminderStore.js` | `agendaStore.js` | `shared_reminders` |
+| `todoStore.js` | `notesStore.js` | `todo_lists`, `todo_items` |
+
+Each follows the established pattern: `initialize*`, `cleanup`, optimistic updates, Realtime subscription per `pair_id`.
+
+---
+
+## Data Flow Changes
+
+### Before (v1.2)
+```
+User opens app
+  → authStore.fetchProfile() loads profile from profiles table
+  → checkPairStatus() loads pair from pairs table
+  → Each feature initializes its own store + Realtime subscription
+  → ProfilePage → direct Supabase calls to profiles table
+```
+
+### After (v2.0)
+```
+User opens app
+  → authStore.fetchProfile() loads profile (unchanged)
+  → statusStore initializes → subscribes to online_status for partner
+  → Each feature initializes its store + Realtime (unchanged)
+  → AvatarUpload adds crop step → uploads to avatars bucket → updates profiles.avatar_url
+  → HomePage shows partner online status from statusStore
+  → AgendaPage adds RemindersTab + TodoTab → initializes reminderStore + todoStore
+  → reminderStore subscribes to shared_reminders → shows upcoming reminders
+  → todoStore subscribes to todo_lists + todo_items → shows shared checklists
+  → Edge Function fires reminders → sends push notifications
+```
+
+### Key Data Flow Changes
+
+1. **Profile is now partner-readable.** Existing RLS on `profiles` only allows `SELECT WHERE auth.uid() = id`. Need a new policy: "Paired users can view partner profile" — adds `OR EXISTS (SELECT 1 FROM pairs WHERE ... AND partner = auth.uid())`. This enables `PartnerProfile`, `Header`, and `Drawer` to show partner name/avatar without a separate query.
+
+2. **Online status is broadcast via Realtime.** Partners subscribe to `online_status` changes. When user A comes online, user B's client receives the Realtime event and updates the UI. This is new — currently no cross-client presence exists.
+
+3. **Reminders fire asynchronously.** The Edge Function handles background delivery. Client also polls on visibility change for immediate check. Two paths converge: client-side `setTimeout` for foreground, Edge Function for background.
+
+4. **To-dos have two-level hierarchy.** Unlike notes (flat), todos have `todo_lists → todo_items`. Realtime subscription must handle both tables. Store manages list ordering and item filtering.
+
+---
+
+## Build Order
+
+### Phase 1: Profile Enhancement (Foundation)
+**Depends on:** Nothing (existing infrastructure)
+**Rationale:** Online status touches every component that shows user info. Building it first unblocks avatar display improvements and partner presence everywhere.
+
+| Step | Task | Why |
+|------|------|-----|
+| 1.1 | Migration: `online_status` table + RLS | Schema first |
+| 1.2 | `statusStore.js` + heartbeat logic | Core presence mechanism |
+| 1.3 | `AvatarCrop.jsx` (Canvas crop tool) | Self-contained component |
+| 1.4 | Extend `AvatarUpload.jsx` with crop | Integrates crop into existing flow |
+| 1.5 | `Avatar.jsx` shared component | Extract repeated avatar pattern |
+| 1.6 | `OnlineStatus.jsx` dot indicator | Small presentational component |
+| 1.7 | Extend `PartnerProfile.jsx` | Add online status + improved avatar |
+| 1.8 | Extend `Header.jsx` / `Drawer.jsx` | Show partner online indicator |
+| 1.9 | Migration: Add partner-read policy to `profiles` | Enables cross-profile access |
+
+### Phase 2: Shared Reminders
+**Depends on:** Phase 1 (uses `statusStore` for partner info, `Avatar` component)
+**Rationale:** Reminders are simpler than to-dos (no hierarchy). Edge Function infrastructure (pg_cron, Push API) is reusable for future features.
+
+| Step | Task | Why |
+|------|------|-----|
+| 2.1 | Migration: `shared_reminders` table + RLS + index | Schema first |
+| 2.2 | `reminderStore.js` | CRUD + Realtime |
+| 2.3 | `DateTimePicker.jsx` shared component | Reusable for todos too |
+| 2.4 | `ReminderCard.jsx` + `ReminderForm.jsx` | UI components |
+| 2.5 | `RemindersTab.jsx` | Tab container |
+| 2.6 | Extend `AgendaPage.jsx` — add 3rd tab | Integration point |
+| 2.7 | Edge Function: `fire-reminders` + pg_cron | Background delivery |
+| 2.8 | Service worker: `push` event handler | Receives push, shows notification |
+| 2.9 | Client-side reminder scheduling | Foreground fallback |
+
+### Phase 3: Shared To-Do Lists
+**Depends on:** Phase 2 (shares `DateTimePicker`, `AgendaPage` tab infrastructure)
+**Rationale:** Most complex feature (two-level hierarchy, assignees, due dates). Benefits from all shared infrastructure being in place.
+
+| Step | Task | Why |
+|------|------|-----|
+| 3.1 | Migration: `todo_lists` + `todo_items` tables + RLS | Schema first |
+| 3.2 | `todoStore.js` | Two-table CRUD + Realtime |
+| 3.3 | `TodoItem.jsx` | Checkbox + due date + assignee badge |
+| 3.4 | `TodoListCard.jsx` | Container with item count |
+| 3.5 | `TodoForm.jsx` | Create list / add item |
+| 3.6 | `TodoTab.jsx` | Tab container |
+| 3.7 | Extend `AgendaPage.jsx` — 4 tabs or grouped nav | Navigation update |
+| 3.8 | Dashboard widget: overdue/upcoming todos | Optional integration |
+| 3.9 | Drawer badge: pending reminder count | Optional polish |
+
+### Dependency Graph
+```
+Phase 1 (Profile)
+  ├── online_status table + store
+  ├── AvatarCrop + AvatarUpload extension
+  └── profiles partner-read policy
+      │
+Phase 2 (Reminders)
+  ├── shared_reminders table + store
+  ├── DateTimePicker (shared)
+  ├── Edge Function + service worker
+  └── AgendaPage tab extension
+      │
+Phase 3 (To-Dos)
+  ├── todo_lists + todo_items tables + store
+  ├── TodoItem/ListCard/Form components
+  ├── AgendaPage final nav
+  └── Dashboard integration
+```
+
+---
+
+## RLS Policy Design
+
+### Pattern: Pair-Member Access (Established)
+Every pair-scoped table uses this pattern:
+```sql
+-- SELECT: pair members can read
+CREATE POLICY "Pair members can view X"
+ON {table} FOR SELECT TO authenticated
+USING (
+  pair_id IN (
+    SELECT id FROM pairs WHERE user_one = auth.uid() OR user_two = auth.uid()
+  )
+);
+
+-- INSERT: pair members can create (must set own user_id)
+CREATE POLICY "Pair members can insert X"
+ON {table} FOR INSERT TO authenticated
+WITH CHECK (
+  pair_id IN (
+    SELECT id FROM pairs WHERE user_one = auth.uid() OR user_two = auth.uid()
+  )
+  AND user_id = auth.uid()
+);
+
+-- UPDATE: pair members can update any row in their pair
+CREATE POLICY "Pair members can update X"
+ON {table} FOR UPDATE TO authenticated
+USING (
+  pair_id IN (
+    SELECT id FROM pairs WHERE user_one = auth.uid() OR user_two = auth.uid()
+  )
+);
+
+-- DELETE: pair members can delete any row in their pair
+CREATE POLICY "Pair members can delete X"
+ON {table} FOR DELETE TO authenticated
+USING (
+  pair_id IN (
+    SELECT id FROM pairs WHERE user_one = auth.uid() OR user_two = auth.uid()
+  )
+);
+```
+
+### New: `online_status` RLS (User-Level, Not Pair-Level)
+```sql
+-- Anyone authenticated can read online status (needed for partner lookup)
+CREATE POLICY "Authenticated users can view online status"
+ON online_status FOR SELECT TO authenticated
+USING (true);
+
+-- Users can only update their own status
+CREATE POLICY "Users can update own online status"
+ON online_status FOR UPDATE TO authenticated
+USING (auth.uid() = id)
+WITH CHECK (auth.uid() = id);
+
+-- Users insert their own status on first heartbeat
+CREATE POLICY "Users can insert own online status"
+ON online_status FOR INSERT TO authenticated
+WITH CHECK (auth.uid() = id);
+```
+**Note:** `online_status` intentionally has broader read access — any authenticated user needs to see if their partner is online. Write is restricted to self.
+
+### New: `profiles` Partner-Read Policy
+```sql
+-- Add to existing profiles RLS:
+CREATE POLICY "Paired users can view partner profile"
+ON profiles FOR SELECT TO authenticated
+USING (
+  EXISTS (
+    SELECT 1 FROM pairs
+    WHERE pairs.paired_at IS NOT NULL
+    AND (
+      (pairs.user_one = auth.uid() AND pairs.user_two = profiles.id)
+      OR
+      (pairs.user_two = auth.uid() AND pairs.user_one = profiles.id)
     )
-  );
+  )
+);
 ```
+**Impact:** Enables `PartnerProfile.jsx`, `Header.jsx`, `Drawer.jsx`, and chat message bubbles to read partner profile data directly from the `profiles` table without needing a separate RPC or query. The existing "Users can view own profile" policy remains — both policies coexist.
 
-### Pattern 4: Optimistic UI with Supabase Realtime Reconciliation
+### New: `shared_reminders` RLS
+Standard pair-member pattern (as shown in established pattern above).
 
-**What:** Show changes immediately in the UI, then reconcile when Supabase confirms via Realtime.
+### New: `todo_lists` RLS
+Standard pair-member pattern.
 
-**When:** Chat messages, mood updates, event creation.
-
-**Why:** Instant perceived performance even on slow networks. Supabase Realtime acts as the source of truth confirmation.
-
-```typescript
-// Optimistic send
-const tempId = crypto.randomUUID();
-addMessage({ id: tempId, text, status: 'sending' });
-
-const { data, error } = await supabase.from('messages').insert({ ... }).select().single();
-if (error) {
-  updateMessage(tempId, { status: 'error' });
-} else {
-  replaceMessage(tempId, { ...data, status: 'sent' });
-}
-// Realtime will deliver the canonical version to partner
+### New: `todo_items` RLS
+```sql
+-- Same as standard pair-member, but also gates on list ownership:
+CREATE POLICY "Pair members can view todo items"
+ON todo_items FOR SELECT TO authenticated
+USING (
+  list_id IN (
+    SELECT id FROM todo_lists
+    WHERE pair_id IN (
+      SELECT id FROM pairs WHERE user_one = auth.uid() OR user_two = auth.uid()
+    )
+  )
+);
 ```
+**Why different:** `todo_items` references `todo_lists` not `pairs` directly. RLS chains through `list_id → todo_lists.pair_id → pairs`. This is slightly more expensive but ensures items can only be read if the parent list belongs to the user's pair.
 
-### Pattern 5: PWA Shell with Workbox Offline Strategy
+### Edge Function Security
+- `fire-reminders` runs as `service_role` (bypasses RLS) — called by pg_cron, not client
+- Push delivery uses VAPID keys stored in Supabase Vault secrets
+- Client push subscription stored in `push_subscriptions` table with RLS
 
-**What:** Cache the app shell (HTML, CSS, JS, assets) via Workbox. Use stale-while-revalidate for API data.
+---
 
-**When:** Service worker registration, asset caching, offline fallback.
+## Summary of All New Artifacts
 
-**Why:** Instant load on repeat visits, graceful offline degradation, installable on mobile home screens.
+| Type | Artifact | Migration |
+|------|----------|-----------|
+| Table | `online_status` | `20260728_online_status.sql` |
+| Table | `shared_reminders` | `20260728_shared_reminders.sql` |
+| Table | `todo_lists` | `20260728_todo_lists.sql` |
+| Table | `todo_items` | `20260728_todo_lists.sql` (same migration) |
+| Policy | `profiles` partner-read | `20260728_profiles_partner_read.sql` |
+| Store | `statusStore.js` | — |
+| Store | `reminderStore.js` | — |
+| Store | `todoStore.js` | — |
+| Component | `AvatarCrop.jsx` | — |
+| Component | `Avatar.jsx` (shared) | — |
+| Component | `OnlineStatus.jsx` | — |
+| Component | `DateTimePicker.jsx` (shared) | — |
+| Component | `RemindersTab.jsx` | — |
+| Component | `ReminderCard.jsx` | — |
+| Component | `ReminderForm.jsx` | — |
+| Component | `TodoTab.jsx` | — |
+| Component | `TodoListCard.jsx` | — |
+| Component | `TodoItem.jsx` | — |
+| Component | `TodoForm.jsx` | — |
+| Edge Function | `fire-reminders` | — |
+| Service Worker | Push event handler | — |
+| CSS | `reminders.css` | — |
+| CSS | `todo.css` | — |
 
-```typescript
-// vite-plugin-pwa config
-export default defineConfig({
-  plugins: [
-    react(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/storage/,
-            handler: 'StaleWhileRevalidate',
-            options: { cacheName: 'supabase-storage' }
-          }
-        ]
-      }
-    })
-  ]
-});
-```
-
-## Anti-Patterns to Avoid
-
-### Anti-Pattern 1: FastAPI as Database Proxy
-
-**What:** Routing all Supabase queries through FastAPI instead of using the client SDK directly.
-
-**Why bad:** Adds unnecessary latency, doubles connection pool usage, duplicates RLS logic, and makes real-time subscriptions harder to wire.
-
-**Instead:** Use `@supabase/supabase-js` client directly in React for all CRUD. Only route through FastAPI when you need server-side secrets or processing.
-
-### Anti-Pattern 2: Storing Secrets in Frontend
-
-**What:** Putting Spotify client secrets, Google Calendar service account keys, or Supabase service-role keys in React code.
-
-**Why bad:** Visible in browser DevTools, bundled into JS files, trivially extractable.
-
-**Instead:** All secrets live in FastAPI environment variables or Supabase Edge Function secrets. Frontend only holds publishable keys (Supabase anon key, Spotify client ID).
-
-### Anti-Pattern 3: Ignoring RLS and Relying on Frontend Filtering
-
-**What:** Trusting the frontend to filter data by pair_id without server-side RLS enforcement.
-
-**Why bad:** Any user can call the Supabase API directly and access other couples' data. Security by obscurity is not security.
-
-**Instead:** Every table has RLS policies. Frontend filtering is for UX only, never for security.
-
-### Anti-Pattern 4: Monolithic Component Structure
-
-**What:** Building all features in a single large component or flat component directory.
-
-**Why bad:** Hard to maintain, test, and reason about. Couples' apps have distinct domains (chat, calendar, memories).
-
-**Instead:** Feature-based folder structure. Each feature owns its components, hooks, and types. Shared UI components in a common directory.
-
-```
-src/
-├── features/
-│   ├── chat/        # ChatPage, MessageList, MessageInput, VoiceRecorder
-│   ├── homepage/    # DashboardPage, MoodTracker, MiniAlbum, NowPlaying
-│   ├── agenda/      # AgendaPage, EventForm, CalendarIntegration
-│   └── auth/        # LoginPage, AuthCallback
-├── shared/
-│   ├── components/  # Button, Card, Avatar, BottomNav
-│   ├── hooks/       # usePairId, useRealtime, useSupabaseAuth
-│   └── lib/         # supabase.ts, api.ts, types.ts
-├── App.tsx
-└── main.tsx
-```
-
-### Anti-Pattern 5: Skipping Offline Support
-
-**What:** Building a PWA without service worker configuration or offline fallbacks.
-
-**Why bad:** PWA install prompt is meaningless without offline capability. Users on poor networks get blank screens.
-
-**Instead:** Cache the app shell. Show a meaningful offline state. Queue writes for background sync when connectivity returns.
-
-## Component Dependency Graph
-
-```
-                    ┌─────────────┐
-                    │  Supabase   │
-                    │  (Auth +    │
-                    │   DB +      │
-                    │   Storage + │
-                    │   Realtime) │
-                    └──────┬──────┘
-                           │
-              ┌────────────┼────────────┐
-              ▼            ▼            ▼
-        ┌──────────┐ ┌──────────┐ ┌──────────┐
-        │  Auth    │ │  Chat    │ │  Data    │
-        │  Module  │ │  Module  │ │  Module  │
-        └────┬─────┘ └────┬─────┘ └────┬─────┘
-             │            │            │
-             ▼            ▼            ▼
-        ┌─────────────────────────────────────┐
-        │          React SPA Core             │
-        │  (Router, Layout, PWA, State)       │
-        └──────────────┬──────────────────────┘
-                       │
-                       ▼
-        ┌─────────────────────────────────────┐
-        │        FastAPI Backend               │
-        │  (Audio processing, Spotify,        │
-        │   Calendar, Notifications)          │
-        └─────────────────────────────────────┘
-```
-
-## Build Order Implications
-
-Based on the dependency graph, here's the natural build order:
-
-1. **Supabase project setup** (schema, RLS, auth) — everything depends on this
-2. **React SPA shell** (routing, layout, PWA config, auth flow) — foundation for all features
-3. **Chat module** (core value, uses only Supabase client SDK + Realtime) — no FastAPI needed
-4. **FastAPI scaffold** (JWT verification, CORS, basic endpoints) — needed for integrations
-5. **Homepage module** (reads from Supabase, may use FastAPI for Spotify)
-6. **Agenda module** (writes to Supabase, may use FastAPI for Google Calendar)
-7. **Media features** (voice messages, image sharing — need Supabase Storage + FastAPI processing)
-
-### Why This Order
-
-- **Phase 1-3** (Supabase + React shell + Chat) can be fully functional without FastAPI. This gets a usable product in users' hands fastest.
-- **Phase 4** (FastAPI scaffold) is thin — just JWT verification + CORS. Unblocks Phase 5-6.
-- **Phase 5-7** (Homepage, Agenda, Media) add features on top of the working foundation.
-- Each phase produces a deployable artifact. No "big bang" integration.
-
-## Scalability Considerations
-
-| Concern | At 100 couples | At 10K couples | At 1M couples |
-|---------|---------------|----------------|---------------|
-| **Database** | Supabase free tier handles easily | Supabase Pro plan, connection pooling | Dedicated Postgres, read replicas |
-| **Realtime** | Supabase Realtime handles all | Monitor channel count, may need separate WS server | FastAPI WebSocket fanout + Redis pub/sub |
-| **Storage** | Supabase Storage free tier | Supabase Pro (100GB) | S3 + CloudFront CDN |
-| **FastAPI** | Vercel serverless handles load | Same — serverless scales | Consider dedicated compute for heavy processing |
-| **Offline** | Service worker + IndexedDB | Same | IndexedDB size limits may need pruning strategy |
-
-## PWA-Specific Architecture Notes
-
-### Service Worker Responsibilities
-- **Precache:** App shell (HTML, CSS, JS), static assets (icons, fonts)
-- **Runtime cache:** Supabase Storage responses (images, voice messages) via stale-while-revalidate
-- **Offline fallback:** Show cached chat messages, display offline banner, queue outgoing messages
-- **Background sync:** Retry failed writes when connectivity returns (if supported)
-
-### Install Flow
-- Detect `beforeinstallprompt` event → show custom install banner
-- On iOS: show "Add to Home Screen" instructions (no automatic prompt)
-- Track install status for analytics
-
-### Push Notifications (Future)
-- Use Web Push API with VAPID keys
-- Supabase Edge Functions dispatch push when new message arrives
-- Handle notification clicks → deep link to chat
-
-## Sources
-
-- Supabase Kizuna (supabase/kizuna) — production React + Supabase PWA with Realtime chat, RLS, Workbox offline
-- Intimately (Devpost) — couple-focused PWA with Supabase + React + push notifications
-- sahith14/Couples-app — couple app with Supabase Realtime chat, pairing, voice notes, E2E encryption
-- document-copilot (daveebbelaar) — React + FastAPI + Supabase architecture with JWT auth flow
-- A.B.E.L (Adam-Blf) — React PWA + FastAPI + Supabase with Zustand state management
-- ClipSync (Mintlify docs) — Supabase Realtime + offline handling patterns
-- pg18-chat (v0id-user) — FastAPI WebSocket + Postgres LISTEN/NOTIFY real-time patterns
-- Discord clone (Maheshnath09) — FastAPI + WebSocket + Redis pub/sub architecture
-- hermes-pwa (stasstepv) — Core/Shell split pattern for PWA portability
-- better-pwa (0xMilord) — PWA layered architecture with offline data consistency
-- Mayfly (jay23606) — PWA with Supabase + WebRTC for real-time couple communication
-- John Apollos Olal (Medium) — Offline-first PWA with Supabase + Dexie.js mutation queue
+**Modified files:**
+- `AvatarUpload.jsx` — add crop step
+- `PartnerProfile.jsx` — add online status + improved avatar
+- `Header.jsx` — partner online indicator
+- `Drawer.jsx` — partner status + reminder badge
+- `AgendaPage.jsx` — 3-4 tab navigation
+- `HomePage.jsx` — optional widgets (upcoming reminder, overdue todos)
+- `vite.config.js` — PWA service worker push handler config
