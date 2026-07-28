@@ -13,8 +13,8 @@ Requirements for Profile & Shared Utilities milestone. Each maps to roadmap phas
 - [x] **PROF-02**: User can crop uploaded photo with circular crop tool
 - [x] **PROF-03**: Uploaded avatar is compressed before storage (target ~200KB)
 - [x] **PROF-04**: User can edit display name (shown in chat, profile, drawer)
-- [ ] **PROF-05**: Partner can see user's online status (green/gray dot)
-- [ ] **PROF-06**: Partner can see "last seen X ago" when user is offline
+- [x] **PROF-05**: Partner can see user's online status (green/gray dot) ✓
+- [x] **PROF-06**: Partner can see "last seen X ago" when user is offline ✓
 - [x] **PROF-07**: Online status updates via Supabase Realtime Presence ✓
 
 ### Shared Reminders
@@ -45,7 +45,7 @@ Requirements for Profile & Shared Utilities milestone. Each maps to roadmap phas
 - [ ] **INFRA-02**: New `online_status` table with RLS
 - [x] **INFRA-03**: New `shared_reminders` table with pair_id RLS ✓
 - [x] **INFRA-04**: New `todo_lists` and `todo_items` tables with pair_id RLS ✓
-- [ ] **INFRA-05**: `profiles` table partner-read policy (paired users can view partner profile)
+- [x] **INFRA-05**: `profiles` table partner-read policy (paired users can view partner profile) ✓
 - [x] **INFRA-06**: Avatar cache busting after upload (append ?v=timestamp)
 
 ## v3 Requirements
@@ -95,8 +95,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROF-02 | Phase 6 | Complete |
 | PROF-03 | Phase 6 | Complete |
 | PROF-04 | Phase 6 | Complete |
-| PROF-05 | Phase 6 | Pending |
-| PROF-06 | Phase 6 | Pending |
+| PROF-05 | Phase 6 | Complete |
+| PROF-06 | Phase 6 | Complete |
 | PROF-07 | Phase 6 | Complete |
 | REMN-01 | Phase 7 | Pending |
 | REMN-02 | Phase 7 | Pending |
@@ -118,7 +118,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-02 | Phase 6 | Pending |
 | INFRA-03 | Phase 6 | Complete |
 | INFRA-04 | Phase 6 | Complete |
-| INFRA-05 | Phase 6 | Pending |
+| INFRA-05 | Phase 6 | Complete |
 | INFRA-06 | Phase 6 | Complete |
 
 **Coverage:**
