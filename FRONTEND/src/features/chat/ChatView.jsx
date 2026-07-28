@@ -2,9 +2,12 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Send, ChevronDown, Reply, Trash2, X, SmilePlus, Settings, Mic } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { formatDistanceToNow } from 'date-fns'
 import useAuthStore from '../../stores/authStore'
 import useChatStore from '../../stores/chatStore'
 import { usePairing } from '../pairing/usePairing'
+import { usePresence } from '../../hooks/usePresence'
+import StatusDot from '../../shared/components/StatusDot'
 import VoiceRecorder from './VoiceRecorder'
 import VoiceMessage from './VoiceMessage'
 import ImagePicker from './ImagePicker'
@@ -399,6 +402,7 @@ export default function ChatView() {
   const { checkPairStatus } = usePairing()
   const { user } = useAuthStore()
   const [pairId, setPairId] = useState(null)
+  const [partnerId, setPartnerId] = useState(null)
   const {
     messages, loading, sending, error,
     partnerTyping, isAtBottom, offlineQueue,
@@ -421,15 +425,18 @@ export default function ChatView() {
   const [unreadCount, setUnreadCount] = useState(0)
   const typingTimerRef = useRef(null)
 
+  const { isOnline, lastSeen } = usePresence(pairId, partnerId)
+
   useEffect(() => {
     checkPairStatus().then(pair => {
       if (pair) {
         setPairId(pair.id)
+        setPartnerId(pair.user_one === user?.id ? pair.user_two : pair.user_one)
         initializeChat(pair.id)
       }
     })
     return () => cleanup()
-  }, [checkPairStatus, initializeChat, cleanup])
+  }, [checkPairStatus, initializeChat, cleanup, user?.id])
 
   useEffect(() => {
     if (isAtBottom) {
@@ -543,7 +550,16 @@ export default function ChatView() {
           <div>
             <h2 className="chat-header-name">Chat</h2>
             <span className="chat-header-status">
-              {partnerTyping ? 'Typing...' : 'Online'}
+              {partnerTyping ? 'Typing...' : (
+                <>
+                  <StatusDot isOnline={isOnline} size={6} />
+                  {isOnline ? ' Online' : (
+                    lastSeen && (Date.now() - new Date(lastSeen).getTime()) > 3600000
+                      ? ` last seen ${formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}`
+                      : ' Offline'
+                  )}
+                </>
+              )}
             </span>
           </div>
         </div>

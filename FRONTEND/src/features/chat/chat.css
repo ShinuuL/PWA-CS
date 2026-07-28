@@ -82,6 +82,9 @@
 .chat-header-status {
   font-size: 0.75rem;
   color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .chat-error-banner,

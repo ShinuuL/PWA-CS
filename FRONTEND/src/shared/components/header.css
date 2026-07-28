@@ -33,6 +33,14 @@
   justify-content: center;
 }
 
+.header-avatar-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .header-avatar {
   width: 32px;
   height: 32px;
@@ -43,6 +51,17 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+.header-status-dot {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  border: 2px solid var(--color-bg-card);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-avatar img {

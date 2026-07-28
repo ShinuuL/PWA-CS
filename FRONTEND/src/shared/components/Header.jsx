@@ -2,11 +2,17 @@ import { useState, useEffect } from 'react'
 import { Menu } from 'lucide-react'
 import { useAuth } from '../../features/auth/useAuth'
 import { supabase } from '../lib/supabase'
+import { usePresence } from '../../hooks/usePresence'
+import StatusDot from './StatusDot'
 import './header.css'
 
 export default function Header({ onMenuClick }) {
   const { user } = useAuth()
   const [partner, setPartner] = useState(null)
+  const [partnerId, setPartnerId] = useState(null)
+  const [pairId, setPairId] = useState(null)
+
+  const { isOnline } = usePresence(pairId, partnerId)
 
   useEffect(() => {
     if (!user) return
@@ -21,15 +27,17 @@ export default function Header({ onMenuClick }) {
 
       if (!pair) return
 
-      const partnerId = pair.user_one === user.id ? pair.user_two : pair.user_one
+      const pid = pair.user_one === user.id ? pair.user_two : pair.user_one
 
       const { data: profile } = await supabase
         .from('profiles')
         .select('display_name, avatar_url')
-        .eq('id', partnerId)
+        .eq('id', pid)
         .maybeSingle()
 
       setPartner(profile)
+      setPartnerId(pid)
+      setPairId(pair.id)
     }
 
     fetchPartner()
@@ -49,14 +57,23 @@ export default function Header({ onMenuClick }) {
       <div className="header-center">
         {partner ? (
           <>
-            <div className="header-avatar">
-              {partner.avatar_url ? (
-                <img src={partner.avatar_url} alt={partner.display_name} />
-              ) : (
-                <span className="header-avatar-initials">
-                  {getInitials(partner.display_name)}
-                </span>
-              )}
+            <div
+              className="header-avatar-wrapper"
+              style={{ cursor: 'pointer' }}
+              onClick={() => {/* PartnerProfileModal will be wired in Task 2 */}}
+            >
+              <div className="header-avatar">
+                {partner.avatar_url ? (
+                  <img src={partner.avatar_url} alt={partner.display_name} />
+                ) : (
+                  <span className="header-avatar-initials">
+                    {getInitials(partner.display_name)}
+                  </span>
+                )}
+              </div>
+              <div className="header-status-dot">
+                <StatusDot isOnline={isOnline} size={8} />
+              </div>
             </div>
             <span className="header-partner-name">{partner.display_name}</span>
           </>
