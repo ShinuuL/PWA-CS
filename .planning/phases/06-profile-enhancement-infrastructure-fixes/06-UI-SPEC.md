@@ -51,13 +51,11 @@ Exceptions: None — project uses rem-based spacing aligned to 4px grid.
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
 | Body | 16px (1rem) | 400 (regular) | 1.5 |
-| Label | 13.6px (0.85rem) | 400 (regular) | 1.4 |
 | Heading | 24px (1.5rem) | 600 (semibold) | 1.2 |
 | Subheading | 20px (1.25rem) | 600 (semibold) | 1.3 |
 | Caption | 12px (0.75rem) | 400 (regular) | 1.4 |
-| Button | 16px (1rem) | 600 (semibold) | 1.0 |
 
-Note: Project does NOT use a "Display" role. These 6 roles cover all Phase 6 needs.
+Note: Button text reuses Body at 16px with weight 600. Labels and secondary text reuses Caption at 12px. 4 unique sizes: 12 → 16 → 20 → 24.
 
 ---
 
@@ -144,6 +142,12 @@ No third-party registries. No shadcn initialized. All components are custom CSS.
 
 ---
 
+## Visual Hierarchy
+
+**ProfilePage:** Avatar circle (128px) is the primary visual anchor. Display name input is the secondary focal point, positioned directly below the avatar with 16px vertical spacing. The layout flows top-down: avatar → name → status → partner section. Accent color is reserved exclusively for the primary CTA button; the avatar and name rely on size and position for visual weight, not color.
+
+---
+
 ## Interaction Contracts
 
 ### Avatar Upload Flow (PROF-01, PROF-02, PROF-03)
@@ -222,3 +226,9 @@ New tokens to add for Phase 6:
 - [ ] Dimension 6 Registry Safety: PASS
 
 **Approval:** pending
+
+**Checker Notes:**
+- Typography consolidated to 4 unique sizes (was 5): 12px, 16px, 20px, 24px
+- Label role (13.6px) removed; all label-level text uses Caption (12px)
+- Button role removed as a size; reuses Body (16px) at weight 600
+- Visual hierarchy focal point declared for ProfilePage
