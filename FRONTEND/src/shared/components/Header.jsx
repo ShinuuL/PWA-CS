@@ -3,6 +3,7 @@ import { Menu } from 'lucide-react'
 import { useAuth } from '../../features/auth/useAuth'
 import { supabase } from '../lib/supabase'
 import { usePresence } from '../../hooks/usePresence'
+import PartnerProfileModal from '../../features/profile/PartnerProfileModal'
 import StatusDot from './StatusDot'
 import './header.css'
 
@@ -11,8 +12,9 @@ export default function Header({ onMenuClick }) {
   const [partner, setPartner] = useState(null)
   const [partnerId, setPartnerId] = useState(null)
   const [pairId, setPairId] = useState(null)
+  const [showPartnerProfile, setShowPartnerProfile] = useState(false)
 
-  const { isOnline } = usePresence(pairId, partnerId)
+  const { isOnline } = usePresence(pairId, partnerId, user?.id)
 
   useEffect(() => {
     if (!user) return
@@ -60,7 +62,7 @@ export default function Header({ onMenuClick }) {
             <div
               className="header-avatar-wrapper"
               style={{ cursor: 'pointer' }}
-              onClick={() => {/* PartnerProfileModal will be wired in Task 2 */}}
+              onClick={() => setShowPartnerProfile(true)}
             >
               <div className="header-avatar">
                 {partner.avatar_url ? (
@@ -83,6 +85,11 @@ export default function Header({ onMenuClick }) {
       </div>
 
       <div style={{ width: 32 }} />
+
+      <PartnerProfileModal
+        isOpen={showPartnerProfile}
+        onClose={() => setShowPartnerProfile(false)}
+      />
     </header>
   )
 }

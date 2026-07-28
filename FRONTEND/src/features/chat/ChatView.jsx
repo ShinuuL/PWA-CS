@@ -7,6 +7,7 @@ import useAuthStore from '../../stores/authStore'
 import useChatStore from '../../stores/chatStore'
 import { usePairing } from '../pairing/usePairing'
 import { usePresence } from '../../hooks/usePresence'
+import { supabase } from '../../shared/lib/supabase'
 import StatusDot from '../../shared/components/StatusDot'
 import VoiceRecorder from './VoiceRecorder'
 import VoiceMessage from './VoiceMessage'
@@ -403,6 +404,7 @@ export default function ChatView() {
   const { user } = useAuthStore()
   const [pairId, setPairId] = useState(null)
   const [partnerId, setPartnerId] = useState(null)
+  const [partnerProfile, setPartnerProfile] = useState(null)
   const {
     messages, loading, sending, error,
     partnerTyping, isAtBottom, offlineQueue,
@@ -425,7 +427,7 @@ export default function ChatView() {
   const [unreadCount, setUnreadCount] = useState(0)
   const typingTimerRef = useRef(null)
 
-  const { isOnline, lastSeen } = usePresence(pairId, partnerId)
+  const { isOnline, lastSeen } = usePresence(pairId, partnerId, user?.id)
 
   useEffect(() => {
     checkPairStatus().then(pair => {
@@ -437,6 +439,19 @@ export default function ChatView() {
     })
     return () => cleanup()
   }, [checkPairStatus, initializeChat, cleanup, user?.id])
+
+  useEffect(() => {
+    if (!partnerId) return
+    const fetchPartnerProfile = async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_url')
+        .eq('id', partnerId)
+        .maybeSingle()
+      setPartnerProfile(data)
+    }
+    fetchPartnerProfile()
+  }, [partnerId])
 
   useEffect(() => {
     if (isAtBottom) {
@@ -540,15 +555,15 @@ export default function ChatView() {
       <div className="chat-header">
         <div className="chat-header-info">
           <div className="chat-header-avatar">
-            {user?.user_metadata?.avatar_url
-              ? <img src={user.user_metadata.avatar_url} alt="" />
+            {partnerProfile?.avatar_url
+              ? <img src={partnerProfile.avatar_url} alt="" />
               : <div className="chat-header-avatar-placeholder">
-                  {user?.user_metadata?.display_name?.[0]?.toUpperCase() || '?'}
+                  {partnerProfile?.display_name?.[0]?.toUpperCase() || '?'}
                 </div>
             }
           </div>
           <div>
-            <h2 className="chat-header-name">Chat</h2>
+            <h2 className="chat-header-name">{partnerProfile?.display_name || 'Chat'}</h2>
             <span className="chat-header-status">
               {partnerTyping ? 'Typing...' : (
                 <>
@@ -601,7 +616,7 @@ export default function ChatView() {
             const showDate = shouldShowDateSeparator(messages, i)
 
             return (
-              <div key={msg.id || msg.temp_id}>
+              <div key={msg.id || msg.temp_id || `msg-${i}`}>
                 {showDate && <DateSeparator date={msg.created_at} />}
                 <MessageBubble
                   message={msg}
