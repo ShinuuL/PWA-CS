@@ -10,11 +10,20 @@ Chat between couples — real-time private messaging is the foundation. If every
 
 ## Current State
 
-**Shipped:** v1.0 MVP (2026-07-25)
-**Phases complete:** 3 of 5
-**Requirements:** 19/27 v1 requirements done
+**Shipped:** v1.0 MVP (2026-07-25), v1.1 Homepage Dashboard (2026-07-27), v1.2 Shared Notes & Agenda (2026-07-28)
+**Phases complete:** 5
+**Requirements:** 17/17 v1 requirements done
 
-v1.0 delivers: Google OAuth, couple pairing, real-time chat with replies/reactions/delete/typing, WhatsApp-style voice messages, image sharing, and a shared photo album.
+v1.0 delivers: Google OAuth, couple pairing, real-time chat with replies/reactions/delete/typing, WhatsApp-style voice messages, image sharing, and a shared photo album. v1.1 adds homepage dashboard with memory hero, mood tracking, and mini album. v1.2 adds shared notes and event calendar.
+
+## Current Milestone: v2.0 Profile & Shared Utilities
+
+**Goal:** Let users personalize their identity and manage shared life together.
+
+**Target features:**
+- Avatar upload with crop, display name editing, online/last seen status
+- One-time shared reminders with push notifications
+- Shared to-do lists with due dates and partner assignment
 
 ## Requirements
 
@@ -32,15 +41,22 @@ v1.0 delivers: Google OAuth, couple pairing, real-time chat with replies/reactio
 - ✓ Image sharing in chat — v1.0
 - ✓ Shared photo album — v1.0
 - ✓ Mini photo album widget — v1.0
+- ✓ Homepage random memory photo — v1.1
+- ✓ Daily mood tracker with quick-select emotions — v1.1
+- ✓ Mood status visible to both partners — v1.1
+- ✓ Shared notes/journal — v1.2
+- ✓ Event calendar with date-organized view — v1.2
 
-### Active (v1.1)
+### Active (v2.0)
 
-- [ ] Homepage random memory photo
-- [ ] Daily mood tracker with quick-select emotions
-- [ ] Mood status visible to both partners
-- [ ] Shared notes/journal
-- [ ] Event calendar with date-organized view
-- [ ] Shared reminders
+- [ ] Avatar upload with crop tool
+- [ ] Display name editing
+- [ ] Online/last seen status visible to partner
+- [ ] One-time shared reminders
+- [ ] Push notification delivery for reminders
+- [ ] Shared to-do lists with checkboxes
+- [ ] To-do items with due dates
+- [ ] To-do items assignable to either partner
 
 ### Out of Scope
 
@@ -83,5 +99,22 @@ v1.0 delivers: Google OAuth, couple pairing, real-time chat with replies/reactio
 - **Hosting**: Vercel (frontend + backend as serverless functions)
 - **PWA**: Must be installable, work offline where possible
 
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
 ---
-*Last updated: 2026-07-25 after v1.0 milestone*
+*Last updated: 2026-07-28 after v2.0 milestone start*
