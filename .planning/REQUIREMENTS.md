@@ -1,97 +1,89 @@
 # Requirements: CoupleSpace
 
-**Defined:** 2026-07-24
+**Defined:** 2026-07-28
 **Core Value:** Chat between couples — real-time private messaging is the foundation
-
-## v1 Requirements
-
-Requirements for initial release. Each maps to roadmap phases.
-
-### Auth & Pairing
-
-- [x] **AUTH-01**: User can sign in with Google OAuth
-- [x] **AUTH-02**: User session persists across browser refresh
-- [x] **AUTH-03**: User can generate an invite code/link to pair with partner
-- [x] **AUTH-04**: User can enter an invite code/link to connect with partner
-- [x] **AUTH-05**: Only two users can be paired per pairID
-
-### Profile
-
-- [x] **PROF-01**: User can set display name
-- [x] **PROF-02**: User can upload profile picture
-- [x] **PROF-03**: User can customize profile icon/avatar
-
-### Chat
-
-- [x] **CHAT-01**: User can send and receive real-time text messages
-- [x] **CHAT-02**: User can record and send voice messages (WhatsApp-style: hold to record, slide to cancel)
-- [x] **CHAT-03**: Voice messages play inline with waveform display
-- [x] **CHAT-04**: User can send images in chat
-- [x] **CHAT-05**: User can reply to (quote) a specific message
-- [x] **CHAT-06**: User can react to messages with emojis
-- [x] **CHAT-07**: Chat interface is optimized for mobile devices
-
-### Homepage Dashboard
-
-- [ ] **HOME-01**: Homepage displays random memory photo from shared album
-- [ ] **HOME-02**: User can select daily mood from predefined emotions (happy, tired, sad, missing, needy)
-- [ ] **HOME-03**: Mood status is visible to both partners
-- [x] **HOME-04**: Mini photo album displays horizontally scrollable photos
-- [x] **HOME-05**: User can upload photos to shared album
-
-### Shared Notes
-
-- [ ] **NOTE-01**: User can create shared notes/journal entries
-- [ ] **NOTE-02**: Both partners can read and edit shared notes
-- [ ] **NOTE-03**: Notes are organized chronologically
-
-### Agenda
-
-- [ ] **AGND-01**: User can create events with title, date, and description
-- [ ] **AGND-02**: Events are displayed in date-organized view
-- [ ] **AGND-03**: Both partners can see and create events
-- [ ] **AGND-04**: User can set reminders for events
 
 ## v2 Requirements
 
+Requirements for Profile & Shared Utilities milestone. Each maps to roadmap phases.
+
+### Profile & Avatar
+
+- [ ] **PROF-01**: User can upload a photo from device gallery or camera
+- [ ] **PROF-02**: User can crop uploaded photo with circular crop tool
+- [ ] **PROF-03**: Uploaded avatar is compressed before storage (target ~200KB)
+- [ ] **PROF-04**: User can edit display name (shown in chat, profile, drawer)
+- [ ] **PROF-05**: Partner can see user's online status (green/gray dot)
+- [ ] **PROF-06**: Partner can see "last seen X ago" when user is offline
+- [ ] **PROF-07**: Online status updates via Supabase Realtime Presence
+
+### Shared Reminders
+
+- [ ] **REMN-01**: User can create a one-time reminder with title and date/time
+- [ ] **REMN-02**: Both partners receive push notification at reminder time
+- [ ] **REMN-03**: Reminder creator attribution shown on reminder card
+- [ ] **REMN-04**: User can mark reminder as completed/dismissed
+- [ ] **REMN-05**: User can view list of upcoming reminders
+- [ ] **REMN-06**: User can view list of past/dismissed reminders
+- [ ] **REMN-07**: Push notification delivery via Supabase Edge Function + pg_cron
+- [ ] **REMN-08**: Service worker handles push event and displays notification
+
+### Shared To-Do Lists
+
+- [ ] **TODO-01**: User can create named to-do lists (e.g., "Groceries", "House")
+- [ ] **TODO-02**: User can add items with checkboxes to a list
+- [ ] **TODO-03**: User can toggle item completion (checkbox)
+- [ ] **TODO-04**: User can assign items to "Me" or "Partner" with visible badge
+- [ ] **TODO-05**: User can set optional due date on each item
+- [ ] **TODO-06**: Items sort by due date (items with dates first, then undated)
+- [ ] **TODO-07**: Both partners see real-time updates when items are added/completed
+- [ ] **TODO-08**: User can delete items and lists
+
+### Infrastructure (Cross-cutting)
+
+- [ ] **INFRA-01**: Fix dual service worker registration (remove manual SW, use vite-plugin-pwa)
+- [ ] **INFRA-02**: New `online_status` table with RLS
+- [ ] **INFRA-03**: New `shared_reminders` table with pair_id RLS
+- [ ] **INFRA-04**: New `todo_lists` and `todo_items` tables with pair_id RLS
+- [ ] **INFRA-05**: `profiles` table partner-read policy (paired users can view partner profile)
+- [ ] **INFRA-06**: Avatar cache busting after upload (append ?v=timestamp)
+
+## v3 Requirements
+
 Deferred to future release. Tracked but not in current roadmap.
 
-### Spotify Integration
+### Profile & Avatar
 
-- **SPOT-01**: User can connect Spotify account
-- **SPOT-02**: Homepage shows now-playing preview from both partners
-- **SPOT-03**: Shared playlist display on homepage
+- **PROF-08**: Default initials avatar before photo uploaded
+- **PROF-09**: Custom status text (e.g., "Busy", "At work")
+- **PROF-10**: Profile themes/customization
 
-### Agenda Advanced
+### Shared Reminders
 
-- **AGND-05**: Google Calendar integration (bidirectional sync)
-- **AGND-06**: Shared reminders with notifications
+- **REMN-09**: Recurring reminders (daily, weekly, monthly)
+- **REMN-10**: Location-based reminders
+- **REMN-11**: Snooze/reschedule on notification
 
-### Notifications
+### Shared To-Do Lists
 
-- **NOTF-01**: Push notifications for new messages
-- **NOTF-02**: Push notifications for event reminders
-- **NOTF-03**: In-app notification center
-
-### Photo Stories
-
-- **PSTR-01**: User can post 24-hour ephemeral photo stories
-- **PSTR-02**: Partner can view and react to stories
+- **TODO-09**: Subtasks on to-do items
+- **TODO-10**: Drag-and-drop reorder
+- **TODO-11**: Task categories/tags
+- **TODO-12**: Gamification/rewards for completion
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Real-time location sharing | Deferred to future version — privacy complexity |
-| Virtual pet | Deferred to future version — not core value |
-| Minigames | Deferred to future version — not core value |
-| Flutter native app | React PWA first, Flutter later |
-| Email/password auth | Google OAuth only — simplicity |
-| AI coaching/therapy | Regulatory risk + retention trap (Couply case study) |
-| Relationship quizzes | Kills retention ( Couply evidence) |
-| Shared finances | Out of scope for couple communication app |
-| Video calling | High complexity, not core to value prop |
-| Social/community features | Private couple space only |
+| Public profiles / profile discovery | Couples-only app, no social features |
+| Kanban boards / project management | Not Asana — keep it simple |
+| Time tracking on tasks | Chat and album already handle this |
+| Comments/threads on tasks | Use chat for discussion |
+| File attachments on tasks | Use shared album |
+| Recurring reminders (v2.0) | Timezone/DST complexity, validate one-time first |
+| Location-based reminders | Battery drain, always-on geolocation |
+| Calendar integration (Google, Apple) | External API dependencies, not core value |
+| Relationship milestones | Low effort but not blocking launch |
 
 ## Traceability
 
@@ -99,42 +91,41 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 1 | Complete |
-| AUTH-02 | Phase 1 | Complete |
-| AUTH-03 | Phase 1 | Complete |
-| AUTH-04 | Phase 1 | Complete |
-| AUTH-05 | Phase 1 | Complete |
-| PROF-01 | Phase 1 | Complete |
-| PROF-02 | Phase 1 | Complete |
-| PROF-03 | Phase 1 | Complete |
-| CHAT-01 | Phase 2 | Complete |
-| CHAT-05 | Phase 2 | Complete |
-| CHAT-06 | Phase 2 | Complete |
-| CHAT-07 | Phase 2 | Complete |
-| CHAT-02 | Phase 3 | Complete |
-| CHAT-03 | Phase 3 | Complete |
-| CHAT-04 | Phase 3 | Complete |
-| HOME-04 | Phase 3 | Complete |
-| HOME-05 | Phase 3 | Complete |
-| HOME-01 | Phase 4 | Pending |
-| HOME-02 | Phase 4 | Pending |
-| HOME-03 | Phase 4 | Pending |
-| NOTE-01 | Phase 5 | Pending |
-| NOTE-02 | Phase 5 | Pending |
-| NOTE-03 | Phase 5 | Pending |
-| AGND-01 | Phase 5 | Pending |
-| AGND-02 | Phase 5 | Pending |
-| AGND-03 | Phase 5 | Pending |
-| AGND-04 | Phase 5 | Pending |
+| PROF-01 | — | Pending |
+| PROF-02 | — | Pending |
+| PROF-03 | — | Pending |
+| PROF-04 | — | Pending |
+| PROF-05 | — | Pending |
+| PROF-06 | — | Pending |
+| PROF-07 | — | Pending |
+| REMN-01 | — | Pending |
+| REMN-02 | — | Pending |
+| REMN-03 | — | Pending |
+| REMN-04 | — | Pending |
+| REMN-05 | — | Pending |
+| REMN-06 | — | Pending |
+| REMN-07 | — | Pending |
+| REMN-08 | — | Pending |
+| TODO-01 | — | Pending |
+| TODO-02 | — | Pending |
+| TODO-03 | — | Pending |
+| TODO-04 | — | Pending |
+| TODO-05 | — | Pending |
+| TODO-06 | — | Pending |
+| TODO-07 | — | Pending |
+| TODO-08 | — | Pending |
+| INFRA-01 | — | Pending |
+| INFRA-02 | — | Pending |
+| INFRA-03 | — | Pending |
+| INFRA-04 | — | Pending |
+| INFRA-05 | — | Pending |
+| INFRA-06 | — | Pending |
 
 **Coverage:**
-
-- v1 requirements: 27 total
-- Mapped to phases: 27
-- Unmapped: 0 ✓
-- Completed (Phases 1-3): 19/27
-- Remaining (Phases 4-5): 8/27
+- v2 requirements: 29 total
+- Mapped to phases: 0
+- Unmapped: 29 ⚠️
 
 ---
-*Requirements defined: 2026-07-24*
-*Last updated: 2026-07-24 after initial definition*
+*Requirements defined: 2026-07-28*
+*Last updated: 2026-07-28 after initial definition*
