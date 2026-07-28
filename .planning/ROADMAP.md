@@ -1,82 +1,125 @@
-# Roadmap: CoupleSpace
+# Roadmap: v2.0 Profile & Shared Utilities
 
-## Overview
+**Milestone:** v2.0 — Profile & Shared Utilities
+**Phases:** 6, 7, 8 (continuing from v1.x phases 1-5)
+**Requirements:** 29 (PROF-01–07, REMN-01–08, TODO-01–08, INFRA-01–06)
 
-CoupleSpace ships as a mobile-first PWA that gives couples a private shared space. The roadmap follows a vertical MVP approach: each phase delivers an end-to-end user capability.
+## Phase 6: Profile Enhancement + Infrastructure Fixes
 
-## Milestones
+**Goal:** Personalize user identity and fix foundational infrastructure
 
-- ✅ **v1.0 MVP** — Phases 1-3 (shipped 2026-07-25)
-- ✅ **v1.1 Complete** — Phases 4-5 (shipped 2026-07-28)
+### Requirements
 
-## Phases
+| Req | Description |
+|-----|-------------|
+| INFRA-01 | Fix dual service worker registration (remove manual SW, use vite-plugin-pwa) |
+| INFRA-02 | New `online_status` table with RLS |
+| INFRA-03 | New `shared_reminders` table with pair_id RLS |
+| INFRA-04 | New `todo_lists` and `todo_items` tables with pair_id RLS |
+| INFRA-05 | `profiles` table partner-read policy (paired users can view partner profile) |
+| INFRA-06 | Avatar cache busting after upload (append ?v=timestamp) |
+| PROF-01 | User can upload a photo from device gallery or camera |
+| PROF-02 | User can crop uploaded photo with circular crop tool |
+| PROF-03 | Uploaded avatar is compressed before storage (target ~200KB) |
+| PROF-04 | User can edit display name (shown in chat, profile, drawer) |
+| PROF-05 | Partner can see user's online status (green/gray dot) |
+| PROF-06 | Partner can see "last seen X ago" when user is offline |
+| PROF-07 | Online status updates via Supabase Realtime Presence |
 
-<details>
-<summary>✅ v1.0 MVP (Phases 1-3) — SHIPPED 2026-07-25</summary>
+**Total:** 13 requirements
 
-- [x] Phase 1: Foundation & Pairing (3/3 plans) — completed 2026-07-24
-- [x] Phase 2: Real-Time Chat (3/3 plans) — completed 2026-07-25
-- [x] Phase 3: Voice & Image Sharing (2/2 plans) — completed 2026-07-25
+### Success Criteria
 
-</details>
+1. User can upload a photo, crop it circular, and see the updated avatar everywhere (chat, profile, drawer)
+2. Partner sees a green dot when user is online and "last seen X ago" when offline
+3. Service worker registers cleanly with no duplicate registrations
+4. Partner can view the other's profile (name + avatar) in drawer and header
+5. Avatar changes appear immediately without stale caching
 
-### 📋 v1.1 Complete (Planned)
+### Dependency Note
 
-- [x] Phase 4: Homepage Dashboard (2/2 plans) — completed 2026-07-27
-- [x] Phase 5: Shared Notes & Agenda (3/3 plans) — completed 2026-07-28
+INFRA-03 and INFRA-04 are database-only (table creation). They enable Phase 7 and Phase 8 respectively but have no frontend dependency in this phase.
 
-## Phase Details
+---
 
-### Phase 4: Homepage Dashboard
+## Phase 7: Shared Reminders + Push Notifications
 
-**Goal**: Couples have a single view showing their relationship at a glance — the daily ritual that drives retention
-**Depends on**: Phase 3
-**Requirements**: HOME-01, HOME-02, HOME-03
-**Success Criteria** (what must be TRUE):
+**Goal:** Let couples set one-time reminders with reliable push delivery
 
-  1. Homepage displays a random photo from the shared album as a daily memory highlight
-  2. User can tap to select a daily mood from predefined emotions
-  3. Partner's mood status is visible on the dashboard in real-time
-  4. Homepage is the primary view after login with a clear, mobile-first layout
+### Requirements
 
-**Plans**: 2 plans
+| Req | Description |
+|-----|-------------|
+| REMN-01 | User can create a one-time reminder with title and date/time |
+| REMN-02 | Both partners receive push notification at reminder time |
+| REMN-03 | Reminder creator attribution shown on reminder card |
+| REMN-04 | User can mark reminder as completed/dismissed |
+| REMN-05 | User can view list of upcoming reminders |
+| REMN-06 | User can view list of past/dismissed reminders |
+| REMN-07 | Push notification delivery via Supabase Edge Function + pg_cron |
+| REMN-08 | Service worker handles push event and displays notification |
 
-Plans:
-**Wave 1**
+**Total:** 8 requirements
 
-- [ ] 04-01-PLAN.md — Database foundation (moods table + random photo RPC) and MemoryHero component
+### Success Criteria
 
-**Wave 2** *(blocked on Wave 1 completion)*
+1. User creates a reminder and both partners receive a push notification at the scheduled time
+2. User can view upcoming and past reminders separately
+3. Reminder creator name is visible on each reminder card
+4. User can dismiss/complete a reminder and it moves to past list
+5. Push notifications work on both Android and iOS (installed PWA)
 
-- [ ] 04-02-PLAN.md — Mood system (store, selector, partner display, modal) and dashboard assembly
+### Dependency Note
 
-### Phase 5: Shared Notes & Agenda
+Depends on Phase 6 completion: stable service worker (INFRA-01), `shared_reminders` table (INFRA-03), and the `DateTimePicker` component built in this phase will be reused by Phase 8.
 
-**Goal**: Couples can collaborate on notes and manage a shared calendar of events
-**Depends on**: Phase 4
-**Requirements**: NOTE-01, NOTE-02, NOTE-03, AGND-01, AGND-02, AGND-03, AGND-04
-**Success Criteria** (what must be TRUE):
+---
 
-  1. User can create a shared note and partner can read and edit it
-  2. Notes are organized chronologically and both partners see the same list
-  3. User can create an event with title, date, and description
-  4. Events display in a date-organized view visible to both partners
-  5. User can set a reminder for an event
+## Phase 8: Shared To-Do Lists
 
-**Plans**: 3 plans
+**Goal:** Manage shared tasks with assignments and due dates in real time
 
-Plans:
+### Requirements
 
-- [x] 05-01-PLAN.md — Database migration (shared_notes + agenda_events tables), Zustand stores (notesStore, agendaStore), AgendaPage with SegmentedTabs
-- [x] 05-02-PLAN.md — EventsTab (CalendarGrid with swipe, EventRow, EventForm), NotesTab (NoteCard, NoteEditor), full agenda.css
-- [x] 05-GAP-01-PLAN.md — Calendar swipe animation smoothing (gap closure)
+| Req | Description |
+|-----|-------------|
+| TODO-01 | User can create named to-do lists (e.g., "Groceries", "House") |
+| TODO-02 | User can add items with checkboxes to a list |
+| TODO-03 | User can toggle item completion (checkbox) |
+| TODO-04 | User can assign items to "Me" or "Partner" with visible badge |
+| TODO-05 | User can set optional due date on each item |
+| TODO-06 | Items sort by due date (items with dates first, then undated) |
+| TODO-07 | Both partners see real-time updates when items are added/completed |
+| TODO-08 | User can delete items and lists |
 
-## Progress
+**Total:** 8 requirements
 
-| Phase | Milestone | Plans Complete | Status | Completed |
-|-------|-----------|----------------|--------|-----------|
-| 1. Foundation & Pairing | v1.0 | 3/3 | Complete | 2026-07-24 |
-| 2. Real-Time Chat | v1.0 | 3/3 | Complete | 2026-07-25 |
-| 3. Voice & Image Sharing | v1.0 | 2/2 | Complete | 2026-07-25 |
-| 4. Homepage Dashboard | v1.1 | 2/2 | Complete | 2026-07-27 |
-| 5. Shared Notes & Agenda | v1.1 | 3/3 | Complete | 2026-07-28 |
+### Success Criteria
+
+1. User creates a named list, adds items, and both partners see changes in real time
+2. User assigns an item to "Partner" and the partner sees the badge on their end
+3. Items with due dates sort above undated items; overdue items are visually distinct
+4. User checks off an item and the checkbox state syncs instantly to partner
+5. User deletes an item or list and it disappears for both partners
+
+### Dependency Note
+
+Depends on Phase 7 completion: `DateTimePicker` component, `AgendaPage` tab navigation, and `todo_lists`/`todo_items` tables (INFRA-04 from Phase 6).
+
+---
+
+## Coverage Validation
+
+| Requirement Group | Count | Phase | Mapped |
+|-------------------|-------|-------|--------|
+| INFRA-01–06 | 6 | Phase 6 | 6/6 ✓ |
+| PROF-01–07 | 7 | Phase 6 | 7/7 ✓ |
+| REMN-01–08 | 8 | Phase 7 | 8/8 ✓ |
+| TODO-01–08 | 8 | Phase 8 | 8/8 ✓ |
+| **Total** | **29** | | **29/29 ✓** |
+
+**Coverage: 100%**
+
+---
+
+*Created: 2026-07-28*

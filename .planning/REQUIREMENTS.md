@@ -91,40 +91,40 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROF-01 | — | Pending |
-| PROF-02 | — | Pending |
-| PROF-03 | — | Pending |
-| PROF-04 | — | Pending |
-| PROF-05 | — | Pending |
-| PROF-06 | — | Pending |
-| PROF-07 | — | Pending |
-| REMN-01 | — | Pending |
-| REMN-02 | — | Pending |
-| REMN-03 | — | Pending |
-| REMN-04 | — | Pending |
-| REMN-05 | — | Pending |
-| REMN-06 | — | Pending |
-| REMN-07 | — | Pending |
-| REMN-08 | — | Pending |
-| TODO-01 | — | Pending |
-| TODO-02 | — | Pending |
-| TODO-03 | — | Pending |
-| TODO-04 | — | Pending |
-| TODO-05 | — | Pending |
-| TODO-06 | — | Pending |
-| TODO-07 | — | Pending |
-| TODO-08 | — | Pending |
-| INFRA-01 | — | Pending |
-| INFRA-02 | — | Pending |
-| INFRA-03 | — | Pending |
-| INFRA-04 | — | Pending |
-| INFRA-05 | — | Pending |
-| INFRA-06 | — | Pending |
+| PROF-01 | Phase 6 | Pending |
+| PROF-02 | Phase 6 | Pending |
+| PROF-03 | Phase 6 | Pending |
+| PROF-04 | Phase 6 | Pending |
+| PROF-05 | Phase 6 | Pending |
+| PROF-06 | Phase 6 | Pending |
+| PROF-07 | Phase 6 | Pending |
+| REMN-01 | Phase 7 | Pending |
+| REMN-02 | Phase 7 | Pending |
+| REMN-03 | Phase 7 | Pending |
+| REMN-04 | Phase 7 | Pending |
+| REMN-05 | Phase 7 | Pending |
+| REMN-06 | Phase 7 | Pending |
+| REMN-07 | Phase 7 | Pending |
+| REMN-08 | Phase 7 | Pending |
+| TODO-01 | Phase 8 | Pending |
+| TODO-02 | Phase 8 | Pending |
+| TODO-03 | Phase 8 | Pending |
+| TODO-04 | Phase 8 | Pending |
+| TODO-05 | Phase 8 | Pending |
+| TODO-06 | Phase 8 | Pending |
+| TODO-07 | Phase 8 | Pending |
+| TODO-08 | Phase 8 | Pending |
+| INFRA-01 | Phase 6 | Pending |
+| INFRA-02 | Phase 6 | Pending |
+| INFRA-03 | Phase 6 | Pending |
+| INFRA-04 | Phase 6 | Pending |
+| INFRA-05 | Phase 6 | Pending |
+| INFRA-06 | Phase 6 | Pending |
 
 **Coverage:**
 - v2 requirements: 29 total
-- Mapped to phases: 0
-- Unmapped: 29 ⚠️
+- Mapped to phases: 29
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-28*
