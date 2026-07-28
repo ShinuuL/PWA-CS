@@ -1,7 +1,11 @@
+import { useLocation } from 'react-router-dom'
 import { supabase } from '../../shared/lib/supabase'
 import './auth.css'
 
 export default function LoginPage() {
+  const location = useLocation()
+  const from = location.state?.from?.pathname || '/home'
+
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
