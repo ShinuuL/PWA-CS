@@ -10,10 +10,11 @@ import AuthCallback from './features/auth/AuthCallback'
 import ProfilePage from './features/profile/ProfilePage'
 import PartnerProfile from './features/profile/PartnerProfile'
 import SettingsPage from './features/settings/SettingsPage'
-
-const HomePage = () => <div style={{ padding: '1.5rem' }}>Home (Phase 4)</div>
-const ChatPage = () => <div style={{ padding: '1.5rem' }}>Chat (Phase 2)</div>
-const AgendaPage = () => <div style={{ padding: '1.5rem' }}>Agenda (Phase 5)</div>
+import ChatView from './features/chat/ChatView'
+import ChatSettings from './features/chat/ChatSettings'
+import AlbumPage from './features/album/AlbumPage'
+import HomePage from './features/dashboard/HomePage'
+import AgendaPage from './features/agenda/AgendaPage'
 
 function App() {
   const { initialize, loading } = useAuthStore()
@@ -48,7 +49,29 @@ function App() {
             <ProtectedRoute>
               <AppShell>
                 <PairingGate>
-                  <ChatPage />
+                  <ChatView />
+                </PairingGate>
+              </AppShell>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat/settings"
+          element={
+            <ProtectedRoute>
+              <AppShell>
+                <ChatSettings />
+              </AppShell>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/album"
+          element={
+            <ProtectedRoute>
+              <AppShell>
+                <PairingGate>
+                  <AlbumPage />
                 </PairingGate>
               </AppShell>
             </ProtectedRoute>

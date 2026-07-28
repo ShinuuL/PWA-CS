@@ -1,87 +1,39 @@
+# Planning State
+
+## Current Milestone: v2.0 Profile & Shared Utilities
+
+**Started:** 2026-07-28
+**Target:** Personalize user identity and manage shared life together
+
+## Phase Status
+
+| Phase | Name | Status | Progress |
+|-------|------|--------|----------|
+| 6 | Profile Enhancement + Infrastructure Fixes | Planning | 0% |
+| 7 | Shared Reminders + Push Notifications | Blocked by Phase 6 | 0% |
+| 8 | Shared To-Do Lists | Blocked by Phase 7 | 0% |
+
+## Requirements Status
+
+| Group | Total | Done | Blocked |
+|-------|-------|------|---------|
+| INFRA | 6 | 0 | 0 |
+| PROF | 7 | 0 | 0 |
+| REMN | 8 | 0 | 8 |
+| TODO | 8 | 0 | 8 |
+| **Total** | **29** | **0** | **16** |
+
+## Active Phase
+
+**Phase 6** — Profile Enhancement + Infrastructure Fixes
+- Next action: Plan phase (run `/gsd-plan-phase 6`)
+- Dependencies: None (can start immediately)
+
+## Blockers
+
+- None for Phase 6
+- Phase 7 blocked by Phase 6 (stable SW + reminders table)
+- Phase 8 blocked by Phase 7 (DateTimePicker + AgendaPage tabs)
+
 ---
-gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-current_phase: 2
-current_phase_name: Real-Time Chat
-status: execution_complete
-stopped_at: Phase 1 execution complete — ready for verification
-last_updated: "2026-07-24T22:28:00.000Z"
-last_activity: 2026-07-24
-last_activity_desc: Phase 1 execution complete
-progress:
-  total_phases: 5
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
----
-
-# Project State
-
-## Project Reference
-
-See: .planning/PROJECT.md (updated 2026-07-24)
-
-**Core value:** Chat between couples — real-time private messaging is the foundation
-**Current focus:** Phase 2 — Real-Time Chat
-
-## Current Position
-
-Phase: 2 of 5 (Real-Time Chat)
-Plan: 0 of 2 in current phase
-Status: Phase 1 execution complete — ready for Phase 2 planning
-Last activity: 2026-07-24 — Phase 1 execution complete
-
-Progress: [████░░░░░░] 40% (Phase 1 complete)
-
-## Performance Metrics
-
-**Velocity:**
-
-- Total plans completed: 0
-- Average duration: —
-- Total execution time: 0 hours
-
-**By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| - | - | - | - |
-
-**Recent Trend:**
-
-- Last 5 plans: —
-- Trend: —
-
-*Updated after each plan completion*
-
-## Accumulated Context
-
-### Decisions
-
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-- Roadmap created: 5 phases, standard granularity, 27/27 requirements mapped
-- Spotify integration moved to v2 (not in v1 requirements)
-- Shared Notes (NOTE-01..03) included in v1 scope as Phase 5
-
-### Pending Todos
-
-None yet.
-
-### Blockers/Concerns
-
-None yet.
-
-## Deferred Items
-
-| Category | Item | Status | Deferred At |
-|----------|------|--------|-------------|
-| *(none)* | | | |
-
-## Session Continuity
-
-Last session: 2026-07-25T00:15:00.000Z
-Stopped at: Phase 1 plans ready for execution
-Resume file: .planning/phases/01-foundation-pairing/01-PLAN-01.md
+*Last updated: 2026-07-28*

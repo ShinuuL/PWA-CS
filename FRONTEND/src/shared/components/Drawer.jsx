@@ -1,12 +1,13 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
-import { Home, MessageCircle, CalendarDays, Settings, LogOut } from 'lucide-react'
+import { Home, MessageCircle, Images, CalendarDays, Settings, LogOut } from 'lucide-react'
 import useAuthStore from '../../stores/authStore'
 import './drawer.css'
 
 const NAV_ITEMS = [
   { path: '/home', label: 'Homepage', icon: Home, requiresPairing: false },
   { path: '/chat', label: 'Chat', icon: MessageCircle, requiresPairing: true },
+  { path: '/album', label: 'Album', icon: Images, requiresPairing: true },
   { path: '/agenda', label: 'Agenda', icon: CalendarDays, requiresPairing: true },
   { path: '/settings', label: 'Settings', icon: Settings, requiresPairing: false },
 ]
