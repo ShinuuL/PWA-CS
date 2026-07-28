@@ -9,10 +9,10 @@ Requirements for Profile & Shared Utilities milestone. Each maps to roadmap phas
 
 ### Profile & Avatar
 
-- [ ] **PROF-01**: User can upload a photo from device gallery or camera
-- [ ] **PROF-02**: User can crop uploaded photo with circular crop tool
-- [ ] **PROF-03**: Uploaded avatar is compressed before storage (target ~200KB)
-- [ ] **PROF-04**: User can edit display name (shown in chat, profile, drawer)
+- [x] **PROF-01**: User can upload a photo from device gallery or camera
+- [x] **PROF-02**: User can crop uploaded photo with circular crop tool
+- [x] **PROF-03**: Uploaded avatar is compressed before storage (target ~200KB)
+- [x] **PROF-04**: User can edit display name (shown in chat, profile, drawer)
 - [ ] **PROF-05**: Partner can see user's online status (green/gray dot)
 - [ ] **PROF-06**: Partner can see "last seen X ago" when user is offline
 - [x] **PROF-07**: Online status updates via Supabase Realtime Presence ✓
@@ -41,12 +41,12 @@ Requirements for Profile & Shared Utilities milestone. Each maps to roadmap phas
 
 ### Infrastructure (Cross-cutting)
 
-- [ ] **INFRA-01**: Fix dual service worker registration (remove manual SW, use vite-plugin-pwa)
+- [x] **INFRA-01**: Fix dual service worker registration (remove manual SW, use vite-plugin-pwa)
 - [ ] **INFRA-02**: New `online_status` table with RLS
 - [x] **INFRA-03**: New `shared_reminders` table with pair_id RLS ✓
 - [x] **INFRA-04**: New `todo_lists` and `todo_items` tables with pair_id RLS ✓
 - [ ] **INFRA-05**: `profiles` table partner-read policy (paired users can view partner profile)
-- [ ] **INFRA-06**: Avatar cache busting after upload (append ?v=timestamp)
+- [x] **INFRA-06**: Avatar cache busting after upload (append ?v=timestamp)
 
 ## v3 Requirements
 
@@ -91,10 +91,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROF-01 | Phase 6 | Pending |
-| PROF-02 | Phase 6 | Pending |
-| PROF-03 | Phase 6 | Pending |
-| PROF-04 | Phase 6 | Pending |
+| PROF-01 | Phase 6 | Complete |
+| PROF-02 | Phase 6 | Complete |
+| PROF-03 | Phase 6 | Complete |
+| PROF-04 | Phase 6 | Complete |
 | PROF-05 | Phase 6 | Pending |
 | PROF-06 | Phase 6 | Pending |
 | PROF-07 | Phase 6 | Complete |
@@ -114,14 +114,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TODO-06 | Phase 8 | Pending |
 | TODO-07 | Phase 8 | Pending |
 | TODO-08 | Phase 8 | Pending |
-| INFRA-01 | Phase 6 | Pending |
+| INFRA-01 | Phase 6 | Complete |
 | INFRA-02 | Phase 6 | Pending |
 | INFRA-03 | Phase 6 | Complete |
 | INFRA-04 | Phase 6 | Complete |
 | INFRA-05 | Phase 6 | Pending |
-| INFRA-06 | Phase 6 | Pending |
+| INFRA-06 | Phase 6 | Complete |
 
 **Coverage:**
+
 - v2 requirements: 29 total
 - Mapped to phases: 29
 - Unmapped: 0 ✓
