@@ -15,7 +15,7 @@ export default function PairingGate({ children }) {
     })
   }, [])
 
-  if (isPaired === null) return <div>Checking pairing status...</div>
+  if (isPaired === null) return <div className="loading">Checking pairing status...</div>
 
   if (!isPaired) {
     return (
@@ -23,14 +23,14 @@ export default function PairingGate({ children }) {
         {showGenerate ? (
           <>
             <GenerateCode />
-            <button onClick={() => setShowGenerate(false)}>
+            <button className="toggle-button" onClick={() => setShowGenerate(false)}>
               Have a code? Enter it
             </button>
           </>
         ) : (
           <>
             <EnterCode />
-            <button onClick={() => setShowGenerate(true)}>
+            <button className="toggle-button" onClick={() => setShowGenerate(true)}>
               Don't have a code? Generate one
             </button>
           </>
