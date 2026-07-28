@@ -8,21 +8,29 @@ const useAuthStore = create((set, get) => ({
   loading: true,
 
   initialize: async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    set({ session, user: session?.user ?? null, loading: false })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        set({ session, user: session?.user ?? null })
-        if (session?.user) {
-          await get().fetchProfile(session.user.id)
-        } else {
-          set({ profile: null })
-        }
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      if (error) {
+        console.error('Session error:', error)
       }
-    )
+      set({ session, user: session?.user ?? null, loading: false })
 
-    return () => subscription.unsubscribe()
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (_event, session) => {
+          set({ session, user: session?.user ?? null })
+          if (session?.user) {
+            await get().fetchProfile(session.user.id)
+          } else {
+            set({ profile: null })
+          }
+        }
+      )
+
+      return () => subscription.unsubscribe()
+    } catch (err) {
+      console.error('Initialize error:', err)
+      set({ loading: false })
+    }
   },
 
   fetchProfile: async (userId) => {
