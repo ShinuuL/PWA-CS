@@ -1,7 +1,7 @@
 import useAuthStore from '../../stores/authStore'
 
 export function useAuth() {
-  const { session, user, profile, loading, signOut } = useAuthStore()
+  const { session, user, profile, loading, signOut, fetchProfile } = useAuthStore()
 
   return {
     session,
@@ -9,6 +9,7 @@ export function useAuth() {
     profile,
     loading,
     isAuthenticated: !!session,
-    signOut
+    signOut,
+    fetchProfile
   }
 }
