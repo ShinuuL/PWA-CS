@@ -45,7 +45,7 @@ INFRA-03 and INFRA-04 are database-only (table creation). They enable Phase 7 an
 **Plans:** 3 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Database migrations (shared_reminders, todo tables) + usePresence hook
+- [x] 06-01-PLAN.md — Database migrations (shared_reminders, todo tables) + usePresence hook
 - [ ] 06-02-PLAN.md — Avatar upload with crop/compression, ProfilePage auto-save, SW cleanup
 - [ ] 06-03-PLAN.md — StatusDot, online presence in Header/ChatView, PartnerProfileModal
 
