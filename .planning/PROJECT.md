@@ -12,7 +12,8 @@ Chat between couples — real-time private messaging is the foundation. If every
 
 **Shipped:** v1.0 MVP (2026-07-25), v1.1 Homepage Dashboard (2026-07-27), v1.2 Shared Notes & Agenda (2026-07-28)
 **Phases complete:** 5
-**Requirements:** 17/17 v1 requirements done
+**v1 requirements:** 17/17 done
+**v2 requirements:** 0/29 (Phase 6 planning next)
 
 v1.0 delivers: Google OAuth, couple pairing, real-time chat with replies/reactions/delete/typing, WhatsApp-style voice messages, image sharing, and a shared photo album. v1.1 adds homepage dashboard with memory hero, mood tracking, and mini album. v1.2 adds shared notes and event calendar.
 
@@ -47,16 +48,16 @@ v1.0 delivers: Google OAuth, couple pairing, real-time chat with replies/reactio
 - ✓ Shared notes/journal — v1.2
 - ✓ Event calendar with date-organized view — v1.2
 
-### Active (v2.0)
+### Active (v2.0) — Phase 6
 
-- [ ] Avatar upload with crop tool
-- [ ] Display name editing
-- [ ] Online/last seen status visible to partner
-- [ ] One-time shared reminders
-- [ ] Push notification delivery for reminders
-- [ ] Shared to-do lists with checkboxes
-- [ ] To-do items with due dates
-- [ ] To-do items assignable to either partner
+- [ ] Avatar upload with crop tool — Phase 6
+- [ ] Display name editing — Phase 6
+- [ ] Online/last seen status visible to partner — Phase 6
+- [ ] One-time shared reminders — Phase 7
+- [ ] Push notification delivery for reminders — Phase 7
+- [ ] Shared to-do lists with checkboxes — Phase 8
+- [ ] To-do items with due dates — Phase 8
+- [ ] To-do items assignable to either partner — Phase 8
 
 ### Out of Scope
 

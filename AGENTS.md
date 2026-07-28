@@ -87,4 +87,5 @@ This project uses GSD for structured development. Key commands:
 - `docs/Features.md` — Feature definitions
 - `docs/Roadmap.md` — Future features (v2+)
 - `docs/UIUX.md` — UI/UX guidelines
+- `docs/deploy.md` — Deployment guide for all platforms
 - `docs/cosmic-v2.html` — Design reference (validate before implementing new UI)
