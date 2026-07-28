@@ -9,8 +9,7 @@ export default function ProfilePage() {
   const { user, profile, fetchProfile } = useAuth()
   const navigate = useNavigate()
   const [displayName, setDisplayName] = useState('')
-  const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState(null)
+  const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     if (profile) {
@@ -18,26 +17,20 @@ export default function ProfilePage() {
     }
   }, [profile])
 
-  const handleSave = async (e) => {
-    e.preventDefault()
-    if (!displayName.trim()) return
-
-    setSaving(true)
-    setMessage(null)
+  const handleBlur = async () => {
+    if (!user || !displayName.trim()) return
+    if (displayName.trim() === (profile?.display_name || '')) return
 
     const { error } = await supabase
       .from('profiles')
       .update({ display_name: displayName.trim() })
       .eq('id', user.id)
 
-    if (error) {
-      setMessage({ type: 'error', text: error.message })
-    } else {
+    if (!error) {
       await fetchProfile(user.id)
-      setMessage({ type: 'success', text: 'Profile updated!' })
+      setSaved(true)
+      setTimeout(() => setSaved(false), 1500)
     }
-
-    setSaving(false)
   }
 
   return (
@@ -46,7 +39,7 @@ export default function ProfilePage() {
 
       <AvatarUpload />
 
-      <form className="profile-form" onSubmit={handleSave}>
+      <div className="profile-form">
         <div className="profile-field">
           <label htmlFor="display-name">Display Name</label>
           <input
@@ -54,25 +47,14 @@ export default function ProfilePage() {
             type="text"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
+            onBlur={handleBlur}
             placeholder="Your name"
-            disabled={saving}
+            maxLength={30}
           />
+          {saved && <span className="profile-saved-check">&#10003;</span>}
         </div>
 
-        {message && (
-          <div className={`profile-message ${message.type}`}>
-            {message.text}
-          </div>
-        )}
-
         <div className="profile-actions">
-          <button
-            type="submit"
-            className="btn-primary"
-            disabled={saving || !displayName.trim()}
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
           <button
             type="button"
             className="btn-secondary"
@@ -81,7 +63,7 @@ export default function ProfilePage() {
             Back
           </button>
         </div>
-      </form>
+      </div>
     </div>
   )
 }

@@ -1,75 +1,20 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useAuth } from '../auth/useAuth'
-import { supabase } from '../../shared/lib/supabase'
-
-const MAX_SIZE = 5 * 1024 * 1024
+import AvatarCropModal from './AvatarCropModal'
 
 export default function AvatarUpload() {
   const { user, profile, fetchProfile } = useAuth()
-  const [uploading, setUploading] = useState(false)
+  const [showCropModal, setShowCropModal] = useState(false)
   const [preview, setPreview] = useState(null)
-  const [error, setError] = useState(null)
-  const inputRef = useRef(null)
 
   const getInitials = (name) => {
     if (!name) return '?'
     return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
   }
 
-  const handleClick = () => {
-    inputRef.current?.click()
-  }
-
-  const handleFileChange = async (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setError(null)
-
-    if (!file.type.startsWith('image/')) {
-      setError('Please select an image file.')
-      return
-    }
-
-    if (file.size > MAX_SIZE) {
-      setError('Image must be under 5MB.')
-      return
-    }
-
-    setUploading(true)
-    const reader = new FileReader()
-    reader.onload = () => setPreview(reader.result)
-    reader.readAsDataURL(file)
-
-    const ext = file.name.split('.').pop()
-    const filePath = `${user.id}/avatar.${ext}`
-
-    const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(filePath, file, { upsert: true })
-
-    if (uploadError) {
-      setError(uploadError.message)
-      setUploading(false)
-      return
-    }
-
-    const { data: urlData } = supabase.storage
-      .from('avatars')
-      .getPublicUrl(filePath)
-
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({ avatar_url: urlData.publicUrl })
-      .eq('id', user.id)
-
-    if (updateError) {
-      setError(updateError.message)
-    } else {
-      await fetchProfile(user.id)
-    }
-
-    setUploading(false)
+  const handleAvatarUpdated = (newUrl) => {
+    setPreview(newUrl)
+    fetchProfile(user.id)
   }
 
   const avatarUrl = preview || profile?.avatar_url
@@ -77,7 +22,7 @@ export default function AvatarUpload() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
       <div
-        onClick={handleClick}
+        onClick={() => setShowCropModal(true)}
         style={{
           position: 'relative',
           width: 96,
@@ -118,7 +63,7 @@ export default function AvatarUpload() {
           }}
           className="avatar-overlay"
         >
-          {uploading ? 'Uploading...' : 'Change Photo'}
+          Upload Photo
         </div>
       </div>
 
@@ -126,19 +71,11 @@ export default function AvatarUpload() {
         div:hover > .avatar-overlay { opacity: 1 !important; }
       `}</style>
 
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        style={{ display: 'none' }}
+      <AvatarCropModal
+        isOpen={showCropModal}
+        onClose={() => setShowCropModal(false)}
+        onAvatarUpdated={handleAvatarUpdated}
       />
-
-      {error && (
-        <div style={{ color: '#ef4444', fontSize: '0.85rem', textAlign: 'center' }}>
-          {error}
-        </div>
-      )}
     </div>
   )
 }

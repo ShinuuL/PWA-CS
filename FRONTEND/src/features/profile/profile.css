@@ -45,6 +45,19 @@
   cursor: not-allowed;
 }
 
+.profile-saved-check {
+  color: #22c55e;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+  animation: profile-check-fade 1.5s ease forwards;
+}
+
+@keyframes profile-check-fade {
+  0% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 .profile-actions {
   display: flex;
   flex-direction: column;
