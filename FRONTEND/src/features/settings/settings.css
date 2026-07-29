@@ -118,3 +118,86 @@
   color: white;
   font-weight: 600;
 }
+
+/* Push notification toggle */
+.settings-section-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  background: var(--color-bg-input);
+  border-radius: var(--radius-md);
+}
+
+.settings-toggle-label {
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+}
+
+.settings-toggle-switch {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  background: #3a3e50;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  padding: 0;
+}
+
+.settings-toggle-switch.active {
+  background: #B87CFF;
+}
+
+.settings-toggle-switch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settings-toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s;
+}
+
+.settings-toggle-switch.active .settings-toggle-knob {
+  transform: translateX(20px);
+}
+
+.settings-toggle-status {
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  padding: 0 1rem;
+}
+
+.status-granted {
+  color: #22c55e;
+}
+
+.status-denied {
+  color: #ef4444;
+}
+
+.status-default {
+  color: var(--color-text-secondary);
+}
+
+.settings-toggle-hint {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+  padding: 0 1rem;
+}
+
+.settings-push-message {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  padding: 0.875rem 1rem;
+  line-height: 1.5;
+}
