@@ -82,6 +82,16 @@ Plans:
 
 Depends on Phase 6 completion: stable service worker (INFRA-01), `shared_reminders` table (INFRA-03), and the `DateTimePicker` component built in this phase will be reused by Phase 8.
 
+### Plans
+
+**Plans:** 4 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Database migrations (status column + push_subscriptions) + reminderStore + AgendaPage 3-tab integration
+- [ ] 07-02-PLAN.md — Reusable DateTimePicker component (CalendarGrid + scroll-wheel TimePicker)
+- [ ] 07-03-PLAN.md — RemindersTab UI (list, ReminderCard, ReminderForm, swipe-to-dismiss, collapsible completed)
+- [ ] 07-04-PLAN.md — Push notifications (service worker, Edge Functions, pg_cron, chat push, Settings toggle)
+
 ---
 
 ## Phase 8: Shared To-Do Lists
