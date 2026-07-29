@@ -84,13 +84,14 @@ Depends on Phase 6 completion: stable service worker (INFRA-01), `shared_reminde
 
 ### Plans
 
-**Plans:** 4 plans
+**Plans:** 5 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Database migrations (status column + push_subscriptions) + reminderStore + AgendaPage 3-tab integration
+- [ ] 07-01-PLAN.md — Database migrations (status column + push_subscriptions) + reminderStore + AgendaPage 3-tab integration + D-08 client fallback
 - [ ] 07-02-PLAN.md — Reusable DateTimePicker component (CalendarGrid + scroll-wheel TimePicker)
-- [ ] 07-03-PLAN.md — RemindersTab UI (list, ReminderCard, ReminderForm, swipe-to-dismiss, collapsible completed)
-- [ ] 07-04-PLAN.md — Push notifications (service worker, Edge Functions, pg_cron, chat push, Settings toggle)
+- [ ] 07-03-PLAN.md — RemindersTab UI (list, ReminderCard, ReminderForm, swipe-to-dismiss, collapsible completed) — PRIMARY owner of REMN-01
+- [ ] 07-04-PLAN.md — Client push infrastructure (service worker, pushSubscription.js, Settings toggle)
+- [ ] 07-05-PLAN.md — Server push delivery (Edge Functions, pg_cron, chatStore background push)
 
 ---
 
