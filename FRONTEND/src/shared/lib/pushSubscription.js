@@ -72,12 +72,20 @@ export async function subscribeToPush() {
     // Store in Supabase
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
+      // Get user's pair_id from pairs table
+      const { data: pairData } = await supabase
+        .from('pairs')
+        .select('id')
+        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
+        .single()
+
       const subscriptionJson = subscription.toJSON()
       const { error } = await supabase.from('push_subscriptions').insert({
         user_id: user.id,
+        pair_id: pairData?.id,
         endpoint: subscriptionJson.endpoint,
-        keys_p256dh: subscriptionJson.keys?.p256dh,
-        keys_auth: subscriptionJson.keys?.auth
+        p256dh: subscriptionJson.keys?.p256dh,
+        auth: subscriptionJson.keys?.auth
       })
       if (error) {
         console.error('Failed to store push subscription:', error)
