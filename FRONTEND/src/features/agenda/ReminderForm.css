@@ -1,0 +1,111 @@
+/* ReminderForm — follows EventForm pattern */
+
+.reminder-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reminder-form__input,
+.reminder-form__textarea,
+.reminder-form__select {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-family: var(--font-family);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.reminder-form__input:focus,
+.reminder-form__textarea:focus,
+.reminder-form__select:focus {
+  border-color: var(--color-primary);
+}
+
+.reminder-form__input::placeholder,
+.reminder-form__textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.reminder-form__textarea {
+  resize: none;
+  min-height: 60px;
+}
+
+.reminder-form__select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.reminder-form__date-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: border-color 0.15s;
+  text-align: left;
+}
+
+.reminder-form__date-btn:hover {
+  border-color: var(--color-primary);
+}
+
+.reminder-form__date-text {
+  flex: 1;
+  color: var(--color-text-secondary);
+}
+
+.reminder-form__row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.reminder-form__row .reminder-form__select {
+  flex: 1;
+}
+
+.reminder-form__actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.reminder-form__btn {
+  flex: 1;
+  padding: 0.625rem;
+  border-radius: var(--radius-md);
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.reminder-form__btn--cancel {
+  background: var(--color-bg-input);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+.reminder-form__btn--submit {
+  background: var(--color-primary);
+  color: white;
+}
+
+.reminder-form__btn--submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
