@@ -122,12 +122,35 @@ const useChatStore = create((set, get) => ({
             } else {
               set({ messages: [...state.messages, newMsg] })
               if (!state.isInChat) {
-                const { settings: s } = state
-                if (s.notificationSounds || s.messagePreview) {
-                  get().showNotification(
-                    newMsg.profiles?.display_name || 'Partner',
-                    s.messagePreview ? newMsg.content : 'New message'
-                  )
+                const isAppInForeground =
+                  typeof document !== 'undefined' &&
+                  document.visibilityState === 'visible'
+
+                if (isAppInForeground) {
+                  // Foreground: in-app toast only, no push (D-25)
+                  const { settings: s } = state
+                  if (s.notificationSounds || s.messagePreview) {
+                    get().showNotification(
+                      newMsg.profiles?.display_name || 'Partner',
+                      s.messagePreview ? newMsg.content : 'New message'
+                    )
+                  }
+                } else {
+                  // Background: send push via Edge Function (D-25, D-26)
+                  supabase.functions
+                    .invoke('send-chat-push', {
+                      body: {
+                        recipient_id: user.id,
+                        sender_name:
+                          newMsg.profiles?.display_name || 'Partner',
+                        message_text: newMsg.content
+                          ? newMsg.content.substring(0, 50)
+                          : 'New message'
+                      }
+                    })
+                    .catch(() => {
+                      // Push failed — silent fallback, user will see message on next open
+                    })
                 }
               }
             }
