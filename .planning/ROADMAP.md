@@ -177,7 +177,7 @@ Standalone phase — no dependency on prior phases. Requires Spotify Developer c
 
 Plans:
 - [x] 09-01-PLAN.md — Database migration + Edge Functions (spotify-auth, spotify-playlist) + spotifyStore + useSpotifyAuth + env vars
-- [ ] 09-02-PLAN.md — useSpotifyPlayer + SpotifyPlayer card + SpotifySearch + PlaylistManager + auto-rotate + HomePage integration + callback route
+- [x] 09-02-PLAN.md — useSpotifyPlayer + SpotifyPlayer card + SpotifySearch + PlaylistManager + auto-rotate + HomePage integration + callback route
 
 ---
 
