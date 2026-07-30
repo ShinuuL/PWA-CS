@@ -15,6 +15,7 @@ import ChatSettings from './features/chat/ChatSettings'
 import AlbumPage from './features/album/AlbumPage'
 import HomePage from './features/dashboard/HomePage'
 import AgendaPage from './features/agenda/AgendaPage'
+import SpotifyCallback from './features/spotify/SpotifyCallback'
 
 function App() {
   const { initialize, loading } = useAuthStore()
@@ -29,6 +30,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/spotify/callback" element={<SpotifyCallback />} />
         <Route path="/login" element={<LoginPage />} />
 
         <Route
