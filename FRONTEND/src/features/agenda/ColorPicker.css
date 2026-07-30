@@ -1,0 +1,35 @@
+.color-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-bg-card, #1a1a2e);
+  border-radius: var(--radius-lg, 16px);
+  min-height: 200px;
+}
+
+.color-picker .react-colorful {
+  width: 100% !important;
+  height: 180px !important;
+  border-radius: var(--radius-md, 12px);
+}
+
+.color-picker__hex {
+  width: 100%;
+  max-width: 140px;
+  padding: 8px 12px;
+  background: var(--color-bg-input, #16213e);
+  color: var(--color-text, #e0e0e0);
+  border: 1px solid var(--color-border, #2a2a4a);
+  border-radius: var(--radius-sm, 8px);
+  font-size: 14px;
+  font-family: monospace;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.color-picker__hex:focus {
+  border-color: var(--color-primary, #B87CFF);
+}
