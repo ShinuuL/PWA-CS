@@ -45,12 +45,14 @@
   letter-spacing: 0.05em;
   color: var(--color-text-secondary);
   margin-bottom: 0.75rem;
+  padding-left: 0.25rem;
 }
 
 .chat-settings-section-subtitle {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
   margin: 1rem 0 0.5rem;
+  padding-left: 0.25rem;
 }
 
 .chat-settings-row {

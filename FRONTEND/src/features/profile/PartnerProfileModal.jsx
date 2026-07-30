@@ -15,7 +15,7 @@ export default function PartnerProfileModal({ isOpen, onClose }) {
   const [partnerId, setPartnerId] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const { isOnline } = usePresence(pairId, partnerId)
+  const { isOnline } = usePresence(pairId, partnerId, user?.id)
 
   useEffect(() => {
     if (!user || !isOpen) return
@@ -79,10 +79,11 @@ export default function PartnerProfileModal({ isOpen, onClose }) {
         >
           <motion.div
             className="partner-modal-content"
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
           >
             {loading ? (
               <div className="partner-modal-loading">Loading...</div>

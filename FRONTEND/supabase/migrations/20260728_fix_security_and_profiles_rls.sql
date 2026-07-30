@@ -26,6 +26,9 @@ $$;
 -- Drop the restrictive policy
 DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
 
+-- Drop if it already exists from a previous failed run
+DROP POLICY IF EXISTS "Users can view own and partner profile" ON profiles;
+
 -- Create new policy: users can see their own AND their partner's profile
 CREATE POLICY "Users can view own and partner profile" ON profiles
   FOR SELECT USING (

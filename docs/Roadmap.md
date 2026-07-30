@@ -50,6 +50,29 @@ Jogos rápidos para interação entre o casal.
 
 ---
 
+## 🎵 Spotify Random Picker (Phase 9)
+
+Integração com Spotify para playlist compartilhada e sorteio aleatório de músicas na homepage.
+
+### Planejamento
+
+* Vincular conta Spotify via OAuth (requer Premium para playback in-app).
+* Playlist compartilhada entre o casal (criada ou vinculada).
+* Player dedicado na homepage com controles play/pause/skip.
+* Auto-rotate com intervalo configurável (1–30 min).
+* Busca integrada de músicas via Spotify Search API.
+* Gerenciamento da playlist (visualizar, remover músicas) via modal inline.
+* Deduplicação de músicas recentemente reproduzidas.
+* Refresh automático de tokens via Supabase Edge Function.
+
+### Status
+
+* **Spec completo:** `docs/specs/2026-07-29-spotify-random-picker-design.md`
+* **Fase proposta:** Phase 9 (v3.0)
+* **Dependências:** Aguarda conclusão das fases 7 e 8
+
+---
+
 # Regras
 
 ## 1. Implementação

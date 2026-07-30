@@ -20,7 +20,7 @@ export default function Drawer({ open, onClose, isPaired }) {
   const navigate = useNavigate()
   const location = useLocation()
   const signOut = useAuthStore((s) => s.signOut)
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const [partner, setPartner] = useState(null)
   const [showPartnerModal, setShowPartnerModal] = useState(false)
 
@@ -68,80 +68,98 @@ export default function Drawer({ open, onClose, isPaired }) {
   }
 
   return (
-    <AnimatePresence>
-      {open && (
-        <>
-          <motion.div
-            className="drawer-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={onClose}
-          />
-          <motion.div
-            className="drawer"
-            initial={{ x: -280 }}
-            animate={{ x: 0 }}
-            exit={{ x: -280 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          >
-            <div className="drawer-header">
-              <h2>CoupleSpace</h2>
-            </div>
+    <>
+      <AnimatePresence>
+        {open && (
+          <>
+            <motion.div
+              className="drawer-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={onClose}
+            />
+            <motion.div
+              className="drawer"
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            >
+              <div className="drawer-header">
+                <h2>CoupleSpace</h2>
+              </div>
 
-            <nav className="drawer-nav">
-              {isPaired && partner && (
+              <nav className="drawer-nav">
                 <button
-                  className="drawer-partner"
-                  onClick={() => setShowPartnerModal(true)}
+                  className="drawer-user-profile"
+                  onClick={() => { navigate('/profile'); onClose() }}
                 >
-                  <div className="drawer-partner-avatar">
-                    {partner.avatar_url ? (
-                      <img src={partner.avatar_url} alt={partner.display_name} />
+                  <div className="drawer-user-avatar">
+                    {profile?.avatar_url ? (
+                      <img src={profile.avatar_url} alt={profile.display_name} />
                     ) : (
-                      <span className="drawer-partner-initials">
-                        {getInitials(partner.display_name)}
+                      <span className="drawer-user-initials">
+                        {getInitials(profile?.display_name || user?.email)}
                       </span>
                     )}
                   </div>
-                  <span className="drawer-partner-name">{partner.display_name}</span>
+                  <span className="drawer-user-name">{profile?.display_name || user?.email}</span>
                 </button>
-              )}
 
-              {NAV_ITEMS.map((item) => {
-                const Icon = item.icon
-                const locked = item.requiresPairing && !isPaired
-                const active = location.pathname === item.path
-
-                return (
+                {isPaired && partner && (
                   <button
-                    key={item.path}
-                    className={`drawer-nav-item${active ? ' active' : ''}${locked ? ' locked' : ''}`}
-                    onClick={() => handleNav(item)}
+                    className="drawer-partner"
+                    onClick={() => setShowPartnerModal(true)}
                   >
-                    <Icon size={20} />
-                    <span>{item.label}</span>
-                    {locked && <span style={{ marginLeft: 'auto', fontSize: '0.75rem' }}>🔒</span>}
+                    <div className="drawer-partner-avatar">
+                      {partner.avatar_url ? (
+                        <img src={partner.avatar_url} alt={partner.display_name} />
+                      ) : (
+                        <span className="drawer-partner-initials">
+                          {getInitials(partner.display_name)}
+                        </span>
+                      )}
+                    </div>
+                    <span className="drawer-partner-name">{partner.display_name}</span>
                   </button>
-                )
-              })}
-            </nav>
+                )}
 
-            <div className="drawer-footer">
-              <button className="drawer-signout" onClick={handleSignOut}>
-                <LogOut size={20} />
-                <span>Sign Out</span>
-              </button>
-            </div>
-          </motion.div>
-        </>
-      )}
+                {NAV_ITEMS.map((item) => {
+                  const Icon = item.icon
+                  const locked = item.requiresPairing && !isPaired
+                  const active = location.pathname === item.path
+
+                  return (
+                    <button
+                      key={item.path}
+                      className={`drawer-nav-item${active ? ' active' : ''}${locked ? ' locked' : ''}`}
+                      onClick={() => handleNav(item)}
+                    >
+                      <Icon size={20} />
+                      <span>{item.label}</span>
+                      {locked && <span style={{ marginLeft: 'auto', fontSize: '0.75rem' }}>🔒</span>}
+                    </button>
+                  )
+                })}
+              </nav>
+
+              <div className="drawer-footer">
+                <button className="drawer-signout" onClick={handleSignOut}>
+                  <LogOut size={20} />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <PartnerProfileModal
         isOpen={showPartnerModal}
         onClose={() => setShowPartnerModal(false)}
       />
-    </AnimatePresence>
+    </>
   )
 }

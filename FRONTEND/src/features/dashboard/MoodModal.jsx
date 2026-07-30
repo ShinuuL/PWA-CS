@@ -21,7 +21,7 @@ export default function MoodModal({ onClose }) {
         <h3 className="mood-modal__title">Como você está se sentindo?</h3>
         <input
           className="mood-modal__emoji-input"
-          placeholder="Escolha um emoji"
+          placeholder="Escreva um emoji"
           value={emoji}
           onChange={(e) => setEmoji(e.target.value)}
           maxLength={4}

@@ -20,7 +20,10 @@ D:\Dev\PWA CS\
 │   └── .env.local     # Required: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
 ├── docs/              # cosmic-v2.html design ref, Features.md, Roadmap.md, UIUX.md
 ├── .planning/         # GSD workflow state (ROADMAP.md, phases/, milestones/)
-└── .ai/               # Agent role definitions (planner, coder, verifier, reviewer)
+├── .ai/               # Agent role definitions (planner, coder, verifier, reviewer)
+├── fixs/              # Bug fix logs and temporary fix artifacts
+├── planning/          # Planning documents (legacy, prefer .planning/)
+└── graphify-out/      # Output from graphify knowledge graph tool
 ```
 
 ## Developer Commands
@@ -38,6 +41,20 @@ npm run preview      # Preview production build locally
 ```
 
 There is **no TypeScript** — the project uses plain JSX. There is **no backend** in this repo yet (FastAPI is planned but not scaffolded).
+
+## Gotchas for Agents
+
+- **Always `cd FRONTEND` first.** Running `npm` from repo root will fail or do nothing useful.
+- **No TypeScript.** Never create `.tsx` files or add type annotations. All components are `.jsx`.
+- **Linter is oxlint, not eslint.** Don't run `eslint`. Use `npm run lint` from `FRONTEND/`.
+- **The animation package is `framer-motion`, not `motion`.**
+- **React Router is v7, not v6.** Route syntax differs — check existing routes before adding new ones.
+- **No backend here.** There are no API endpoints, no Express, no server code. Everything goes through Supabase client.
+- **CSS is co-located, not global.** Each component gets its own `.css` file imported in the component. Don't create shared CSS files.
+- **PWA config lives in `vite.config.js`.** If you modify caching, manifest, or service worker behavior, edit the `VitePWA` plugin config there.
+- **Test setup is in `src/test/setup.js`.** Vitest config is in `vite.config.js`, not a separate vitest config file.
+- **`.env.local` is required but gitignored.** Copy from `.env.example`. Never commit `.env.local`.
+- **Supabase migrations are in `FRONTEND/supabase/migrations/`.** These are SQL files applied via Supabase dashboard/CLI — they are not run by the app.
 
 ## Environment Setup
 
