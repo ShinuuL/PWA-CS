@@ -126,6 +126,14 @@ Plans:
 
 Depends on Phase 7 completion: `DateTimePicker` component, `AgendaPage` tab navigation, and `todo_lists`/`todo_items` tables (INFRA-04 from Phase 6).
 
+### Plans
+
+**Plans:** 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — todoStore (Zustand + Realtime), color column migration, react-colorful, ColorPicker component
+- [ ] 08-02-PLAN.md — ListsTab UI, ListCard, ItemRow, ListForm, ItemForm, AgendaPage 4th tab integration
+
 ---
 
 ## Coverage Validation
