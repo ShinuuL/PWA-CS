@@ -136,6 +136,51 @@ Plans:
 
 ---
 
+## Phase 9: Spotify Random Picker
+
+**Goal:** Add a Spotify-powered music player to the homepage with random song rotation, search, and playlist management
+
+### Requirements
+
+| Req | Description |
+|-----|-------------|
+| SPOT-01 | User can connect Spotify account via OAuth |
+| SPOT-02 | User can link a shared playlist to the app |
+| SPOT-03 | Player card shows current track with album art |
+| SPOT-04 | User can play/pause/skip from the homepage |
+| SPOT-05 | Auto-rotate picks random song at configurable interval |
+| SPOT-06 | User can search and add songs via Spotify Search API |
+| SPOT-07 | User can view and manage playlist (remove tracks) |
+| SPOT-08 | Recently played songs are not repeated |
+| SPOT-09 | Token refresh happens automatically |
+| SPOT-10 | Feature degrades gracefully without Premium |
+
+**Total:** 10 requirements
+
+### Success Criteria
+
+1. User connects Spotify via OAuth and the player card appears on homepage
+2. Both partners see the currently playing track with album art in real time
+3. User can play/pause/skip directly from the homepage card
+4. Auto-rotate picks a random song at the configured interval without repeating recent tracks
+5. User can search for songs via Spotify Search API and add them to the shared playlist
+6. User can view and manage the playlist (remove tracks) from the homepage card
+7. Feature degrades gracefully when Spotify Premium is not active (shows upgrade prompt)
+
+### Dependency Note
+
+Standalone phase — no dependency on prior phases. Requires Spotify Developer credentials and Supabase project with Edge Functions enabled.
+
+### Plans
+
+**Plans:** 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Database migration + Edge Functions (spotify-auth, spotify-playlist) + spotifyStore + useSpotifyAuth + env vars
+- [ ] 09-02-PLAN.md — useSpotifyPlayer + SpotifyPlayer card + SpotifySearch + PlaylistManager + auto-rotate + HomePage integration + callback route
+
+---
+
 ## Coverage Validation
 
 | Requirement Group | Count | Phase | Mapped |
@@ -144,7 +189,8 @@ Plans:
 | PROF-01–07 | 7 | Phase 6 | 7/7 ✓ |
 | REMN-01–08 | 8 | Phase 7 | 8/8 ✓ |
 | TODO-01–08 | 8 | Phase 8 | 8/8 ✓ |
-| **Total** | **29** | | **29/29 ✓** |
+| SPOT-01–10 | 10 | Phase 9 | 10/10 ✓ |
+| **Total** | **39** | | **39/39 ✓** |
 
 **Coverage: 100%**
 

@@ -71,6 +71,19 @@ Deferred to future release. Tracked but not in current roadmap.
 - **TODO-11**: Task categories/tags
 - **TODO-12**: Gamification/rewards for completion
 
+### Spotify Random Picker
+
+- [ ] **SPOT-01**: User can connect Spotify account via OAuth
+- [ ] **SPOT-02**: User can link a shared playlist to the app
+- [ ] **SPOT-03**: Player card shows current track with album art
+- [ ] **SPOT-04**: User can play/pause/skip from the homepage
+- [ ] **SPOT-05**: Auto-rotate picks random song at configurable interval
+- [ ] **SPOT-06**: User can search and add songs via Spotify Search API
+- [ ] **SPOT-07**: User can view and manage playlist (remove tracks)
+- [ ] **SPOT-08**: Recently played songs are not repeated
+- [ ] **SPOT-09**: Token refresh happens automatically
+- [ ] **SPOT-10**: Feature degrades gracefully without Premium
+
 ## Out of Scope
 
 | Feature | Reason |
@@ -120,11 +133,22 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-04 | Phase 6 | Complete |
 | INFRA-05 | Phase 6 | Complete |
 | INFRA-06 | Phase 6 | Complete |
+| SPOT-01 | Phase 9 | Pending |
+| SPOT-02 | Phase 9 | Pending |
+| SPOT-03 | Phase 9 | Pending |
+| SPOT-04 | Phase 9 | Pending |
+| SPOT-05 | Phase 9 | Pending |
+| SPOT-06 | Phase 9 | Pending |
+| SPOT-07 | Phase 9 | Pending |
+| SPOT-08 | Phase 9 | Pending |
+| SPOT-09 | Phase 9 | Pending |
+| SPOT-10 | Phase 9 | Pending |
 
 **Coverage:**
 
 - v2 requirements: 29 total
-- Mapped to phases: 29
+- v3 requirements (Spotify): 10 total
+- Mapped to phases: 39
 - Unmapped: 0 ✓
 
 ---
