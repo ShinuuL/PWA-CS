@@ -382,6 +382,7 @@ const useSpotifyStore = create((set, get) => ({
     }, intervalMs)
 
     set({ autoRotateTimer: timer })
+    get().setupVisibilityHandler()
   },
 
   stopAutoRotate: () => {
@@ -389,6 +390,40 @@ const useSpotifyStore = create((set, get) => ({
     if (autoRotateTimer) {
       clearInterval(autoRotateTimer)
       set({ autoRotateTimer: null })
+    }
+  },
+
+  setupVisibilityHandler: () => {
+    const { visibilityHandler } = get()
+    if (visibilityHandler) return // already set up
+
+    const handler = () => {
+      const { config, autoRotateTimer } = get()
+      if (!config?.is_enabled) return
+
+      if (document.hidden) {
+        // Pause auto-rotate when tab hidden
+        if (autoRotateTimer) {
+          clearInterval(autoRotateTimer)
+          set({ autoRotateTimer: null })
+        }
+      } else {
+        // Resume auto-rotate when tab visible
+        if (!autoRotateTimer) {
+          get().startAutoRotate()
+        }
+      }
+    }
+
+    document.addEventListener('visibilitychange', handler)
+    set({ visibilityHandler: handler })
+  },
+
+  cleanupVisibilityHandler: () => {
+    const { visibilityHandler } = get()
+    if (visibilityHandler) {
+      document.removeEventListener('visibilitychange', visibilityHandler)
+      set({ visibilityHandler: null })
     }
   },
 
@@ -462,6 +497,7 @@ const useSpotifyStore = create((set, get) => ({
 
   cleanup: () => {
     get().stopAutoRotate()
+    get().cleanupVisibilityHandler()
     set({
       config: null,
       currentTrack: null,
@@ -475,6 +511,7 @@ const useSpotifyStore = create((set, get) => ({
       deviceId: null,
       accessToken: null,
       pairId: null,
+      visibilityHandler: null,
     })
   },
 }))
