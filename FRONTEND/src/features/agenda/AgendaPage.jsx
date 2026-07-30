@@ -3,10 +3,12 @@ import { usePairing } from '../pairing/usePairing'
 import useNotesStore from '../../stores/notesStore'
 import useAgendaStore from '../../stores/agendaStore'
 import useReminderStore from '../../stores/reminderStore'
+import useTodoStore from '../../stores/todoStore'
 import SegmentedTabs from './SegmentedTabs'
 import EventsTab from './EventsTab'
 import RemindersTab from './RemindersTab'
 import NotesTab from './NotesTab'
+import ListsTab from './ListsTab'
 import './agenda.css'
 
 export default function AgendaPage() {
@@ -17,6 +19,8 @@ export default function AgendaPage() {
   const cleanupNotes = useNotesStore((s) => s.cleanup)
   const initializeReminders = useReminderStore((s) => s.initializeReminders)
   const cleanupReminders = useReminderStore((s) => s.cleanup)
+  const initializeTodos = useTodoStore((s) => s.initializeTodos)
+  const cleanupTodos = useTodoStore((s) => s.cleanup)
 
   const [activeTab, setActiveTab] = useState('events')
 
@@ -27,6 +31,7 @@ export default function AgendaPage() {
         initializeAgenda(pair.id)
         initializeReminders(pair.id)
         initializeNotes(pair.id)
+        initializeTodos(pair.id)
       }
     })
     return () => {
@@ -34,12 +39,14 @@ export default function AgendaPage() {
       cleanupAgenda()
       cleanupReminders()
       cleanupNotes()
+      cleanupTodos()
     }
-  }, [checkPairStatus, initializeAgenda, cleanupAgenda, initializeReminders, cleanupReminders, initializeNotes, cleanupNotes])
+  }, [checkPairStatus, initializeAgenda, cleanupAgenda, initializeReminders, cleanupReminders, initializeNotes, cleanupNotes, initializeTodos, cleanupTodos])
 
   const tabs = [
     { id: 'events', label: 'Eventos' },
     { id: 'reminders', label: 'Lembretes' },
+    { id: 'lists', label: 'Listas' },
     { id: 'notes', label: 'Notas' }
   ]
 
@@ -62,6 +69,11 @@ export default function AgendaPage() {
         {activeTab === 'notes' && (
           <div className="agenda__tab-content">
             <NotesTab />
+          </div>
+        )}
+        {activeTab === 'lists' && (
+          <div className="agenda__tab-content">
+            <ListsTab />
           </div>
         )}
       </div>

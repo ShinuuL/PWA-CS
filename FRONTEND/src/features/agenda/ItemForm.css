@@ -1,0 +1,132 @@
+.item-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.item-form__input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--color-bg-input, #16213e);
+  color: var(--color-text);
+  border: 1px solid var(--color-border, #2a2a4a);
+  border-radius: var(--radius-md, 12px);
+  font-size: 0.9375rem;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.item-form__input:focus {
+  border-color: var(--color-primary);
+}
+
+.item-form__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.item-form__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.item-form__assignee-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.item-form__assignee-btn {
+  flex: 1;
+  padding: 0.625rem;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.item-form__assignee-btn--active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.item-form__date-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 1rem;
+  background: var(--color-bg-input, #16213e);
+  border-radius: var(--radius-md);
+}
+
+.item-form__date-text {
+  font-size: 0.875rem;
+  color: var(--color-text);
+}
+
+.item-form__date-remove {
+  background: none;
+  border: none;
+  color: #FF6B6B;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.item-form__date-picker-toggle {
+  padding: 0.625rem 1rem;
+  background: none;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.item-form__date-picker-toggle:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.item-form__actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.item-form__cancel {
+  flex: 1;
+  padding: 0.75rem;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.item-form__submit {
+  flex: 1;
+  padding: 0.75rem;
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.item-form__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
