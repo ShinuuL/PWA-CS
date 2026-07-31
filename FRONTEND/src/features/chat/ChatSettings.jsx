@@ -40,15 +40,15 @@ export default function ChatSettings() {
 
   return (
     <div className="chat-settings-page">
-      <div className="chat-settings-header">
+      <header className="chat-settings-header">
         <button className="chat-settings-back" onClick={() => navigate('/chat')} aria-label="Back to chat">
-          <ArrowLeft size={24} />
+          <ArrowLeft size={20} />
         </button>
         <h2>Chat Settings</h2>
-      </div>
+      </header>
 
-      <div className="chat-settings-section">
-        <p className="chat-settings-section-title">Notifications</p>
+      <section className="chat-settings-section">
+        <span className="chat-settings-section-title">NOTIFICATIONS</span>
 
         {notificationPermission !== 'granted' && (
           <button className="chat-settings-enable-notif" onClick={handleEnableNotifications}>
@@ -56,31 +56,33 @@ export default function ChatSettings() {
           </button>
         )}
 
-        <div className="chat-settings-row">
-          <span className="chat-settings-label">Notification Sounds</span>
-          <Toggle
-            checked={settings.notificationSounds}
-            onChange={(v) => updateSetting('notificationSounds', v)}
-          />
+        <div className="chat-settings-card">
+          <div className="chat-settings-item">
+            <span className="chat-settings-label">Notification Sounds</span>
+            <Toggle
+              checked={settings.notificationSounds}
+              onChange={(v) => updateSetting('notificationSounds', v)}
+            />
+          </div>
+          <div className="chat-settings-item">
+            <span className="chat-settings-label">Message Preview</span>
+            <Toggle
+              checked={settings.messagePreview}
+              onChange={(v) => updateSetting('messagePreview', v)}
+            />
+          </div>
         </div>
-        <div className="chat-settings-row">
-          <span className="chat-settings-label">Message Preview</span>
-          <Toggle
-            checked={settings.messagePreview}
-            onChange={(v) => updateSetting('messagePreview', v)}
-          />
-        </div>
-        <p className="chat-settings-note">Notifications are global for all chats</p>
-      </div>
+        <p className="chat-settings-section-subtitle">Notifications are global for all chats</p>
+      </section>
 
-      <div className="chat-settings-section">
-        <p className="chat-settings-section-title">Appearance</p>
+      <section className="chat-settings-section">
+        <span className="chat-settings-section-title">APPEARANCE</span>
 
-        <div className="chat-settings-theme-group">
+        <div className="chat-settings-btn-group triple">
           {THEMES.map(t => (
             <button
               key={t.value}
-              className={`chat-settings-theme-btn ${settings.theme === t.value ? 'active' : ''}`}
+              className={`chat-settings-group-btn ${settings.theme === t.value ? 'active' : ''}`}
               onClick={() => updateSetting('theme', t.value)}
             >
               {t.label}
@@ -88,33 +90,34 @@ export default function ChatSettings() {
           ))}
         </div>
 
-        <p className="chat-settings-section-subtitle">Font Size</p>
-        <div className="chat-settings-font-group">
+        <label className="chat-settings-input-label">Font Size</label>
+        <div className="chat-settings-btn-group quad">
           {FONT_SIZES.map(f => (
             <button
               key={f.value}
-              className={`chat-settings-font-btn ${settings.fontSize === f.value ? 'active' : ''}`}
+              className={`chat-settings-group-btn ${settings.fontSize === f.value ? 'active' : ''}`}
               onClick={() => updateSetting('fontSize', f.value)}
-              style={{ fontSize: `${f.value}px` }}
             >
               {f.label}
             </button>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="chat-settings-section">
-        <p className="chat-settings-section-title">Chat</p>
+      <section className="chat-settings-section">
+        <span className="chat-settings-section-title">CHAT</span>
 
-        <div className="chat-settings-row">
-          <span className="chat-settings-label">Read Receipts</span>
-          <Toggle
-            checked={settings.readReceipts}
-            onChange={(v) => updateSetting('readReceipts', v)}
-          />
+        <div className="chat-settings-card">
+          <div className="chat-settings-item">
+            <span className="chat-settings-label">Read Receipts</span>
+            <Toggle
+              checked={settings.readReceipts}
+              onChange={(v) => updateSetting('readReceipts', v)}
+            />
+          </div>
         </div>
-        <p className="chat-settings-note">When off, delivery indicators are hidden for both users</p>
-      </div>
+        <p className="chat-settings-section-subtitle">When off, delivery indicators are hidden for both users</p>
+      </section>
     </div>
   )
 }
