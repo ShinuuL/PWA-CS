@@ -1,10 +1,17 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  flex: 1;
+  min-height: 0;
   background: var(--color-bg-dark);
   position: relative;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .chat-container {
+    height: 100%;
+  }
 }
 
 .chat-header {
@@ -1133,10 +1140,6 @@
 }
 
 @media (max-width: 768px) {
-  .chat-container {
-    height: 100dvh;
-  }
-
   .chat-messages {
     padding: 0.5rem 0.75rem;
   }
@@ -1177,3 +1180,5 @@
     padding: 0.375rem 0.5rem;
   }
 }
+
+
