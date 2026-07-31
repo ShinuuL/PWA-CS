@@ -9,16 +9,16 @@ import './AvatarCropModal.css'
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024 // 15MB
 
-function getCroppedImg(imageSrc, crop) {
+function getCroppedImg(imageSrc, crop, displayWidth, displayHeight) {
   return new Promise((resolve, reject) => {
     const image = new Image()
     image.onload = () => {
       const canvas = document.createElement('canvas')
-      const scaleX = image.naturalWidth / image.width
-      const scaleY = image.naturalHeight / image.height
+      const scaleX = image.naturalWidth / displayWidth
+      const scaleY = image.naturalHeight / displayHeight
 
-      canvas.width = crop.width
-      canvas.height = crop.height
+      canvas.width = crop.width * scaleX
+      canvas.height = crop.height * scaleY
       const ctx = canvas.getContext('2d')
 
       ctx.drawImage(
@@ -29,8 +29,8 @@ function getCroppedImg(imageSrc, crop) {
         crop.height * scaleY,
         0,
         0,
-        crop.width,
-        crop.height
+        canvas.width,
+        canvas.height
       )
 
       canvas.toBlob(
@@ -103,7 +103,9 @@ export default function AvatarCropModal({ isOpen, onClose, onAvatarUpdated }) {
     setError(null)
 
     try {
-      const blob = await getCroppedImg(imgSrc, completedCrop)
+      const imgElement = imgRef.current
+      if (!imgElement) return
+      const blob = await getCroppedImg(imgSrc, completedCrop, imgElement.clientWidth, imgElement.clientHeight)
 
       const filePath = `${user.id}/avatar.${Date.now()}.jpg`
 

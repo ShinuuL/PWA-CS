@@ -40,6 +40,17 @@ export function usePresence(pairId, partnerId, myUserId) {
     // Register this instance's callbacks
     ref.subscribers.set(callbackId, { setIsOnline, setLastSeen, partnerId, myUserId })
 
+    // Initialize new subscriber from current presence state if channel already subscribed
+    if (ref.subscribed) {
+      const state = ref.channel.presenceState()
+      const allPresences = Object.values(state).flat()
+      const partnerPresence = allPresences.find((p) => p.user_id === partnerId)
+      if (partnerPresence) {
+        setIsOnline(true)
+        setLastSeen(new Date(partnerPresence.online_at))
+      }
+    }
+
     // Only attach presence listeners once (on first subscriber)
     if (ref.subscribers.size === 1) {
       ref.channel

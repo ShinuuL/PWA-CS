@@ -202,3 +202,14 @@
     padding-top: max(1rem, env(safe-area-inset-top));
   }
 }
+
+@media (min-width: 769px) {
+  .chat-settings-page {
+    max-width: 560px;
+    padding: 2rem;
+  }
+
+  .chat-settings-section {
+    margin-bottom: 2.5rem;
+  }
+}

@@ -136,7 +136,7 @@
 .chat-message-row {
   display: flex;
   align-items: flex-end;
-  gap: 0.5rem;
+  gap: 0.25rem;
   max-width: 85%;
   position: relative;
   transition: transform 0.1s ease-out;
@@ -152,8 +152,8 @@
 }
 
 .chat-avatar {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
@@ -177,7 +177,7 @@
 }
 
 .chat-avatar-spacer {
-  width: 28px;
+  width: 24px;
   flex-shrink: 0;
 }
 

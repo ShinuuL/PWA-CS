@@ -76,8 +76,13 @@ export async function subscribeToPush() {
       const { data: pairData } = await supabase
         .from('pairs')
         .select('id')
-        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
+        .or(`user_one.eq.${user.id},user_two.eq.${user.id}`)
         .single()
+
+      if (!pairData?.id) {
+        console.error('No pair found for push subscription')
+        return subscription
+      }
 
       const subscriptionJson = subscription.toJSON()
       const { error } = await supabase.from('push_subscriptions').insert({
