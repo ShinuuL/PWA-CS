@@ -87,6 +87,28 @@
   max-width: 100%;
 }
 
+/* Circular crop overrides for avatar crop modal */
+.avatar-crop-crop-area .ReactCrop__crop-selection {
+  border-radius: 50%;
+  box-shadow: 0 0 0 9999em rgba(0, 0, 0, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Circular drag handles on crop corners */
+.avatar-crop-crop-area .ReactCrop__drag-handle {
+  border-radius: 50%;
+  width: 10px !important;
+  height: 10px !important;
+  border: 2px solid white !important;
+  background: var(--color-primary, #6366f1) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Hide the rule-of-thirds grid lines inside circular crop */
+.avatar-crop-crop-area .ReactCrop__crop-selection::after {
+  display: none;
+}
+
 .avatar-crop-error {
   margin-top: 0.75rem;
   padding: 0.625rem 0.875rem;
