@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../auth/useAuth'
 import AvatarCropModal from './AvatarCropModal'
 
@@ -16,6 +16,13 @@ export default function AvatarUpload() {
     setPreview(newUrl)
     fetchProfile(user.id)
   }
+
+  // Clear preview once the profile's avatar_url has been updated via fetchProfile
+  useEffect(() => {
+    if (preview && profile?.avatar_url && profile.avatar_url !== preview) {
+      setPreview(null)
+    }
+  }, [preview, profile?.avatar_url])
 
   const avatarUrl = preview || profile?.avatar_url
 

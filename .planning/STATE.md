@@ -53,8 +53,16 @@ progress:
 
 - None — all phases complete
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260730-tso | Fix all remaining bugs from the previous session | 2026-07-30 | 3868642 | [260730-tso-fix-all-remaining-bugs-from-the-previous](./quick/260730-tso-fix-all-remaining-bugs-from-the-previous/) |
+
 ---
 *Last updated: 2026-07-30*
+
+Last activity: 2026-07-30 - Completed quick task 260730-tso: Fix all remaining bugs from the previous session
 
 ## Session
 

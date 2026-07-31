@@ -1,33 +1,37 @@
+/* Container de Configurações (Desktop Centralizado / Mobile Full) */
 .chat-settings-page {
-  padding: 1.5rem;
-  max-width: 480px;
+  width: 100%;
+  max-width: 500px;
   margin: 0 auto;
+  padding: 24px 16px;
+  box-sizing: border-box;
 }
 
 .chat-settings-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .chat-settings-header h2 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
   margin: 0;
   color: var(--color-text-primary);
 }
 
 .chat-settings-back {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
   background: none;
   border: none;
   color: var(--color-text-primary);
+  font-size: 1.2rem;
   cursor: pointer;
-  border-radius: 50%;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
   transition: background 0.15s;
 }
 
@@ -35,35 +39,44 @@
   background: var(--color-bg-input);
 }
 
+/* Estrutura das Seções */
 .chat-settings-section {
-  margin-bottom: 2rem;
+  margin-bottom: 24px;
 }
 
 .chat-settings-section-title {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
   color: var(--color-text-secondary);
-  margin-bottom: 0.75rem;
-  padding-left: 0.25rem;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .chat-settings-section-subtitle {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
-  margin: 1rem 0 0.5rem;
-  padding-left: 0.25rem;
+  margin-top: 6px;
+  padding-left: 0;
 }
 
-.chat-settings-row {
+/* Cards e Listas (Notification, Chat) */
+.chat-settings-card {
+  background-color: var(--color-bg-input);
+  border-radius: 12px;
+}
+
+.chat-settings-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.875rem 1rem;
-  background: var(--color-bg-input);
-  border-radius: var(--radius-md);
-  margin-bottom: 0.5rem;
-  min-height: 44px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.chat-settings-item:last-child {
+  border-bottom: none;
 }
 
 .chat-settings-label {
@@ -71,21 +84,19 @@
   color: var(--color-text-primary);
 }
 
-.chat-settings-note {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  padding: 0 0.25rem;
-}
-
+/* Toggle Switch */
 .chat-settings-toggle {
-  position: relative;
-  width: 48px;
-  height: 28px;
-  border-radius: 14px;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
   border: none;
+  background: var(--color-border);
+  position: relative;
   cursor: pointer;
   transition: background 0.2s;
+  padding: 0;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .chat-settings-toggle.on {
@@ -104,34 +115,88 @@
 .chat-settings-toggle__knob {
   position: absolute;
   top: 2px;
-  width: 24px;
-  height: 24px;
-  background: white;
+  left: 2px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
+  background: white;
   transition: transform 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .chat-settings-toggle.on .chat-settings-toggle__knob {
-  transform: translateX(22px);
+  transform: translateX(20px);
 }
 
 .chat-settings-toggle.off .chat-settings-toggle__knob {
-  transform: translateX(2px);
+  transform: translateX(0);
 }
 
+/* Botões de Grupo (APPEARANCE) */
+.chat-settings-btn-group {
+  display: grid;
+  gap: 6px;
+  background-color: var(--color-bg-input);
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+/* Grid de 3 botões para Light / Dark / System */
+.chat-settings-btn-group.triple {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Grid de 4 botões para Font Size */
+.chat-settings-btn-group.quad {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.chat-settings-group-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-secondary);
+  padding: 10px 0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  white-space: nowrap;
+  font-family: var(--font-family);
+}
+
+/* Botão selecionado/ativo */
+.chat-settings-group-btn.active {
+  background-color: var(--color-bg-card);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.chat-settings-group-btn:hover:not(.active) {
+  background: var(--color-bg-card);
+}
+
+.chat-settings-input-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin: 12px 0 6px 0;
+}
+
+/* Enable Notifications Button */
 .chat-settings-enable-notif {
   width: 100%;
   padding: 0.875rem;
   border: 1px solid var(--color-primary);
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   background: transparent;
   color: var(--color-primary);
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.2s;
   font-family: var(--font-family);
-  margin-bottom: 0.75rem;
+  margin-bottom: 12px;
   min-height: 44px;
 }
 
@@ -139,77 +204,20 @@
   background: rgba(184, 124, 255, 0.1);
 }
 
-.chat-settings-theme-group {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.chat-settings-theme-btn {
-  flex: 1;
-  padding: 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-input);
-  color: var(--color-text-primary);
-  font-size: 0.9375rem;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: var(--font-family);
-  min-height: 44px;
-}
-
-.chat-settings-theme-btn.active {
-  border-color: var(--color-primary);
-  background: rgba(184, 124, 255, 0.15);
-  color: var(--color-primary);
-}
-
-.chat-settings-theme-btn:hover:not(.active) {
-  background: var(--color-bg-card);
-}
-
-.chat-settings-font-group {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.chat-settings-font-btn {
-  flex: 1;
-  padding: 0.75rem 0.5rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-input);
-  color: var(--color-text-primary);
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: var(--font-family);
-  min-height: 44px;
-}
-
-.chat-settings-font-btn.active {
-  border-color: var(--color-primary);
-  background: rgba(184, 124, 255, 0.15);
-  color: var(--color-primary);
-}
-
-.chat-settings-font-btn:hover:not(.active) {
-  background: var(--color-bg-card);
-}
-
+/* Responsividade Mobile */
 @media (max-width: 768px) {
   .chat-settings-page {
-    padding: 1rem;
-    padding-top: max(1rem, env(safe-area-inset-top));
+    padding: 16px;
+    padding-top: max(16px, env(safe-area-inset-top));
   }
 }
 
-@media (min-width: 769px) {
-  .chat-settings-page {
-    max-width: 560px;
-    padding: 2rem;
+@media (max-width: 480px) {
+  .chat-settings-btn-group.quad {
+    font-size: 0.75rem;
   }
-
-  .chat-settings-section {
-    margin-bottom: 2.5rem;
+  
+  .chat-settings-group-btn {
+    padding: 8px 0;
   }
 }

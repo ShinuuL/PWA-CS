@@ -58,6 +58,7 @@ export default function AvatarCropModal({ isOpen, onClose, onAvatarUpdated }) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState(null)
   const imgRef = useRef(null)
+  const cropWrapperRef = useRef(null)
   const fileInputRef = useRef(null)
 
   const getInitialCrop = useCallback((width, height) => {
@@ -103,9 +104,9 @@ export default function AvatarCropModal({ isOpen, onClose, onAvatarUpdated }) {
     setError(null)
 
     try {
-      const imgElement = imgRef.current
-      if (!imgElement) return
-      const blob = await getCroppedImg(imgSrc, completedCrop, imgElement.clientWidth, imgElement.clientHeight)
+      const wrapperEl = cropWrapperRef.current
+      if (!wrapperEl) return
+      const blob = await getCroppedImg(imgSrc, completedCrop, wrapperEl.clientWidth, wrapperEl.clientHeight)
 
       const filePath = `${user.id}/avatar.${Date.now()}.jpg`
 
@@ -207,7 +208,7 @@ export default function AvatarCropModal({ isOpen, onClose, onAvatarUpdated }) {
                   </p>
                 </div>
               ) : (
-                <div className="avatar-crop-crop-area">
+                <div className="avatar-crop-crop-area" ref={cropWrapperRef}>
                   <ReactCrop
                     crop={crop}
                     onChange={(c) => setCrop(c)}
