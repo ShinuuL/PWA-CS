@@ -1,11 +1,16 @@
 .memory-hero {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   border-radius: var(--radius-lg, 24px);
 }
 
 /* When in grid, stretch to fill row */
 .dashboard-grid > .memory-hero {
   align-self: stretch;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* ===== Card ===== */

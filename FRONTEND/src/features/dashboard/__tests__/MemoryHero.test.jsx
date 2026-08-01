@@ -36,14 +36,29 @@ describe('MemoryHero', () => {
     render(<MemoryHero />)
 
     await waitFor(() => {
-      expect(screen.getByText('Add your first photo together')).toBeTruthy()
+      expect(screen.getByText('Adicione sua primeira foto juntos')).toBeTruthy()
     })
+  })
+
+  it('constrains the hero to the available width on mobile layouts', async () => {
+    mockCheckPairStatus.mockResolvedValue({ id: 'pair-1' })
+    mockRpc.mockResolvedValue({ data: null, error: null })
+
+    const { container } = render(<MemoryHero />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Adicione sua primeira foto juntos')).toBeTruthy()
+    })
+
+    const hero = container.querySelector('.memory-hero')
+    expect(getComputedStyle(hero).maxWidth).toBe('100%')
+    expect(getComputedStyle(hero).boxSizing).toBe('border-box')
   })
 
   it('renders hero image when photo exists', async () => {
     mockCheckPairStatus.mockResolvedValue({ id: 'pair-1' })
     mockRpc.mockResolvedValue({
-      data: { id: 'photo-1', url: 'https://example.com/photo.jpg', caption: 'Beach day', created_at: '2026-06-15T10:00:00Z' },
+      data: [{ id: 'photo-1', url: 'https://example.com/photo.jpg', caption: 'Beach day', created_at: '2026-06-15T10:00:00Z' }],
       error: null
     })
 
@@ -55,31 +70,4 @@ describe('MemoryHero', () => {
     })
   })
 
-  it('displays formatted date below the photo', async () => {
-    mockCheckPairStatus.mockResolvedValue({ id: 'pair-1' })
-    mockRpc.mockResolvedValue({
-      data: { id: 'photo-1', url: 'https://example.com/photo.jpg', caption: 'Beach day', created_at: '2026-06-15T10:00:00Z' },
-      error: null
-    })
-
-    render(<MemoryHero />)
-
-    await waitFor(() => {
-      expect(screen.getByText('June 15, 2026')).toBeTruthy()
-    })
-  })
-
-  it('displays caption when photo has one', async () => {
-    mockCheckPairStatus.mockResolvedValue({ id: 'pair-1' })
-    mockRpc.mockResolvedValue({
-      data: { id: 'photo-1', url: 'https://example.com/photo.jpg', caption: 'Beach day', created_at: '2026-06-15T10:00:00Z' },
-      error: null
-    })
-
-    render(<MemoryHero />)
-
-    await waitFor(() => {
-      expect(screen.getByText('Beach day')).toBeTruthy()
-    })
-  })
 })

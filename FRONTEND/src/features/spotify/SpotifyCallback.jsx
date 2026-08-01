@@ -28,7 +28,11 @@ export default function SpotifyCallback() {
           setError('Falha na autenticação')
         }
       })
+<<<<<<< Updated upstream
     } else if (!code && !state) {
+=======
+    } else if (!code || !state) {
+>>>>>>> Stashed changes
       setError('Parâmetros de callback inválidos')
     }
   }, [searchParams, handleCallback, navigate])
@@ -45,7 +49,7 @@ export default function SpotifyCallback() {
     return (
       <div style={{ textAlign: 'center', padding: '2rem' }}>
         <p style={{ color: '#ff3b30' }}>{error || authError}</p>
-        <button onClick={() => navigate('/')} style={{ marginTop: '1rem' }}>
+        <button onClick={() => navigate('/', { replace: true })} style={{ marginTop: '1rem' }}>
           Voltar ao início
         </button>
       </div>

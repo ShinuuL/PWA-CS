@@ -7,10 +7,19 @@ const loadSpotifySDK = () => {
       resolve(window.Spotify)
       return
     }
+<<<<<<< Updated upstream
     // Spotify SDK requires this global callback before script loads
     window.onSpotifyWebPlaybackSDKReady = () => {
       resolve(window.Spotify)
     }
+=======
+
+    // Spotify SDK calls this global callback when ready
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      resolve(window.Spotify)
+    }
+
+>>>>>>> Stashed changes
     const script = document.createElement('script')
     script.src = 'https://sdk.scdn.co/spotify-player.js'
     script.async = true

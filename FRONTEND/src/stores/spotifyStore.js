@@ -45,6 +45,16 @@ const useSpotifyStore = create((set, get) => ({
           isConnected: true,
           isLoading: false,
         })
+
+        // Restore access token from sessionStorage if still valid
+        const savedToken = sessionStorage.getItem('spotify_access_token')
+        const savedExpiresAt = sessionStorage.getItem('spotify_token_expires_at')
+
+        if (savedToken && savedExpiresAt && Number(savedExpiresAt) > Date.now() + 5 * 60 * 1000) {
+          set({ accessToken: savedToken, tokenExpiresAt: Number(savedExpiresAt) })
+        }
+        // Token refresh is handled by refreshTokenIfNeeded (before API calls)
+        // and by the Spotify Web Playback SDK (getOAuthToken callback)
       } else {
         set({ isConnected: false, isLoading: false })
       }
@@ -67,6 +77,8 @@ const useSpotifyStore = create((set, get) => ({
         .eq('pair_id', pairId)
     }
     get().stopAutoRotate()
+    sessionStorage.removeItem('spotify_access_token')
+    sessionStorage.removeItem('spotify_token_expires_at')
     set({
       config: null,
       currentTrack: null,
@@ -429,6 +441,8 @@ const useSpotifyStore = create((set, get) => ({
 
   setAccessToken: (token, expiresIn) => {
     const expiresAt = Date.now() + expiresIn * 1000
+    sessionStorage.setItem('spotify_access_token', token)
+    sessionStorage.setItem('spotify_token_expires_at', String(expiresAt))
     set({ accessToken: token, tokenExpiresAt: expiresAt })
   },
 
@@ -451,7 +465,10 @@ const useSpotifyStore = create((set, get) => ({
           return
         }
 
-        get().setAccessToken(data.access_token, data.expires_in)
+        const expiresAt = Date.now() + data.expires_in * 1000
+        sessionStorage.setItem('spotify_access_token', data.access_token)
+        sessionStorage.setItem('spotify_token_expires_at', String(expiresAt))
+        set({ accessToken: data.access_token, tokenExpiresAt: expiresAt })
       } catch (err) {
         set({ error: err.message })
       }
@@ -470,7 +487,13 @@ const useSpotifyStore = create((set, get) => ({
 
   fetchUserPlaylists: async () => {
     const { accessToken } = get()
-    if (!accessToken) return []
+    if (!accessToken) {
+      // Token missing — try refresh
+      await get().refreshTokenIfNeeded()
+      const retryToken = get().accessToken
+      if (!retryToken) return []
+      return get().fetchUserPlaylists()
+    }
 
     try {
       const response = await fetch(
@@ -479,6 +502,25 @@ const useSpotifyStore = create((set, get) => ({
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
+
+      if (response.status === 401) {
+        // Token expired — refresh and retry once
+        await get().refreshTokenIfNeeded()
+        const retryToken = get().accessToken
+        if (!retryToken) return []
+        const retryResponse = await fetch(
+          'https://api.spotify.com/v1/me/playlists?limit=50',
+          { headers: { Authorization: `Bearer ${retryToken}` } }
+        )
+        if (!retryResponse.ok) throw new Error('Failed to fetch playlists')
+        const retryData = await retryResponse.json()
+        return retryData.items?.map((pl) => ({
+          id: pl.id,
+          name: pl.name,
+          trackCount: pl.tracks.total,
+          image: pl.images?.[0]?.url || null,
+        })) || []
+      }
 
       if (!response.ok) throw new Error('Failed to fetch playlists')
 
@@ -498,6 +540,8 @@ const useSpotifyStore = create((set, get) => ({
   cleanup: () => {
     get().stopAutoRotate()
     get().cleanupVisibilityHandler()
+    sessionStorage.removeItem('spotify_access_token')
+    sessionStorage.removeItem('spotify_token_expires_at')
     set({
       config: null,
       currentTrack: null,

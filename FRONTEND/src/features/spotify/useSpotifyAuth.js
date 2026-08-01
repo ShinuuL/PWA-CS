@@ -86,6 +86,10 @@ export default function useSpotifyAuth() {
         throw new Error('State mismatch — possible CSRF attack')
       }
 
+<<<<<<< Updated upstream
+=======
+      // Get pair from pairs table
+>>>>>>> Stashed changes
       const { user } = (await import('../../stores/authStore')).default.getState()
       if (!user) throw new Error('Not authenticated')
 
@@ -98,6 +102,13 @@ export default function useSpotifyAuth() {
         .single()
 
       if (!pair) throw new Error('No pair found')
+<<<<<<< Updated upstream
+=======
+
+      // Retrieve PKCE code_verifier from localStorage
+      const codeVerifier = localStorage.getItem('spotify_code_verifier')
+      if (!codeVerifier) throw new Error('Missing code_verifier — please try authenticating again')
+>>>>>>> Stashed changes
 
       // Call Edge Function to exchange code for tokens
       const codeVerifier = localStorage.getItem('spotify_code_verifier')

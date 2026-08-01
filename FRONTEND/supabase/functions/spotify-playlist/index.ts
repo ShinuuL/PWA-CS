@@ -1,9 +1,15 @@
+<<<<<<< Updated upstream
+=======
+import { createClient } from "npm:@supabase/supabase-js@2";
+
+>>>>>>> Stashed changes
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
 
+<<<<<<< Updated upstream
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ENCRYPTION_KEY = Deno.env.get("SPOTIFY_TOKEN_ENCRYPTION_KEY")!;
@@ -32,6 +38,8 @@ async function supabaseQuery(table: string, query: string) {
   return Array.isArray(data) ? data[0] : data;
 }
 
+=======
+>>>>>>> Stashed changes
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -45,14 +53,37 @@ Deno.serve(async (req: Request) => {
       `select=access_token,spotify_playlist_id&pair_id=eq.${pair_id}&limit=1`
     );
 
+<<<<<<< Updated upstream
     if (!config?.access_token) {
+=======
+    const encryptionKey = Deno.env.get("SPOTIFY_TOKEN_ENCRYPTION_KEY");
+
+    if (!encryptionKey) {
+      return new Response(
+        JSON.stringify({ error: "server_config_error" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { data: config, error: fetchError } = await supabase
+      .from("spotify_config")
+      .select("access_token, refresh_token, spotify_playlist_id")
+      .eq("pair_id", pair_id)
+      .single();
+
+    if (fetchError || !config?.access_token) {
+>>>>>>> Stashed changes
       return new Response(
         JSON.stringify({ error: "no_config" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
+<<<<<<< Updated upstream
     const accessToken = await supabaseRpc("decrypt_token", {
+=======
+    const { data: accessToken } = await supabase.rpc("decrypt_token", {
+>>>>>>> Stashed changes
       p_encrypted: config.access_token,
       p_key: ENCRYPTION_KEY,
     });
