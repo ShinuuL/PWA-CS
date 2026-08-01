@@ -3,6 +3,13 @@
   border-radius: var(--radius-lg, 24px);
 }
 
+/* Prevent hero from overflowing its container */
+.memory-hero,
+.memory-hero * {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
 /* When in grid, stretch to fill row */
 .dashboard-grid > .memory-hero {
   align-self: stretch;
@@ -101,6 +108,12 @@
   object-position: center;
   display: block;
   will-change: transform;
+}
+
+/* Ensure image never increases layout width */
+.memory-hero__image {
+  max-width: 100%;
+  height: auto;
 }
 
 .memory-hero__image-placeholder {
