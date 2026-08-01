@@ -101,6 +101,18 @@
   }
 }
 
+/* Mobile enforcement: ensure hero fits container */
+@media (max-width: 480px) {
+  .memory-hero, .memory-hero--card, .memory-hero__image-container, .memory-hero__image {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .memory-hero__image {
+    height: auto !important;
+  }
+}
+
 .memory-hero__image {
   width: 100%;
   height: 100%;

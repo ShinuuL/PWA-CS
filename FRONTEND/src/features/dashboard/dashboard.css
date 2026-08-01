@@ -72,6 +72,13 @@
   .dashboard-card {
     margin-bottom: 0.75rem;
   }
+  /* Force columns/children to fit mobile viewport */
+  .dashboard-grid, .dashboard-grid > .memory-hero, .dashboard-grid > .right-column, .dashboard-grid > .memory-hero * {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
 }
 
 /* small tweaks for very small screens preserved */
