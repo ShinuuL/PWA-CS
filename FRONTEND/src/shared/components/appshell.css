@@ -1,17 +1,25 @@
 .appshell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  height: 100vh;
+  min-height: 100vh; /* fallback */
+  min-height: 100dvh; /* use dynamic viewport height on supporting browsers */
 }
 
 .appshell-content {
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto; /* allow vertical scrolling on mobile */
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   scrollbar-width: none;
+}
+
+/* Prefer vertical panning only to avoid accidental horizontal swipes */
+.appshell, .appshell-content {
+  touch-action: pan-y;
+  overscroll-behavior-x: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .appshell-content::-webkit-scrollbar {

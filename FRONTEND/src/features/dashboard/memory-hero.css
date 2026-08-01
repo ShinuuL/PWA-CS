@@ -67,6 +67,19 @@
   background: var(--color-bg-card, #1A1D2E);
 }
 
+/* Mobile: slightly shorter hero to reduce vertical footprint */
+@media (max-width: 768px) {
+  .memory-hero__image-container {
+    aspect-ratio: 16 / 9;
+  }
+  .memory-hero--card {
+    padding: 0.75rem;
+  }
+  .memory-hero__caption {
+    padding: 0.75rem 0.25rem 0.25rem;
+  }
+}
+
 .memory-hero__image {
   width: 100%;
   height: 100%;

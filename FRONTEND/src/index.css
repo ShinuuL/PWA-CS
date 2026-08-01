@@ -27,6 +27,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Prevent horizontal scroll on small viewports */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Ensure media elements do not exceed their containers */
+img, video, canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 .loading {
   display: flex;
   align-items: center;
