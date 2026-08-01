@@ -6,6 +6,24 @@ import { supabase } from '../../shared/lib/supabase'
 import { format } from 'date-fns'
 import './memory-hero.css'
 
+function buildResizedImageUrl(originalUrl, width) {
+  try {
+    const url = new URL(originalUrl)
+    url.pathname = url.pathname.replace(/\.(jpg|jpeg|png|webp)$/i, '')
+    url.searchParams.set('width', width)
+    url.searchParams.set('auto', 'format')
+    return url.toString()
+  } catch {
+    return originalUrl
+  }
+}
+
+function getMemoryHeroSrcSet(url) {
+  return [480, 720, 1024]
+    .map((width) => `${buildResizedImageUrl(url, width)} ${width}w`)
+    .join(', ')
+}
+
 export default function MemoryHero() {
   const [photo, setPhoto] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -83,9 +101,7 @@ export default function MemoryHero() {
           alt={photo.caption || 'Memory photo'}
           loading="lazy"
           decoding="async"
-          // Provide responsive hints to the browser; if your storage supports
-          // server-side resizing you can replace these URLs with sized variants.
-          srcSet={`${photo.url} 640w, ${photo.url} 1024w, ${photo.url} 2048w`}
+          srcSet={getMemoryHeroSrcSet(photo.url)}
           sizes="(max-width:420px) 100vw, (max-width:1024px) 50vw, 33vw"
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgError(true)}
