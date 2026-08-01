@@ -9,7 +9,6 @@ import './memory-hero.css'
 function buildResizedImageUrl(originalUrl, width) {
   try {
     const url = new URL(originalUrl)
-    url.pathname = url.pathname.replace(/\.(jpg|jpeg|png|webp)$/i, '')
     url.searchParams.set('width', width)
     url.searchParams.set('auto', 'format')
     return url.toString()
@@ -102,7 +101,7 @@ export default function MemoryHero() {
           loading="lazy"
           decoding="async"
           srcSet={getMemoryHeroSrcSet(photo.url)}
-          sizes="(max-width:420px) 100vw, (max-width:1024px) 50vw, 33vw"
+          sizes="(max-width:480px) 100vw, (max-width:768px) 100vw, 720px"
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgError(true)}
           initial={{ scale: 1.05 }}
