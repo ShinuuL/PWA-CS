@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
+import { subscribeToPush } from '../../shared/lib/pushSubscription'
 import useChatStore from '../../stores/chatStore'
 import './chatSettings.css'
 
@@ -35,7 +36,10 @@ export default function ChatSettings() {
   const { settings, updateSetting, notificationPermission, requestNotificationPermission } = useChatStore()
 
   const handleEnableNotifications = async () => {
-    await requestNotificationPermission()
+    const permission = await requestNotificationPermission()
+    if (permission === 'granted') {
+      await subscribeToPush()
+    }
   }
 
   return (

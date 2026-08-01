@@ -58,8 +58,39 @@ export async function subscribeToPush() {
     const registration = await navigator.serviceWorker.ready
     const existingSubscription = await registration.pushManager.getSubscription()
 
-    // Already subscribed — return existing
     if (existingSubscription) {
+      // Ensure the subscription exists in Supabase if browser already has one
+      try {
+        const subscriptionJson = existingSubscription.toJSON()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data: pairData } = await supabase
+            .from('pairs')
+            .select('id')
+            .or(`user_one.eq.${user.id},user_two.eq.${user.id}`)
+            .single()
+
+          if (pairData?.id) {
+            const { data: existingRecord } = await supabase
+              .from('push_subscriptions')
+              .select('id')
+              .eq('endpoint', subscriptionJson.endpoint)
+              .single()
+
+            if (!existingRecord) {
+              await supabase.from('push_subscriptions').insert({
+                user_id: user.id,
+                pair_id: pairData.id,
+                endpoint: subscriptionJson.endpoint,
+                p256dh: subscriptionJson.keys?.p256dh,
+                auth: subscriptionJson.keys?.auth
+              })
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to persist existing push subscription:', err)
+      }
       return existingSubscription
     }
 
