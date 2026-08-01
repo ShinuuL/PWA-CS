@@ -81,6 +81,12 @@ export default function MemoryHero() {
           className="memory-hero__image"
           src={photo.url}
           alt={photo.caption || 'Memory photo'}
+          loading="lazy"
+          decoding="async"
+          // Provide responsive hints to the browser; if your storage supports
+          // server-side resizing you can replace these URLs with sized variants.
+          srcSet={`${photo.url} 640w, ${photo.url} 1024w, ${photo.url} 2048w`}
+          sizes="(max-width:420px) 100vw, (max-width:1024px) 50vw, 33vw"
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgError(true)}
           initial={{ scale: 1.05 }}

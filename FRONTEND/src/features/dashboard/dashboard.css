@@ -84,14 +84,14 @@
 /* small tweaks for very small screens preserved */
 @media (max-width: 420px) {
   .mood-card {
-    padding: 0.75rem 0.4rem;
-    min-height: 64px;
+    padding: 0.6rem 0.35rem;
+    min-height: 56px;
   }
   .mood-card__emoji {
-    font-size: 1.35rem;
+    font-size: 1.15rem;
   }
   .mood-card__label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
 }
 

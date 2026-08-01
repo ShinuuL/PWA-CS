@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import useDashboardStore from '../../stores/dashboardStore'
 import MoodModal from './MoodModal'
 import useBreakpoint from '../../hooks/useBreakpoint'
-import MoodSelectorMobile from './MoodSelectorMobile'
-import MoodSelectorTablet from './MoodSelectorTablet'
-import MoodSelectorDesktop from './MoodSelectorDesktop'
+
+// Lazy-load the resolution-specific selectors to reduce initial bundle size
+const MoodSelectorMobile = lazy(() => import('./MoodSelectorMobile'))
+const MoodSelectorTablet = lazy(() => import('./MoodSelectorTablet'))
+const MoodSelectorDesktop = lazy(() => import('./MoodSelectorDesktop'))
 
 export default function MoodSelector() {
   const bp = useBreakpoint()
@@ -13,17 +15,21 @@ export default function MoodSelector() {
   const setMood = useDashboardStore((s) => s.setMood)
   const [showCustomModal, setShowCustomModal] = React.useState(false)
 
-  // delegate to resolution-specific components (pass handler for custom modal)
-  let content = null
   const openCustom = () => setShowCustomModal(true)
   const closeCustom = () => setShowCustomModal(false)
-  if (bp === 'mobile') content = <MoodSelectorMobile onOpenCustom={openCustom} />
-  else if (bp === 'tablet') content = <MoodSelectorTablet onOpenCustom={openCustom} />
-  else content = <MoodSelectorDesktop onOpenCustom={openCustom} />
+
+  // Render the appropriate variant inside Suspense so it loads on demand
+  const renderVariant = () => {
+    if (bp === 'mobile') return <MoodSelectorMobile onOpenCustom={openCustom} />
+    if (bp === 'tablet') return <MoodSelectorTablet onOpenCustom={openCustom} />
+    return <MoodSelectorDesktop onOpenCustom={openCustom} />
+  }
 
   return (
     <div>
-      {content}
+      <Suspense fallback={<div style={{ minHeight: 88 }} />}>
+        {renderVariant()}
+      </Suspense>
       <AnimatePresence>
         {showCustomModal && (
           <MoodModal onClose={closeCustom} />
