@@ -1,11 +1,39 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { ApplicationServer, importVapidKeys } from "jsr:@negrel/webpush";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
+
+const vapidSubject = Deno.env.get("VAPID_SUBJECT") || "mailto:notifications@couplespace.app";
+
+async function createApplicationServer() {
+  const rawVapidKeys = Deno.env.get("VAPID_PRIVATE_KEY")
+  if (!rawVapidKeys) {
+    throw new Error("Missing VAPID_PRIVATE_KEY")
+  }
+
+  let exportedKeys
+  try {
+    exportedKeys = JSON.parse(rawVapidKeys)
+  } catch {
+    throw new Error("VAPID_PRIVATE_KEY must be a JSON string containing exported VAPID keys")
+  }
+
+  if (!exportedKeys?.publicKey || !exportedKeys?.privateKey) {
+    throw new Error("VAPID_PRIVATE_KEY must contain publicKey and privateKey properties")
+  }
+
+  const vapidKeys = await importVapidKeys(exportedKeys)
+  return ApplicationServer.new({
+    crypto,
+    contactInformation: vapidSubject,
+    vapidKeys,
+  })
+}
 
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -41,12 +69,7 @@ serve(async (req: Request) => {
       );
     }
 
-    // Import web-push library
-    const webpush = await import("npm:@negrel/webpush@1.1.1");
-
-    // Load VAPID keys from Vault
-    const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY")!;
-    const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY")!;
+    const appServer = await createApplicationServer();
 
     // Truncate message to ~50 chars (D-26)
     const truncatedMessage =
@@ -75,10 +98,8 @@ serve(async (req: Request) => {
           url: "/chat",
         });
 
-        await webpush.sendPush(pushSubscription, payload, {
-          applicationServerKey: vapidPublicKey,
-          privateKey: vapidPrivateKey,
-        });
+        const subscriber = appServer.subscribe(pushSubscription);
+        await subscriber.pushTextMessage(payload, { urgency: "high" });
 
         successCount++;
       } catch (pushError: any) {
