@@ -74,6 +74,24 @@
   }
 }
 
+/* Make mood grid more compact on very small screens so all items are visible */
+@media (max-width: 420px) {
+  .mood-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .mood-card {
+    padding: 0.6rem 0.4rem;
+    min-height: 64px;
+  }
+  .mood-card__emoji {
+    font-size: 1.4rem;
+  }
+  .mood-card__label {
+    font-size: 0.65rem;
+  }
+}
+
 .dashboard-card {
   background: var(--color-bg-card);
   border-radius: var(--radius-lg);
@@ -119,8 +137,9 @@
 /* ===== Mood Grid ===== */
 .mood-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 12px;
+  align-items: start;
 }
 
 .mood-card {
@@ -135,6 +154,10 @@
   cursor: pointer;
   transition: all 0.2s;
   min-height: 80px;
+}
+
+.mood-card {
+  min-width: 0; /* allow shrinking to fit grid columns */
 }
 
 .mood-card:hover {
