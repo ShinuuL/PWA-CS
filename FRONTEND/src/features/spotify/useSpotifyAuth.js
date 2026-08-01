@@ -86,30 +86,38 @@ export default function useSpotifyAuth() {
         throw new Error('State mismatch — possible CSRF attack')
       }
 
-      // Get pair_id from authStore
       const { user } = (await import('../../stores/authStore')).default.getState()
       if (!user) throw new Error('Not authenticated')
 
-      // Fetch user's pair_id
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('pair_id')
-        .eq('id', user.id)
+      // Fetch user's pair from pairs table
+      const { data: pair } = await supabase
+        .from('pairs')
+        .select('id')
+        .or(`user_one.eq.${user.id},user_two.eq.${user.id}`)
+        .eq('code_used', true)
         .single()
 
-      if (!profile?.pair_id) throw new Error('No pair found')
+      if (!pair) throw new Error('No pair found')
 
       // Call Edge Function to exchange code for tokens
+      const codeVerifier = localStorage.getItem('spotify_code_verifier')
       const { data, error } = await supabase.functions.invoke('spotify-auth', {
         body: {
           action: 'exchange',
           code,
+          code_verifier: codeVerifier,
           redirect_uri: import.meta.env.VITE_SPOTIFY_REDIRECT_URI,
-          pair_id: profile.pair_id,
+          pair_id: pair.id,
         },
       })
 
-      if (error) throw error
+      if (error) {
+        // 401 = invalid_grant (code already used) — need fresh re-auth
+        if (error.status === 401) {
+          throw new Error('Código expirado. Faça login no Spotify novamente.')
+        }
+        throw error
+      }
 
       if (data.error) {
         throw new Error(data.error_description || data.error)
@@ -133,7 +141,7 @@ export default function useSpotifyAuth() {
         player.connect()
       }
 
-      // Clean up localStorage
+      // Clean up localStorage only on success
       localStorage.removeItem('spotify_code_verifier')
       localStorage.removeItem('spotify_auth_state')
 
@@ -142,7 +150,7 @@ export default function useSpotifyAuth() {
     } catch (err) {
       setAuthError(err.message)
       setIsAuthenticating(false)
-      localStorage.removeItem('spotify_code_verifier')
+      // Don't remove code_verifier on error — allow retry with new code
       localStorage.removeItem('spotify_auth_state')
       return false
     }

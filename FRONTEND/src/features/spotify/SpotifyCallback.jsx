@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useSpotifyAuth from './useSpotifyAuth'
 
@@ -7,6 +7,7 @@ export default function SpotifyCallback() {
   const navigate = useNavigate()
   const { handleCallback, isAuthenticating, authError } = useSpotifyAuth()
   const [error, setError] = useState(null)
+  const exchangedRef = useRef(false)
 
   useEffect(() => {
     const code = searchParams.get('code')
@@ -18,7 +19,8 @@ export default function SpotifyCallback() {
       return
     }
 
-    if (code && state) {
+    if (code && state && !exchangedRef.current) {
+      exchangedRef.current = true
       handleCallback(code, state).then((success) => {
         if (success) {
           navigate('/', { replace: true })
@@ -26,7 +28,7 @@ export default function SpotifyCallback() {
           setError('Falha na autenticação')
         }
       })
-    } else {
+    } else if (!code && !state) {
       setError('Parâmetros de callback inválidos')
     }
   }, [searchParams, handleCallback, navigate])

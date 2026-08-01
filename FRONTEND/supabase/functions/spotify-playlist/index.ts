@@ -1,13 +1,38 @@
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req: Request) => {
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const ENCRYPTION_KEY = Deno.env.get("SPOTIFY_TOKEN_ENCRYPTION_KEY")!;
+
+async function supabaseRpc(fn: string, params: Record<string, string>) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+    },
+    body: JSON.stringify(params),
+  });
+  return await res.json();
+}
+
+async function supabaseQuery(table: string, query: string) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+    },
+  });
+  const data = await res.json();
+  return Array.isArray(data) ? data[0] : data;
+}
+
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -15,30 +40,21 @@ serve(async (req: Request) => {
   try {
     const { action, playlist_id, track_uri, pair_id } = await req.json();
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const config = await supabaseQuery(
+      "spotify_config",
+      `select=access_token,spotify_playlist_id&pair_id=eq.${pair_id}&limit=1`
+    );
 
-    const encryptionKey = Deno.env.get("SPOTIFY_TOKEN_ENCRYPTION_KEY")!;
-
-    // Fetch spotify_config for this pair
-    const { data: config, error: fetchError } = await supabase
-      .from("spotify_config")
-      .select("access_token, refresh_token, spotify_playlist_id")
-      .eq("pair_id", pair_id)
-      .single();
-
-    if (fetchError || !config?.access_token) {
+    if (!config?.access_token) {
       return new Response(
-        JSON.stringify({ error: "no_config", error_description: "No Spotify config found" }),
+        JSON.stringify({ error: "no_config" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Decrypt access_token
-    const { data: accessToken } = await supabase.rpc("decrypt_token", {
+    const accessToken = await supabaseRpc("decrypt_token", {
       p_encrypted: config.access_token,
-      p_key: encryptionKey,
+      p_key: ENCRYPTION_KEY,
     });
 
     if (!accessToken) {
@@ -51,7 +67,6 @@ serve(async (req: Request) => {
     const targetPlaylistId = playlist_id || config.spotify_playlist_id;
 
     if (action === "get_tracks") {
-      // Fetch all tracks with pagination (Spotify returns max 100 per request)
       let allTracks: any[] = [];
       let url = `https://api.spotify.com/v1/playlists/${targetPlaylistId}/tracks?limit=100`;
 
@@ -61,19 +76,10 @@ serve(async (req: Request) => {
         });
 
         if (!response.ok) {
-          if (response.status === 404) {
-            return new Response(
-              JSON.stringify({ error: "playlist_not_found" }),
-              { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
-          }
-          if (response.status === 401) {
-            return new Response(
-              JSON.stringify({ error: "token_expired" }),
-              { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
-          }
-          throw new Error(`Spotify API error: ${response.status}`);
+          return new Response(
+            JSON.stringify({ error: `spotify_${response.status}` }),
+            { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
         }
 
         const data = await response.json();
@@ -108,14 +114,8 @@ serve(async (req: Request) => {
           body: JSON.stringify({ uris: [track_uri] }),
         }
       );
-
-      if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(`Spotify add_track error: ${JSON.stringify(errData)}`);
-      }
-
       return new Response(
-        JSON.stringify({ success: true }),
+        JSON.stringify({ success: response.ok }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -132,14 +132,8 @@ serve(async (req: Request) => {
           body: JSON.stringify({ tracks: [{ uri: track_uri }] }),
         }
       );
-
-      if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(`Spotify remove_track error: ${JSON.stringify(errData)}`);
-      }
-
       return new Response(
-        JSON.stringify({ success: true }),
+        JSON.stringify({ success: response.ok }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -152,10 +146,7 @@ serve(async (req: Request) => {
     console.error("spotify-playlist error:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });

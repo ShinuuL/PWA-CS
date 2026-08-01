@@ -7,28 +7,23 @@ const loadSpotifySDK = () => {
       resolve(window.Spotify)
       return
     }
+    // Spotify SDK requires this global callback before script loads
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      resolve(window.Spotify)
+    }
     const script = document.createElement('script')
     script.src = 'https://sdk.scdn.co/spotify-player.js'
-    script.onload = () => {
-      // Wait a bit for window.Spotify to be defined
-      const check = setInterval(() => {
-        if (window.Spotify) {
-          clearInterval(check)
-          resolve(window.Spotify)
-        }
-      }, 100)
-      // Timeout after 5 seconds
-      setTimeout(() => {
-        clearInterval(check)
-        if (!window.Spotify) {
-          console.error('Spotify SDK failed to load')
-        }
-      }, 5000)
-    }
+    script.async = true
     script.onerror = () => {
       console.error('Failed to load Spotify SDK script')
     }
     document.body.appendChild(script)
+    // Fallback timeout in case callback never fires
+    setTimeout(() => {
+      if (window.Spotify) {
+        resolve(window.Spotify)
+      }
+    }, 5000)
   })
 }
 

@@ -1,13 +1,13 @@
--- Spotify Random Picker: Database Tables and Encryption Functions
--- Phase 9, Plan 01: Infrastructure + Store + OAuth
+-- Spotify: Tables, Encryption, RLS (clean migration)
+-- This replaces 20260730_create_spotify_tables.sql and fix_spotify_rls_policies.sql
 
--- Enable pgcrypto for token encryption
+-- 1. Enable pgcrypto
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- Encryption helper functions (using Supabase Vault or env key)
+-- 2. Encryption functions
 CREATE OR REPLACE FUNCTION encrypt_token(p_token text, p_key text)
 RETURNS text AS $$
-  SELECT pgp_sym_encrypt(p_token, p_key, 'cipher-algo=aes256')::text;
+  SELECT pgp_sym_encrypt(p_token, p_key, 'cipher-algo=aes256'::text)::text;
 $$
 LANGUAGE sql SECURITY DEFINER;
 
@@ -17,8 +17,8 @@ RETURNS text AS $$
 $$
 LANGUAGE sql SECURITY DEFINER;
 
--- Main Spotify config table (one per couple)
-CREATE TABLE spotify_config(
+-- 3. spotify_config table
+CREATE TABLE IF NOT EXISTS spotify_config(
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   pair_id UUID NOT NULL REFERENCES pairs(id) ON DELETE CASCADE,
   spotify_playlist_id TEXT NOT NULL DEFAULT '',
@@ -33,8 +33,8 @@ CREATE TABLE spotify_config(
   UNIQUE(pair_id)
 );
 
--- Play history for deduplication (avoid recent repeats)
-CREATE TABLE spotify_play_history(
+-- 4. spotify_play_history table
+CREATE TABLE IF NOT EXISTS spotify_play_history(
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   pair_id UUID NOT NULL REFERENCES pairs(id) ON DELETE CASCADE,
   track_uri TEXT NOT NULL,
@@ -43,14 +43,18 @@ CREATE TABLE spotify_play_history(
   played_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_spotify_history_pair_played
+CREATE INDEX IF NOT EXISTS idx_spotify_history_pair_played
   ON spotify_play_history(pair_id, played_at DESC);
 
--- Enable Row Level Security on both tables
+-- 5. Enable RLS
 ALTER TABLE spotify_config ENABLE ROW LEVEL SECURITY;
 ALTER TABLE spotify_play_history ENABLE ROW LEVEL SECURITY;
 
--- RLS policies: couple can only access their own data (via pairs table)
+-- 6. Drop old broken policies (uses profiles.pair_id which doesn't exist)
+DROP POLICY IF EXISTS "pair.spotify_config" ON spotify_config;
+DROP POLICY IF EXISTS "pair.spotify_history" ON spotify_play_history;
+
+-- 7. Create correct RLS policies using pairs table
 CREATE POLICY "pair.spotify_config" ON spotify_config
   FOR ALL USING (
     EXISTS (
@@ -70,3 +74,10 @@ CREATE POLICY "pair.spotify_history" ON spotify_play_history
       AND (pairs.user_one = auth.uid() OR pairs.user_two = auth.uid())
     )
   );
+
+-- 8. Grant permissions for Edge Functions
+GRANT EXECUTE ON FUNCTION public.encrypt_token(text,text) TO service_role;
+GRANT EXECUTE ON FUNCTION public.decrypt_token(text,text) TO service_role;
+
+-- 9. Force PostgREST to reload schema
+NOTIFY pgrst, 'reload schema';

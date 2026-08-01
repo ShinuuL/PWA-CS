@@ -30,11 +30,9 @@ const useSpotifyStore = create((set, get) => ({
         .from('spotify_config')
         .select('*')
         .eq('pair_id', pairId)
-        .single()
+        .maybeSingle()
 
-      if (error && error.code !== 'PGRST116') {
-        throw error
-      }
+      if (error) throw error
 
       if (config) {
         set({
@@ -92,19 +90,21 @@ const useSpotifyStore = create((set, get) => ({
         .from('spotify_config')
         .select('*')
         .eq('pair_id', pairId)
-        .single()
+        .maybeSingle()
 
       if (error) throw error
 
-      set({
-        config: {
-          playlist_id: config.spotify_playlist_id,
-          playlist_name: config.playlist_name,
-          interval: config.auto_rotate_interval,
-          is_enabled: config.is_enabled,
-        },
-        isConnected: true,
-      })
+      if (config) {
+        set({
+          config: {
+            playlist_id: config.spotify_playlist_id,
+            playlist_name: config.playlist_name,
+            interval: config.auto_rotate_interval,
+            is_enabled: config.is_enabled,
+          },
+          isConnected: true,
+        })
+      }
     } catch (err) {
       set({ error: err.message })
     }
