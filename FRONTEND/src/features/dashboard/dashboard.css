@@ -9,6 +9,11 @@
   z-index: 1;
 }
 
+/* Prevent any horizontal overflow inside the dashboard */
+.dashboard {
+  overflow-x: hidden;
+}
+
 .dashboard > * {
   position: relative;
   z-index: 1;
@@ -56,6 +61,40 @@
   }
 }
 
+/* Compact spacing for small screens to improve visual density */
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 0.5rem;
+  }
+  .dashboard-grid {
+    gap: 0.6rem;
+  }
+  .dashboard-card {
+    margin-bottom: 0.75rem;
+  }
+  /* Force columns/children to fit mobile viewport */
+  .dashboard-grid, .dashboard-grid > .memory-hero, .dashboard-grid > .right-column, .dashboard-grid > .memory-hero * {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+}
+
+/* small tweaks for very small screens preserved */
+@media (max-width: 420px) {
+  .mood-card {
+    padding: 0.6rem 0.35rem;
+    min-height: 56px;
+  }
+  .mood-card__emoji {
+    font-size: 1.15rem;
+  }
+  .mood-card__label {
+    font-size: 0.65rem;
+  }
+}
+
 .dashboard-card {
   background: var(--color-bg-card);
   border-radius: var(--radius-lg);
@@ -98,11 +137,25 @@
   box-shadow: 0 0 20px rgba(184, 124, 255, 0.3);
 }
 
-/* ===== Mood Grid ===== */
 .mood-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
+}
+
+.mood-grid--mobile {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.mood-grid--tablet {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.mood-grid--desktop {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
 }
 
 .mood-card {
@@ -117,6 +170,17 @@
   cursor: pointer;
   transition: all 0.2s;
   min-height: 80px;
+  min-width: 0;
+}
+
+/* Ensure mood grid and cards never exceed container */
+.mood-grid, .mood-grid--mobile, .mood-grid--tablet, .mood-grid--desktop {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.mood-card {
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .mood-card:hover {

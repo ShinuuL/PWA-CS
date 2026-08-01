@@ -471,6 +471,13 @@
   scrollbar-width: none;
 }
 
+/* Ensure the scroll area fits its container and doesn't expand the page */
+.mini-album__scroll {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 .mini-album__scroll::-webkit-scrollbar {
   display: none;
 }
@@ -486,6 +493,13 @@
   position: relative;
   background: var(--color-bg-card);
   transition: transform 0.15s;
+}
+
+@media (max-width: 420px) {
+  .mini-album__thumb {
+    width: 96px;
+    height: 96px;
+  }
 }
 
 .mini-album__thumb:hover {

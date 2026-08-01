@@ -12,6 +12,24 @@
   z-index: 10;
 }
 
+/* Mobile: reduce header height and tighten spacing for small screens */
+@media (max-width: 480px) {
+  .header {
+    height: 48px;
+    padding: 0.5rem 0.75rem;
+  }
+  .header-center {
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
+  .header-partner-name {
+    font-size: 0.95rem;
+  }
+  .header-branding {
+    font-size: 0.95rem;
+  }
+}
+
 .header-menu {
   background: rgba(26, 29, 46, 0.95);
   border: 1px solid rgba(190, 140, 255, 0.3);

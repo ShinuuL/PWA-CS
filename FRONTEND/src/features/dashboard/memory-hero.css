@@ -3,6 +3,13 @@
   border-radius: var(--radius-lg, 24px);
 }
 
+/* Prevent hero from overflowing its container */
+.memory-hero,
+.memory-hero * {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
 /* When in grid, stretch to fill row */
 .dashboard-grid > .memory-hero {
   align-self: stretch;
@@ -67,11 +74,50 @@
   background: var(--color-bg-card, #1A1D2E);
 }
 
+/* Mobile: slightly shorter hero to reduce vertical footprint */
+@media (max-width: 768px) {
+  .memory-hero__image-container {
+    aspect-ratio: 16 / 9;
+  }
+  .memory-hero--card {
+    padding: 0.75rem;
+  }
+  .memory-hero__caption {
+    padding: 0.75rem 0.25rem 0.25rem;
+  }
+}
+
+/* Further constrain hero height on very small screens so it doesn't dominate layout */
+@media (max-width: 420px) {
+  .memory-hero--card {
+    max-height: 44vh;
+    overflow: hidden;
+  }
+  .memory-hero__image-container {
+    aspect-ratio: 16 / 9;
+  }
+  .memory-hero__image {
+    object-position: top center;
+  }
+}
+
+/* Mobile enforcement: ensure hero fits container */
+@media (max-width: 480px) {
+  .memory-hero, .memory-hero--card, .memory-hero__image-container, .memory-hero__image {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .memory-hero__image {
+    height: auto !important;
+  }
+}
+
 .memory-hero__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center center;
   display: block;
   will-change: transform;
 }
