@@ -166,6 +166,16 @@
   min-width: 0;
 }
 
+/* Ensure mood grid and cards never exceed container */
+.mood-grid, .mood-grid--mobile, .mood-grid--tablet, .mood-grid--desktop {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.mood-card {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 .mood-card:hover {
   border-color: var(--color-border);
   transform: translateY(-2px);

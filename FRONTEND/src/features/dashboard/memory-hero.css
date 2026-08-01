@@ -105,15 +105,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center center; /* keep focal point centered */
   display: block;
   will-change: transform;
-}
-
-/* Ensure image never increases layout width */
-.memory-hero__image {
   max-width: 100%;
-  height: auto;
 }
 
 .memory-hero__image-placeholder {
