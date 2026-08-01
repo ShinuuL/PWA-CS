@@ -13,8 +13,6 @@ export default function MoodSelector() {
   const setMood = useDashboardStore((s) => s.setMood)
   const [showCustomModal, setShowCustomModal] = React.useState(false)
 
-  const [showCustomModal, setShowCustomModal] = React.useState(false)
-
   // delegate to resolution-specific components (pass handler for custom modal)
   let content = null
   const openCustom = () => setShowCustomModal(true)
