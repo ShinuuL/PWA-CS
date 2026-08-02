@@ -17,7 +17,6 @@ export default function HomePage() {
   const cleanup = useDashboardStore((s) => s.cleanup)
 
   const initializeSpotify = useSpotifyStore((s) => s.initializeSpotify)
-  const cleanupSpotify = useSpotifyStore((s) => s.cleanup)
 
   useEffect(() => {
     let cancelled = false
@@ -30,9 +29,11 @@ export default function HomePage() {
     return () => {
       cancelled = true
       cleanup()
-      cleanupSpotify()
+      // cleanupSpotify() removido — não deve apagar sessão só por desmontar a tela
+      useSpotifyStore.getState().stopAutoRotate()
+      useSpotifyStore.getState().cleanupVisibilityHandler()
     }
-  }, [checkPairStatus, initializeDashboard, cleanup, initializeSpotify, cleanupSpotify])
+  }, [checkPairStatus, initializeDashboard, cleanup, initializeSpotify])
 
   return (
     <div className="dashboard">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
-import { Music, Play, Pause, SkipForward, SkipBack, Shuffle, List, ExternalLink, Link2 } from 'lucide-react'
+import { Music, Play, Pause, SkipForward, SkipBack, Shuffle, List, ExternalLink, Link2, Unplug, RefreshCw } from 'lucide-react'
 import useSpotifyStore from '../../stores/spotifyStore'
 import useSpotifyAuth from './useSpotifyAuth'
 import useSpotifyPlayer from './useSpotifyPlayer'
@@ -20,6 +20,8 @@ export default function SpotifyPlayer() {
   const playlistTracks = useSpotifyStore((s) => s.playlistTracks)
   const isConnected = useSpotifyStore((s) => s.isConnected)
   const isLoading = useSpotifyStore((s) => s.isLoading)
+  const error = useSpotifyStore((s) => s.error)
+  const accessToken = useSpotifyStore((s) => s.accessToken)
 
   const autoRotateTimer = useSpotifyStore((s) => s.autoRotateTimer)
   const togglePlay = useSpotifyStore((s) => s.togglePlay)
@@ -33,7 +35,8 @@ export default function SpotifyPlayer() {
   const setPlaylist = useSpotifyStore((s) => s.setPlaylist)
 
   const { startAuth } = useSpotifyAuth()
-  const { next, previous, hasPremium } = useSpotifyPlayer()
+  const { next, previous, seek, hasPremium } = useSpotifyPlayer()
+  const disconnect = useSpotifyStore((s) => s.disconnect)
 
   const [userPlaylists, setUserPlaylists] = useState([])
 
@@ -50,8 +53,11 @@ export default function SpotifyPlayer() {
 
   // Fetch user playlists when connected but no playlist selected
   useEffect(() => {
+    console.log('[DEBUG] isConnected:', isConnected, 'playlist_id:', config?.playlist_id)
     if (isConnected && !config?.playlist_id) {
+      console.log('[DEBUG] chamando fetchUserPlaylists...')
       fetchUserPlaylists().then((playlists) => {
+        console.log('[DEBUG] playlists recebidas:', playlists)
         setUserPlaylists(playlists)
       })
     }
@@ -134,7 +140,21 @@ export default function SpotifyPlayer() {
             <Music size={32} className="spotify-player__icon" />
             <p className="spotify-player__text">Selecione uma playlist</p>
             <div className="spotify-player__playlists">
-              {userPlaylists.length > 0 ? (
+              {error ? (
+                <div>
+                  <p className="spotify-player__text spotify-player__text--error">{error}</p>
+                  <button className="spotify-player__btn spotify-player__btn--primary" onClick={startAuth}>
+                    Reconectar Spotify
+                  </button>
+                </div>
+              ) : !accessToken ? (
+                <div>
+                  <p className="spotify-player__text">Obtendo acesso...</p>
+                  <button className="spotify-player__btn spotify-player__btn--primary" onClick={startAuth}>
+                    Reconectar Spotify
+                  </button>
+                </div>
+              ) : userPlaylists.length > 0 ? (
                 userPlaylists.map((pl) => (
                   <button
                     key={pl.id}
@@ -218,7 +238,15 @@ export default function SpotifyPlayer() {
               </button>
             </div>
             <div className="spotify-player__progress-container">
-              <div className="spotify-player__progress-bar">
+              <div
+                className="spotify-player__progress-bar"
+                onClick={(e) => {
+                  if (!currentTrack?.duration_ms) return
+                  const rect = e.currentTarget.getBoundingClientRect()
+                  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+                  seek(Math.round(pct * currentTrack.duration_ms))
+                }}
+              >
                 <div
                   className="spotify-player__progress-fill"
                   style={{ width: `${(progress / (currentTrack?.duration_ms || 1)) * 100}%` }}
@@ -244,10 +272,16 @@ export default function SpotifyPlayer() {
                 ))}
               </select>
             </div>
-            <button className="spotify-player__btn spotify-player__btn--secondary" onClick={() => setShowPlaylistManager(true)}>
-              <List size={14} />
-              Nossa Playlist ({playlistTracks.length})
-            </button>
+            <div className="spotify-player__actions">
+              <button className="spotify-player__btn spotify-player__btn--secondary" onClick={() => setShowPlaylistManager(true)}>
+                <List size={14} />
+                Nossa Playlist ({playlistTracks.length})
+              </button>
+              <button className="spotify-player__btn spotify-player__btn--secondary" onClick={() => { disconnect(); startAuth() }}>
+                <RefreshCw size={14} />
+                Trocar Playlist
+              </button>
+            </div>
           </div>
         )
 
@@ -268,12 +302,20 @@ export default function SpotifyPlayer() {
     <div className="spotify-player">
       <div className="spotify-player__header">
         <h3 className="spotify-player__title">Nossa Playlist</h3>
-        {isConnected && config?.playlist_id && (
-          <button className="spotify-player__header-btn" onClick={() => setShowPlaylistManager(true)}>
-            <List size={16} />
-          </button>
-        )}
+        <div className="spotify-player__header-actions">
+          {isConnected && config?.playlist_id && (
+            <button className="spotify-player__header-btn" onClick={() => setShowPlaylistManager(true)}>
+              <List size={16} />
+            </button>
+          )}
+          {isConnected && (
+            <button className="spotify-player__header-btn spotify-player__header-btn--disconnect" onClick={disconnect} title="Desconectar Spotify">
+              <Unplug size={16} />
+            </button>
+          )}
+        </div>
       </div>
+      {error && <p className="spotify-player__error">{error}</p>}
       {renderContent()}
       <AnimatePresence>
         {showSearch && (
