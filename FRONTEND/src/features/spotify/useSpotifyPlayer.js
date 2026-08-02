@@ -7,19 +7,10 @@ const loadSpotifySDK = () => {
       resolve(window.Spotify)
       return
     }
-<<<<<<< Updated upstream
     // Spotify SDK requires this global callback before script loads
     window.onSpotifyWebPlaybackSDKReady = () => {
       resolve(window.Spotify)
     }
-=======
-
-    // Spotify SDK calls this global callback when ready
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      resolve(window.Spotify)
-    }
-
->>>>>>> Stashed changes
     const script = document.createElement('script')
     script.src = 'https://sdk.scdn.co/spotify-player.js'
     script.async = true
@@ -61,8 +52,12 @@ export default function useSpotifyPlayer() {
 
         const player = new Spotify.Player({
           name: 'CoupleSpace',
-          getOAuthToken: (cb) => {
-            // Get current token from store
+          getOAuthToken: async (cb) => {
+            const store = useSpotifyStore.getState()
+            const { tokenExpiresAt } = store
+            if (!tokenExpiresAt || tokenExpiresAt < Date.now() + 5 * 60 * 1000) {
+              await useSpotifyStore.getState().refreshTokenIfNeeded()
+            }
             const currentToken = useSpotifyStore.getState().accessToken
             cb(currentToken)
           },
@@ -77,7 +72,7 @@ export default function useSpotifyPlayer() {
 
         player.addListener('player_state_changed', (state) => {
           if (cancelledRef.current) return
-          if (!state) return // null state means player is not active
+          if (!state) return
 
           const track = state.track_window?.current_track
           if (track) {
@@ -99,9 +94,17 @@ export default function useSpotifyPlayer() {
           setError('premium_required')
         })
 
-        player.addListener('authentication_error', ({ message }) => {
+        player.addListener('authentication_error', async ({ message }) => {
           if (cancelledRef.current) return
-          setError('auth_expired')
+          if (message.includes('scopes') || message.includes('Invalid')) {
+            return
+          }
+          await useSpotifyStore.getState().refreshTokenIfNeeded()
+          const newToken = useSpotifyStore.getState().accessToken
+          if (newToken) {
+            player.disconnect()
+            player.connect()
+          }
         })
 
         player.addListener('playback_error', ({ message }) => {
@@ -129,6 +132,27 @@ export default function useSpotifyPlayer() {
       setIsReady(false)
     }
   }, [accessToken, setDeviceId, setCurrentTrack, setIsPlaying, setProgress, setError])
+
+  // Progress polling — updates every second while playing
+  useEffect(() => {
+    if (!isReady) return
+
+    const interval = setInterval(async () => {
+      const player = playerRef.current
+      if (!player) return
+
+      try {
+        const state = await player.getCurrentState()
+        if (state && !state.paused) {
+          setProgress(state.position)
+        }
+      } catch {
+        // ignore polling errors
+      }
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [isReady, setProgress])
 
   const play = useCallback(() => {
     if (playerRef.current) {

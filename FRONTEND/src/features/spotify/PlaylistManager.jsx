@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { X, Trash2, Plus, Music } from 'lucide-react'
+import { X, Trash2, Plus, Music, Play } from 'lucide-react'
 import { motion } from 'framer-motion'
 import useSpotifyStore from '../../stores/spotifyStore'
 import './PlaylistManager.css'
@@ -7,6 +7,7 @@ import './PlaylistManager.css'
 export default function PlaylistManager({ onClose, onAddMusic }) {
   const playlistTracks = useSpotifyStore((s) => s.playlistTracks)
   const removeTrack = useSpotifyStore((s) => s.removeTrack)
+  const playUri = useSpotifyStore((s) => s.playUri)
 
   // Escape key handler
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function PlaylistManager({ onClose, onAddMusic }) {
             </div>
           ) : (
             playlistTracks.map((track) => (
-              <div key={track.uri} className="playlist-manager__track">
+              <div key={track.uri} className="playlist-manager__track" onClick={() => playUri(track.uri)}>
                 {track.albumArt && (
                   <img src={track.albumArt} alt={track.name} className="playlist-manager__track-art" />
                 )}
@@ -60,9 +61,14 @@ export default function PlaylistManager({ onClose, onAddMusic }) {
                   <p className="playlist-manager__track-name">{track.name}</p>
                   <p className="playlist-manager__track-artist">{track.artist}</p>
                 </div>
-                <button className="playlist-manager__remove-btn" onClick={() => handleRemove(track)}>
-                  <Trash2 size={16} />
-                </button>
+                <div className="playlist-manager__track-actions">
+                  <button className="playlist-manager__play-btn" onClick={(e) => { e.stopPropagation(); playUri(track.uri) }}>
+                    <Play size={16} />
+                  </button>
+                  <button className="playlist-manager__remove-btn" onClick={(e) => { e.stopPropagation(); handleRemove(track) }}>
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
             ))
           )}

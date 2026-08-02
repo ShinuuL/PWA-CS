@@ -1,61 +1,38 @@
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import React, { Suspense, lazy } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import useDashboardStore from '../../stores/dashboardStore'
 import MoodModal from './MoodModal'
+import useBreakpoint from '../../hooks/useBreakpoint'
 
-const MOODS = [
-  { type: 'happy', emoji: '😊', label: 'Happy' },
-  { type: 'tired', emoji: '😴', label: 'Tired' },
-  { type: 'sad', emoji: '😢', label: 'Sad' },
-  { type: 'missing', emoji: '💕', label: 'Missing' },
-  { type: 'needy', emoji: '🥺', label: 'Needy' },
-  { type: 'custom', emoji: '✏️', label: 'Custom' }
-]
+// Lazy-load the resolution-specific selectors to reduce initial bundle size
+const MoodSelectorMobile = lazy(() => import('./MoodSelectorMobile'))
+const MoodSelectorTablet = lazy(() => import('./MoodSelectorTablet'))
+const MoodSelectorDesktop = lazy(() => import('./MoodSelectorDesktop'))
 
 export default function MoodSelector() {
+  const bp = useBreakpoint()
   const myMood = useDashboardStore((s) => s.myMood)
   const setMood = useDashboardStore((s) => s.setMood)
-  const [showCustomModal, setShowCustomModal] = useState(false)
+  const [showCustomModal, setShowCustomModal] = React.useState(false)
 
-  const handleMoodSelect = (moodType) => {
-    if (moodType === 'custom') {
-      setShowCustomModal(true)
-    } else {
-      setMood(moodType)
-    }
+  const openCustom = () => setShowCustomModal(true)
+  const closeCustom = () => setShowCustomModal(false)
+
+  // Render the appropriate variant inside Suspense so it loads on demand
+  const renderVariant = () => {
+    if (bp === 'mobile') return <MoodSelectorMobile onOpenCustom={openCustom} />
+    if (bp === 'tablet') return <MoodSelectorTablet onOpenCustom={openCustom} />
+    return <MoodSelectorDesktop onOpenCustom={openCustom} />
   }
 
   return (
-    <div className="mood-section">
-      <h3 className="mood-section__title">Como você está se sentindo?</h3>
-      {myMood?.mood_type === 'custom' && myMood?.custom_text && (
-        <div className="mood-section__custom-text">
-          {myMood.custom_emoji && (
-            <span className="mood-card__emoji">{myMood.custom_emoji}</span>
-          )}
-          <span>&ldquo;{myMood.custom_text}&rdquo;</span>
-        </div>
-      )}
-      <div className="mood-grid">
-        {MOODS.map((mood) => (
-          <motion.button
-            key={mood.type}
-            className={`mood-card ${myMood?.mood_type === mood.type ? 'mood-card--selected' : ''}`}
-            onClick={() => handleMoodSelect(mood.type)}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <span className="mood-card__emoji">{mood.emoji}</span>
-            <span className="mood-card__label">{mood.label}</span>
-          </motion.button>
-        ))}
-      </div>
-
+    <div>
+      <Suspense fallback={<div style={{ minHeight: 88 }} />}>
+        {renderVariant()}
+      </Suspense>
       <AnimatePresence>
         {showCustomModal && (
-          <MoodModal onClose={() => setShowCustomModal(false)} />
+          <MoodModal onClose={closeCustom} />
         )}
       </AnimatePresence>
     </div>

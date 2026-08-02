@@ -6,6 +6,23 @@ import { supabase } from '../../shared/lib/supabase'
 import { format } from 'date-fns'
 import './memory-hero.css'
 
+function buildResizedImageUrl(originalUrl, width) {
+  try {
+    const url = new URL(originalUrl)
+    url.searchParams.set('width', width)
+    url.searchParams.set('auto', 'format')
+    return url.toString()
+  } catch {
+    return originalUrl
+  }
+}
+
+function getMemoryHeroSrcSet(url) {
+  return [480, 720, 1024]
+    .map((width) => `${buildResizedImageUrl(url, width)} ${width}w`)
+    .join(', ')
+}
+
 export default function MemoryHero() {
   const [photo, setPhoto] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -81,6 +98,10 @@ export default function MemoryHero() {
           className="memory-hero__image"
           src={photo.url}
           alt={photo.caption || 'Memory photo'}
+          loading="lazy"
+          decoding="async"
+          srcSet={getMemoryHeroSrcSet(photo.url)}
+          sizes="(max-width:480px) 100vw, (max-width:768px) 100vw, 720px"
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgError(true)}
           initial={{ scale: 1.05 }}

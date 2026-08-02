@@ -28,11 +28,7 @@ export default function SpotifyCallback() {
           setError('Falha na autenticação')
         }
       })
-<<<<<<< Updated upstream
     } else if (!code && !state) {
-=======
-    } else if (!code || !state) {
->>>>>>> Stashed changes
       setError('Parâmetros de callback inválidos')
     }
   }, [searchParams, handleCallback, navigate])
