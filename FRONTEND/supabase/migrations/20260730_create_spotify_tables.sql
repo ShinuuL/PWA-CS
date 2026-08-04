@@ -50,13 +50,23 @@ CREATE INDEX idx_spotify_history_pair_played
 ALTER TABLE spotify_config ENABLE ROW LEVEL SECURITY;
 ALTER TABLE spotify_play_history ENABLE ROW LEVEL SECURITY;
 
--- RLS policies: couple can only access their own data
+-- RLS policies: couple can only access their own data (via pairs table)
 CREATE POLICY "pair.spotify_config" ON spotify_config
   FOR ALL USING (
-    pair_id = (SELECT pair_id FROM profiles WHERE id = auth.uid())
+    EXISTS (
+      SELECT 1 FROM pairs
+      WHERE pairs.id = spotify_config.pair_id
+      AND pairs.code_used = TRUE
+      AND (pairs.user_one = auth.uid() OR pairs.user_two = auth.uid())
+    )
   );
 
 CREATE POLICY "pair.spotify_history" ON spotify_play_history
   FOR ALL USING (
-    pair_id = (SELECT pair_id FROM profiles WHERE id = auth.uid())
+    EXISTS (
+      SELECT 1 FROM pairs
+      WHERE pairs.id = spotify_play_history.pair_id
+      AND pairs.code_used = TRUE
+      AND (pairs.user_one = auth.uid() OR pairs.user_two = auth.uid())
+    )
   );

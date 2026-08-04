@@ -1,15 +1,14 @@
 .appshell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* fallback */
-  min-height: 100dvh; /* use dynamic viewport height on supporting browsers */
+  height: 100vh; /* fallback */
+  height: 100dvh; /* use dynamic viewport height on supporting browsers */
 }
 
 .appshell-content {
   flex: 1;
   min-height: 0;
-  overflow-y: auto; /* allow vertical scrolling on mobile */
-  overflow-x: hidden;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   scrollbar-width: none;
