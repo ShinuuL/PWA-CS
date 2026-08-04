@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { ApplicationServer, importVapidKeys } from "jsr:@negrel/webpush";
+import { normalizeVapidKeyPair } from "../_shared/vapid.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,23 +12,15 @@ const corsHeaders = {
 const vapidSubject = Deno.env.get("VAPID_SUBJECT") || "mailto:notifications@couplespace.app";
 
 async function createApplicationServer() {
-  const rawVapidKeys = Deno.env.get("VAPID_PRIVATE_KEY")
-  if (!rawVapidKeys) {
-    throw new Error("Missing VAPID_PRIVATE_KEY")
-  }
+  const normalizedVapidKeys = normalizeVapidKeyPair(
+    Deno.env.get("VAPID_PUBLIC_KEY"),
+    Deno.env.get("VAPID_PRIVATE_KEY")
+  )
 
-  let exportedKeys
-  try {
-    exportedKeys = JSON.parse(rawVapidKeys)
-  } catch {
-    throw new Error("VAPID_PRIVATE_KEY must be a JSON string containing exported VAPID keys")
-  }
-
-  if (!exportedKeys?.publicKey || !exportedKeys?.privateKey) {
-    throw new Error("VAPID_PRIVATE_KEY must contain publicKey and privateKey properties")
-  }
-
-  const vapidKeys = await importVapidKeys(exportedKeys)
+  const vapidKeys = await importVapidKeys({
+    publicKey: normalizedVapidKeys.publicKey,
+    privateKey: normalizedVapidKeys.privateKey,
+  })
   return ApplicationServer.new({
     crypto,
     contactInformation: vapidSubject,
