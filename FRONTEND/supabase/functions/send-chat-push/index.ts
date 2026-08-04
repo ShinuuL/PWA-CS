@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import * as webpush from "jsr:@negrel/webpush";
+import { normalizeVapidKeyPair } from "../_shared/vapid.ts";
 
 // ── VAPID key conversion helpers ─────────────────────────────────────────────
 // Converts raw base64url keys to JWK format for @negrel/webpush
@@ -104,13 +105,15 @@ serve(async (req: Request) => {
     console.log(`send-chat-push: found ${subscriptions.length} subscriptions`);
 
     // ── VAPID key setup ────────────────────────────────────────────────────
-    const publicKeyBase64url = Deno.env.get("VAPID_PUBLIC_KEY")!;
-    const privateKeyBase64url = Deno.env.get("VAPID_PRIVATE_KEY")!;
-    if (!publicKeyBase64url || !privateKeyBase64url) {
-      throw new Error("Missing VAPID_PUBLIC_KEY or VAPID_PRIVATE_KEY env vars");
-    }
+    const normalizedVapidKeys = normalizeVapidKeyPair(
+      Deno.env.get("VAPID_PUBLIC_KEY"),
+      Deno.env.get("VAPID_PRIVATE_KEY")
+    );
 
-    const exportedVapidKeys = convertVapidKeysToJWK(publicKeyBase64url, privateKeyBase64url);
+    const exportedVapidKeys = convertVapidKeysToJWK(
+      normalizedVapidKeys.publicKey,
+      normalizedVapidKeys.privateKey
+    );
     const vapidKeys = await webpush.importVapidKeys(exportedVapidKeys, { extractable: false });
     const appServer = await webpush.ApplicationServer.new({
       contactInformation: Deno.env.get("VAPID_SUBJECT") || "mailto:notifications@couplespace.app",
