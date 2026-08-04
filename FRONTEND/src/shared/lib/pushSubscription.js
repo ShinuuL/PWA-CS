@@ -80,42 +80,53 @@ export async function subscribeToPush() {
     const registration = await navigator.serviceWorker.ready
     console.log('[Push] Service worker ready, scope:', registration.scope)
 
-    const existingSubscription = await registration.pushManager.getSubscription()
-    console.log('[Push] Existing subscription:', existingSubscription ? 'yes' : 'no')
+    let subscription = await registration.pushManager.getSubscription()
+    console.log('[Push] Existing subscription:', subscription ? 'yes' : 'no')
 
-    if (existingSubscription) {
-      // Check if existing subscription matches current VAPID key
-      const existingKey = existingSubscription.options.applicationServerKey
-        ? btoa(String.fromCharCode(...new Uint8Array(existingSubscription.options.applicationServerKey))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    if (subscription) {
+      const existingKey = subscription.options.applicationServerKey
+        ? btoa(String.fromCharCode(...new Uint8Array(subscription.options.applicationServerKey))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
         : null
       console.log('[Push] Existing sub key matches:', existingKey === VAPID_PUBLIC_KEY)
 
-      // If key matches, reuse existing subscription — no need to resubscribe
-      if (existingKey === VAPID_PUBLIC_KEY) {
-        console.log('[Push] Reusing existing subscription (VAPID key matches)')
-        return existingSubscription
+      if (existingKey !== VAPID_PUBLIC_KEY) {
+        console.log('[Push] VAPID key changed, unsubscribing old subscription...')
+        await subscription.unsubscribe()
+        subscription = null
       }
-
-      // Only unsubscribe if VAPID key changed (regenerated keys)
-      console.log('[Push] VAPID key changed, unsubscribing old subscription...')
-      await existingSubscription.unsubscribe()
     }
 
-    const applicationServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-    console.log('[Push] Subscribing to push...')
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey
-    })
-    console.log('[Push] Push subscription created successfully')
+    if (!subscription) {
+      const applicationServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      console.log('[Push] Subscribing to push...')
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey
+      })
+      console.log('[Push] Push subscription created successfully')
+    }
 
-    // Store in Supabase
+    // Ensure subscription is saved in Supabase (idempotent)
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
+      const endpoint = subscription.endpoint
+
+      // Check if this endpoint is already stored
+      const { data: existing } = await supabase
+        .from('push_subscriptions')
+        .select('id')
+        .eq('endpoint', endpoint)
+        .maybeSingle()
+
+      if (existing) {
+        console.log('[Push] Subscription already in database')
+        return subscription
+      }
+
       // Get user's active pair_id (code_used = true)
       let pairId = null
 
-      const { data: pairOne, error: err1 } = await supabase
+      const { data: pairOne } = await supabase
         .from('pairs')
         .select('id')
         .eq('user_one', user.id)
@@ -125,7 +136,7 @@ export async function subscribeToPush() {
       if (pairOne?.id) {
         pairId = pairOne.id
       } else {
-        const { data: pairTwo, error: err2 } = await supabase
+        const { data: pairTwo } = await supabase
           .from('pairs')
           .select('id')
           .eq('user_two', user.id)
