@@ -455,10 +455,19 @@ export default function ChatView() {
 
   useEffect(() => {
     if (isAtBottom) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+      messagesEndRef.current?.scrollIntoView({ behavior: 'instant' })
       setUnreadCount(0)
     }
   }, [messages, isAtBottom])
+
+  const prevMessagesLenRef = useRef(0)
+  useEffect(() => {
+    const prevLen = prevMessagesLenRef.current
+    prevMessagesLenRef.current = messages.length
+    if (messages.length > prevLen && !isAtBottom) {
+      setUnreadCount(prev => prev + (messages.length - prevLen))
+    }
+  }, [messages.length, isAtBottom])
 
   useEffect(() => {
     const handleOnline = () => syncOfflineQueue()
@@ -471,9 +480,6 @@ export default function ChatView() {
     if (!el) return
     const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 50
     setIsAtBottom(atBottom)
-    if (!atBottom) {
-      setUnreadCount(prev => prev + 1)
-    }
   }, [setIsAtBottom])
 
   const handleSend = () => {

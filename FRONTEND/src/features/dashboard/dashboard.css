@@ -10,9 +10,16 @@
   overflow-x: hidden;
 }
 
-/* Prevent any horizontal overflow inside the dashboard */
+/* Allow vertical scrolling when appshell-content is overflow:hidden */
 .dashboard {
+  overflow-y: auto;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.dashboard::-webkit-scrollbar {
+  display: none;
 }
 
 .dashboard > * {
