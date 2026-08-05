@@ -22,7 +22,7 @@ const useAuthStore = create((set, get) => ({
       if (session?.user) {
         if (!pushSubscriptionInProgress) {
           pushSubscriptionInProgress = true
-          subscribeToPush().finally(() => { pushSubscriptionInProgress = false })
+          subscribeToPush()
         }
         startGlobalMessageListener()
       }
@@ -36,8 +36,6 @@ const useAuthStore = create((set, get) => ({
               pushSubscriptionInProgress = true
               console.log('[Push] User logged in, attempting subscription...')
               subscribeToPush()
-                .then((result) => console.log('[Push] subscribeToPush result:', result ? 'success' : 'failed/null'))
-                .finally(() => { pushSubscriptionInProgress = false })
             }
             startGlobalMessageListener()
           } else {
