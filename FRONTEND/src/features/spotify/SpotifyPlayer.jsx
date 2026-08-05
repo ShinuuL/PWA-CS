@@ -11,7 +11,6 @@ import './SpotifyPlayer.css'
 export default function SpotifyPlayer() {
   const [showSearch, setShowSearch] = useState(false)
   const [showPlaylistManager, setShowPlaylistManager] = useState(false)
-  const [countdown, setCountdown] = useState(null)
 
   const config = useSpotifyStore((s) => s.config)
   const currentTrack = useSpotifyStore((s) => s.currentTrack)
@@ -23,13 +22,9 @@ export default function SpotifyPlayer() {
   const error = useSpotifyStore((s) => s.error)
   const accessToken = useSpotifyStore((s) => s.accessToken)
 
-  const autoRotateTimer = useSpotifyStore((s) => s.autoRotateTimer)
   const togglePlay = useSpotifyStore((s) => s.togglePlay)
 
   const setShuffle = useSpotifyStore((s) => s.setShuffle)
-  const setAutoRotateInterval = useSpotifyStore((s) => s.setAutoRotateInterval)
-  const startAutoRotate = useSpotifyStore((s) => s.startAutoRotate)
-  const stopAutoRotate = useSpotifyStore((s) => s.stopAutoRotate)
   const fetchPlaylist = useSpotifyStore((s) => s.fetchPlaylist)
   const fetchUserPlaylists = useSpotifyStore((s) => s.fetchUserPlaylists)
   const setPlaylist = useSpotifyStore((s) => s.setPlaylist)
@@ -69,49 +64,6 @@ export default function SpotifyPlayer() {
       fetchPlaylist()
     }
   }, [config?.playlist_id, fetchPlaylist])
-
-  // Start auto-rotate when connected and has playlist
-  useEffect(() => {
-    if (isConnected && config?.playlist_id && config?.is_enabled) {
-      startAutoRotate()
-    }
-    return () => {
-      stopAutoRotate()
-    }
-  }, [isConnected, config?.playlist_id, config?.is_enabled, startAutoRotate, stopAutoRotate])
-
-  // Countdown timer for auto-rotate
-  useEffect(() => {
-    if (!autoRotateTimer || !config?.is_enabled) {
-      setCountdown(null)
-      return
-    }
-
-    const intervalMs = (config.interval || 3) * 60 * 1000
-    let startTime = Date.now()
-
-    const timer = setInterval(() => {
-      const elapsed = Date.now() - startTime
-      const remaining = Math.max(0, intervalMs - elapsed)
-      const minutes = Math.floor(remaining / 60000)
-      const seconds = Math.floor((remaining % 60000) / 1000)
-      setCountdown(`${minutes}:${seconds.toString().padStart(2, '0')}`)
-
-      if (remaining <= 0) {
-        startTime = Date.now()
-      }
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [autoRotateTimer, config?.is_enabled, config?.interval])
-
-  // Format time mm:ss
-  const formatTime = (ms) => {
-    if (!ms) return '0:00'
-    const minutes = Math.floor(ms / 60000)
-    const seconds = Math.floor((ms % 60000) / 1000)
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`
-  }
 
   // Handle playlist selection
   const handleSelectPlaylist = async (playlistId, name) => {
@@ -252,25 +204,6 @@ export default function SpotifyPlayer() {
                   style={{ width: `${(progress / (currentTrack?.duration_ms || 1)) * 100}%` }}
                 />
               </div>
-              <span className="spotify-player__time">
-                {formatTime(progress)} / {formatTime(currentTrack?.duration_ms)}
-              </span>
-            </div>
-            {config?.is_enabled && countdown && (
-              <p className="spotify-player__countdown">Próxima em: {countdown}</p>
-            )}
-            <div className="spotify-player__interval">
-              <label>Intervalo:</label>
-              <select
-                value={config?.interval || 3}
-                onChange={(e) => setAutoRotateInterval(parseInt(e.target.value))}
-              >
-                {[1, 2, 3, 5, 10, 15, 20, 30].map((min) => (
-                  <option key={min} value={min}>
-                    {min} min
-                  </option>
-                ))}
-              </select>
             </div>
             <div className="spotify-player__actions">
               <button className="spotify-player__btn spotify-player__btn--secondary" onClick={() => setShowPlaylistManager(true)}>

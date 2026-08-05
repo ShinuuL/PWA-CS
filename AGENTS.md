@@ -99,6 +99,15 @@ This project uses GSD for structured development. Key commands:
 - `/gsd-verify-work` — Validate completed work
 - `/gsd-ship` — Create PR
 
+## Component Fix Workflow
+
+Whenever asked to fix a component, follow this order:
+1. **Inspect the DOM** — use Playwright or DevTools MCP to take a snapshot of the element and its ancestors.
+2. **Identify applied CSS** — check which rules are actually computed (not just authored). Distinguish whether the problem comes from Flexbox, Grid, margin, padding, position, width, height, or z-index.
+3. **Explain the root cause** in one sentence before touching any file.
+4. **Apply the smallest possible fix** — prefer adding/adjusting a single CSS property over restructuring markup.
+5. **Validate visually** — take a screenshot or snapshot after the change to confirm the fix worked.
+
 ## Documentation
 
 - `docs/Features.md` — Feature definitions
