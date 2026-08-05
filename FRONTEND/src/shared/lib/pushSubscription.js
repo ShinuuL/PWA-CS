@@ -123,6 +123,13 @@ export async function subscribeToPush() {
         return subscription
       }
 
+      // New endpoint — remove stale rows for this user (mobile browsers
+      // can rotate endpoints on page refresh, leaving orphans)
+      await supabase
+        .from('push_subscriptions')
+        .delete()
+        .eq('user_id', user.id)
+
       // Get user's active pair_id (code_used = true)
       let pairId = null
 
