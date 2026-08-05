@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { supabase } from '../shared/lib/supabase'
-import { subscribeToPush, startGlobalMessageListener, stopGlobalMessageListener } from '../shared/lib/pushSubscription'
+import { subscribeToPush } from '../shared/lib/pushSubscription'
 
 let pushSubscriptionInProgress = false
 
@@ -18,13 +18,12 @@ const useAuthStore = create((set, get) => ({
       }
       set({ session, user: session?.user ?? null, loading: false })
 
-      // Subscribe to push and start global listener for existing session
+      // Subscribe to push for existing session
       if (session?.user) {
         if (!pushSubscriptionInProgress) {
           pushSubscriptionInProgress = true
           subscribeToPush()
         }
-        startGlobalMessageListener()
       }
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -37,10 +36,8 @@ const useAuthStore = create((set, get) => ({
               console.log('[Push] User logged in, attempting subscription...')
               subscribeToPush()
             }
-            startGlobalMessageListener()
           } else {
             set({ profile: null })
-            stopGlobalMessageListener()
           }
         }
       )
@@ -63,7 +60,6 @@ const useAuthStore = create((set, get) => ({
   },
 
   signOut: async () => {
-    await stopGlobalMessageListener()
     await supabase.auth.signOut()
     set({ session: null, user: null, profile: null })
   }

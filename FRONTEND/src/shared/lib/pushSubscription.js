@@ -2,9 +2,6 @@ import { supabase } from './supabase'
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY
 
-let globalMessageChannel = null
-let globalPairId = null
-
 /**
  * Check if push notifications are supported on this platform/device.
  * Returns false for iOS Safari not running as standalone PWA.
@@ -229,109 +226,4 @@ export async function getPushSubscription() {
   }
 }
 
-/**
- * Find the active pair_id for the given user.
- */
-async function findPairId(userId) {
-  const { data: pairOne } = await supabase
-    .from('pairs')
-    .select('id')
-    .eq('user_one', userId)
-    .eq('code_used', true)
-    .maybeSingle()
 
-  if (pairOne?.id) return pairOne.id
-
-  const { data: pairTwo } = await supabase
-    .from('pairs')
-    .select('id')
-    .eq('user_two', userId)
-    .eq('code_used', true)
-    .maybeSingle()
-
-  return pairTwo?.id || null
-}
-
-/**
- * Global message listener that sends push notifications
- * when the app is in background. Runs independently of
- * the chat page — active as long as the user is logged in.
- */
-export async function startGlobalMessageListener() {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return
-
-  const pairId = await findPairId(user.id)
-  if (!pairId) {
-    console.warn('[Push] No active pair for global message listener')
-    return
-  }
-
-  // Skip if already listening for this pair
-  if (globalMessageChannel && globalPairId === pairId) {
-    console.log('[Push:Global] Already listening for pair:', pairId)
-    return
-  }
-
-  // Clean up existing channel if any
-  await stopGlobalMessageListener()
-
-  globalPairId = pairId
-
-  const channel = supabase
-    .channel(`global-push:${pairId}-${Date.now()}`)
-    .on('postgres_changes', {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'messages',
-      filter: `pair_id=eq.${pairId}`
-    }, (payload) => {
-      const { new: newMsg } = payload
-      if (newMsg.sender_id === user.id) return
-
-      const isForeground =
-        typeof document !== 'undefined' &&
-        document.visibilityState === 'visible'
-
-      console.log('[Push:Global] Message received. foreground:', isForeground)
-
-      if (!isForeground) {
-        console.log('[Push:Global] App in background, invoking send-chat-push')
-        supabase.functions
-          .invoke('send-chat-push', {
-            body: {
-              recipient_id: user.id,
-              sender_name: 'Partner',
-              message_text: newMsg.content
-                ? newMsg.content.substring(0, 50)
-                : 'New message'
-            }
-          })
-          .then(async (res) => {
-            if (res.error) {
-              const body = await res.response?.json().catch(() => null)
-              console.error('[Push:Global] send-chat-push error:', res.error.message, 'Body:', body)
-            } else {
-              console.log('[Push:Global] send-chat-push success:', res.data)
-            }
-          })
-          .catch((err) => console.error('[Push:Global] send-chat-push failed:', err))
-      }
-    })
-    .subscribe()
-
-  globalMessageChannel = channel
-  console.log('[Push:Global] Listener started for pair:', pairId)
-}
-
-/**
- * Stop the global message listener.
- */
-export async function stopGlobalMessageListener() {
-  if (globalMessageChannel) {
-    await supabase.removeChannel(globalMessageChannel)
-    globalMessageChannel = null
-    globalPairId = null
-    console.log('[Push:Global] Listener stopped')
-  }
-}
