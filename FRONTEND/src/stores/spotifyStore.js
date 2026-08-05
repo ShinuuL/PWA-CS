@@ -367,6 +367,27 @@ const useSpotifyStore = create((set, get) => ({
     }
   },
 
+  playPlaylistContext: async () => {
+    const { playlistTracks, accessToken, deviceId } = get()
+    if (!playlistTracks.length || !accessToken) return
+
+    try {
+      const uris = playlistTracks.map((t) => t.uri)
+      const qs = deviceId ? `?device_id=${deviceId}` : ''
+      await fetch(`https://api.spotify.com/v1/me/player/play${qs}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ uris }),
+      })
+      set({ isPlaying: true, currentTrack: playlistTracks[0] })
+    } catch (err) {
+      set({ error: err.message })
+    }
+  },
+
   togglePlay: async () => {
     const { isPlaying, accessToken } = get()
     if (!accessToken) return
@@ -456,63 +477,23 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   startAutoRotate: () => {
-    const { config, autoRotateTimer } = get()
+    const { config } = get()
     if (!config?.is_enabled) return
 
-    // Clear existing timer
-    if (autoRotateTimer) {
-      clearInterval(autoRotateTimer)
-    }
-
-    const intervalMs = (config.interval || 3) * 60 * 1000
-    const timer = setInterval(() => {
-      get().playRandom()
-    }, intervalMs)
-
-    set({ autoRotateTimer: timer })
-    get().setupVisibilityHandler()
+    // Play the full playlist context so Spotify auto-advances sequentially
+    get().playPlaylistContext()
   },
 
   stopAutoRotate: () => {
-    const { autoRotateTimer } = get()
-    if (autoRotateTimer) {
-      clearInterval(autoRotateTimer)
-      set({ autoRotateTimer: null })
-    }
+    // No-op: sequential playback is handled by Spotify natively
   },
 
   setupVisibilityHandler: () => {
-    const { visibilityHandler } = get()
-    if (visibilityHandler) return // already set up
-
-    const handler = () => {
-      const { config, autoRotateTimer } = get()
-      if (!config?.is_enabled) return
-
-      if (document.hidden) {
-        // Pause auto-rotate when tab hidden
-        if (autoRotateTimer) {
-          clearInterval(autoRotateTimer)
-          set({ autoRotateTimer: null })
-        }
-      } else {
-        // Resume auto-rotate when tab visible
-        if (!autoRotateTimer) {
-          get().startAutoRotate()
-        }
-      }
-    }
-
-    document.addEventListener('visibilitychange', handler)
-    set({ visibilityHandler: handler })
+    // No-op: sequential playback is handled by Spotify natively
   },
 
   cleanupVisibilityHandler: () => {
-    const { visibilityHandler } = get()
-    if (visibilityHandler) {
-      document.removeEventListener('visibilitychange', visibilityHandler)
-      set({ visibilityHandler: null })
-    }
+    // No-op: sequential playback is handled by Spotify natively
   },
 
   setAccessToken: (token, expiresIn) => {
@@ -640,7 +621,6 @@ const useSpotifyStore = create((set, get) => ({
       tokenExpiresAt: null,
       pairId: null,
       _refreshPromise: null,
-      visibilityHandler: null,
     })
   },
 }))

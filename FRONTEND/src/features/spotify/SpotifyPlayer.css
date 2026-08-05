@@ -232,30 +232,6 @@
   color: var(--color-text-secondary);
 }
 
-.spotify-player__countdown {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  margin: 0.5rem 0;
-}
-
-.spotify-player__interval {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-}
-
-.spotify-player__interval select {
-  background: var(--color-bg-input);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 0.25rem 0.5rem;
-  color: var(--color-text-primary);
-  font-size: 0.875rem;
-}
-
 .spotify-player__loading {
   text-align: center;
   padding: 2rem;
