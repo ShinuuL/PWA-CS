@@ -129,7 +129,7 @@ const useChatStore = create((set, get) => ({
 
               if (isAppInForeground) {
                 // Foreground: in-app toast (D-25)
-                // Push for background is handled by startGlobalMessageListener in pushSubscription.js
+                // Push for background is handled server-side by DB trigger
                 const { settings: s } = state
                 if (!state.isInChat && (s.notificationSounds || s.messagePreview)) {
                   get().showNotification(
