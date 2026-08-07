@@ -74,12 +74,6 @@
   gap: 0.75rem;
   padding: 0.75rem 0;
   border-bottom: 1px solid var(--color-border);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.playlist-manager__track:hover {
-  background: rgba(255, 255, 255, 0.03);
 }
 
 .playlist-manager__track:last-child {
@@ -117,30 +111,18 @@
   text-overflow: ellipsis;
 }
 
-.playlist-manager__track-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
 .playlist-manager__play-btn {
   background: transparent;
   border: none;
-  color: var(--color-text-secondary);
+  color: var(--color-primary);
   cursor: pointer;
   padding: 0.5rem;
   border-radius: var(--radius-md);
   transition: all 0.2s;
-  opacity: 0;
-}
-
-.playlist-manager__track:hover .playlist-manager__play-btn {
-  opacity: 1;
 }
 
 .playlist-manager__play-btn:hover {
-  background: rgba(30, 215, 96, 0.1);
-  color: #1ed760;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .playlist-manager__remove-btn {

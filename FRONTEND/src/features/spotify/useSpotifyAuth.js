@@ -86,10 +86,11 @@ export default function useSpotifyAuth() {
         throw new Error('State mismatch — possible CSRF attack')
       }
 
+      // Get user from authStore
       const { user } = (await import('../../stores/authStore')).default.getState()
       if (!user) throw new Error('Not authenticated')
 
-      // Fetch user's pair from pairs table
+      // Fetch user's pair_id from pairs table
       const { data: pair } = await supabase
         .from('pairs')
         .select('id')
@@ -99,8 +100,10 @@ export default function useSpotifyAuth() {
 
       if (!pair) throw new Error('No pair found')
 
-      // Call Edge Function to exchange code for tokens
+      // Get code_verifier from localStorage (PKCE)
       const codeVerifier = localStorage.getItem('spotify_code_verifier')
+
+      // Call Edge Function to exchange code for tokens
       const { data, error } = await supabase.functions.invoke('spotify-auth', {
         body: {
           action: 'exchange',
@@ -111,13 +114,7 @@ export default function useSpotifyAuth() {
         },
       })
 
-      if (error) {
-        // 401 = invalid_grant (code already used) — need fresh re-auth
-        if (error.status === 401) {
-          throw new Error('Código expirado. Faça login no Spotify novamente.')
-        }
-        throw error
-      }
+      if (error) throw error
 
       if (data.error) {
         throw new Error(data.error_description || data.error)
@@ -141,7 +138,7 @@ export default function useSpotifyAuth() {
         player.connect()
       }
 
-      // Clean up localStorage only on success
+      // Clean up localStorage
       localStorage.removeItem('spotify_code_verifier')
       localStorage.removeItem('spotify_auth_state')
 
@@ -150,7 +147,7 @@ export default function useSpotifyAuth() {
     } catch (err) {
       setAuthError(err.message)
       setIsAuthenticating(false)
-      // Don't remove code_verifier on error — allow retry with new code
+      localStorage.removeItem('spotify_code_verifier')
       localStorage.removeItem('spotify_auth_state')
       return false
     }

@@ -8,6 +8,7 @@ const useDashboardStore = create((set, get) => ({
   loading: false,
   pairId: null,
   subscription: null,
+  realtimeConnected: false,
 
   initializeDashboard: async (pairId) => {
     const { user } = useAuthStore.getState()
@@ -18,6 +19,38 @@ const useDashboardStore = create((set, get) => ({
     set({ loading: true, pairId })
 
     try {
+      const oldChannel = get().subscription
+      if (oldChannel) {
+        await supabase.removeChannel(oldChannel)
+      }
+
+      const channel = supabase
+        .channel(`moods:${pairId}`)
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'moods',
+          filter: `pair_id=eq.${pairId}`
+        }, (payload) => {
+          const { new: newMood } = payload
+          if (!newMood) return
+          if (newMood.user_id === user.id) {
+            set({ myMood: newMood })
+          } else {
+            set({ partnerMood: newMood })
+          }
+        })
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            set({ realtimeConnected: true })
+          } else if (status === 'CHANNEL_ERROR') {
+            console.error('[Dashboard] Realtime subscription error')
+            set({ realtimeConnected: false })
+          }
+        })
+
+      set({ subscription: channel })
+
       const { data: myMood } = await supabase
         .from('moods')
         .select('*')
@@ -37,30 +70,6 @@ const useDashboardStore = create((set, get) => ({
         .maybeSingle()
 
       set({ myMood, partnerMood, loading: false })
-
-      const oldChannel = get().subscription
-      if (oldChannel) {
-        supabase.removeChannel(oldChannel)
-      }
-
-      const channel = supabase
-        .channel(`moods:${pairId}`)
-        .on('postgres_changes', {
-          event: '*',
-          schema: 'public',
-          table: 'moods',
-          filter: `pair_id=eq.${pairId}`
-        }, (payload) => {
-          const { new: newMood } = payload
-          if (newMood.user_id === user.id) {
-            set({ myMood: newMood })
-          } else {
-            set({ partnerMood: newMood })
-          }
-        })
-        .subscribe()
-
-      set({ subscription: channel })
     } catch (err) {
       set({ error: err.message, loading: false })
     }
@@ -112,7 +121,8 @@ const useDashboardStore = create((set, get) => ({
       partnerMood: null,
       loading: false,
       pairId: null,
-      subscription: null
+      subscription: null,
+      realtimeConnected: false
     })
   }
 }))

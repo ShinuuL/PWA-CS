@@ -7,23 +7,28 @@ const loadSpotifySDK = () => {
       resolve(window.Spotify)
       return
     }
-    // Spotify SDK requires this global callback before script loads
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      resolve(window.Spotify)
-    }
     const script = document.createElement('script')
     script.src = 'https://sdk.scdn.co/spotify-player.js'
-    script.async = true
+    script.onload = () => {
+      // Wait a bit for window.Spotify to be defined
+      const check = setInterval(() => {
+        if (window.Spotify) {
+          clearInterval(check)
+          resolve(window.Spotify)
+        }
+      }, 100)
+      // Timeout after 5 seconds
+      setTimeout(() => {
+        clearInterval(check)
+        if (!window.Spotify) {
+          console.error('Spotify SDK failed to load')
+        }
+      }, 5000)
+    }
     script.onerror = () => {
       console.error('Failed to load Spotify SDK script')
     }
     document.body.appendChild(script)
-    // Fallback timeout in case callback never fires
-    setTimeout(() => {
-      if (window.Spotify) {
-        resolve(window.Spotify)
-      }
-    }, 5000)
   })
 }
 
@@ -72,7 +77,7 @@ export default function useSpotifyPlayer() {
 
         player.addListener('player_state_changed', (state) => {
           if (cancelledRef.current) return
-          if (!state) return
+          if (!state) return // null state means player is not active
 
           const track = state.track_window?.current_track
           if (track) {
@@ -94,17 +99,9 @@ export default function useSpotifyPlayer() {
           setError('premium_required')
         })
 
-        player.addListener('authentication_error', async ({ message }) => {
+        player.addListener('authentication_error', ({ message }) => {
           if (cancelledRef.current) return
-          if (message.includes('scopes') || message.includes('Invalid')) {
-            return
-          }
-          await useSpotifyStore.getState().refreshTokenIfNeeded()
-          const newToken = useSpotifyStore.getState().accessToken
-          if (newToken) {
-            player.disconnect()
-            player.connect()
-          }
+          setError('auth_expired')
         })
 
         player.addListener('playback_error', ({ message }) => {
@@ -133,7 +130,7 @@ export default function useSpotifyPlayer() {
     }
   }, [accessToken, setDeviceId, setCurrentTrack, setIsPlaying, setProgress, setError])
 
-  // Progress polling — updates every second while playing
+  // Progress polling
   useEffect(() => {
     if (!isReady) return
 

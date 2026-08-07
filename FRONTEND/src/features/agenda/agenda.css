@@ -99,6 +99,7 @@
 
 .calendar-grid__swipe-container {
   touch-action: pan-y;
+  overflow: visible;
 }
 
 .calendar-grid__weekdays {
@@ -150,6 +151,14 @@
 }
 
 .calendar-grid__day--today .calendar-grid__day-number {
+  color: white;
+}
+
+.calendar-grid__day--selected {
+  background: var(--color-primary);
+}
+
+.calendar-grid__day--selected .calendar-grid__day-number {
   color: white;
 }
 

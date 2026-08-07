@@ -53,7 +53,7 @@ export default function PlaylistManager({ onClose, onAddMusic }) {
             </div>
           ) : (
             playlistTracks.map((track) => (
-              <div key={track.uri} className="playlist-manager__track" onClick={() => playUri(track.uri)}>
+              <div key={track.uri} className="playlist-manager__track">
                 {track.albumArt && (
                   <img src={track.albumArt} alt={track.name} className="playlist-manager__track-art" />
                 )}
@@ -61,14 +61,12 @@ export default function PlaylistManager({ onClose, onAddMusic }) {
                   <p className="playlist-manager__track-name">{track.name}</p>
                   <p className="playlist-manager__track-artist">{track.artist}</p>
                 </div>
-                <div className="playlist-manager__track-actions">
-                  <button className="playlist-manager__play-btn" onClick={(e) => { e.stopPropagation(); playUri(track.uri) }}>
-                    <Play size={16} />
-                  </button>
-                  <button className="playlist-manager__remove-btn" onClick={(e) => { e.stopPropagation(); handleRemove(track) }}>
-                    <Trash2 size={16} />
-                  </button>
-                </div>
+                <button className="playlist-manager__play-btn" onClick={() => playUri(track.uri)}>
+                  <Play size={16} />
+                </button>
+                <button className="playlist-manager__remove-btn" onClick={() => handleRemove(track)}>
+                  <Trash2 size={16} />
+                </button>
               </div>
             ))
           )}

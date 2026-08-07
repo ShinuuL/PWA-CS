@@ -4,6 +4,7 @@ import { useAuth } from '../auth/useAuth'
 import { usePairing } from '../pairing/usePairing'
 import useAuthStore from '../../stores/authStore'
 import { isPushSupported, isIOSStandalone, subscribeToPush, unsubscribeFromPush, getPushSubscription } from '../../shared/lib/pushSubscription'
+import BugReportModal from './BugReportModal'
 import './settings.css'
 
 export default function SettingsPage() {
@@ -13,6 +14,7 @@ export default function SettingsPage() {
   const navigate = useNavigate()
   const [showConfirm, setShowConfirm] = useState(false)
   const [unpairing, setUnpairing] = useState(false)
+  const [showBugReport, setShowBugReport] = useState(false)
 
   // Push notification state
   const [pushSupported] = useState(() => isPushSupported())
@@ -140,6 +142,13 @@ export default function SettingsPage() {
       </div>
 
       <div className="settings-section">
+        <p className="settings-section-title">Suporte</p>
+        <button className="btn-secondary" onClick={() => setShowBugReport(true)}>
+          Reportar Problema
+        </button>
+      </div>
+
+      <div className="settings-section">
         <p className="settings-section-title">Session</p>
         <button className="btn-secondary" onClick={handleSignOut}>
           Sign Out
@@ -172,6 +181,8 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
+
+      {showBugReport && <BugReportModal onClose={() => setShowBugReport(false)} />}
     </div>
   )
 }

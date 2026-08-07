@@ -23,7 +23,7 @@ export default function SpotifyCallback() {
       exchangedRef.current = true
       handleCallback(code, state).then((success) => {
         if (success) {
-          navigate('/', { replace: true })
+          navigate('/home', { replace: true })
         } else {
           setError('Falha na autenticação')
         }

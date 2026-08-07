@@ -1,0 +1,224 @@
+/* BugReportModal styles */
+
+.bug-report-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.bug-report-modal {
+  background: var(--color-bg-card, #1A1D2E);
+  border: 1px solid var(--color-border, #2a2a4a);
+  border-radius: var(--radius-lg, 24px);
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.bug-report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-border, #2a2a4a);
+}
+
+.bug-report-header h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.bug-report-close {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: var(--radius-md);
+  transition: background 0.15s;
+}
+
+.bug-report-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.bug-report-form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.bug-report-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bug-report-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.bug-report-categories {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.bug-report-category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.5rem;
+  background: var(--color-bg-input, #16213e);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md, 12px);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.bug-report-category:hover {
+  border-color: var(--color-border, #2a2a4a);
+}
+
+.bug-report-category--active {
+  border-color: var(--color-primary, #B87CFF);
+  background: rgba(184, 124, 255, 0.1);
+}
+
+.bug-report-category-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.bug-report-category-desc {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+}
+
+.bug-report-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--color-bg-input, #16213e);
+  border: 1px solid var(--color-border, #2a2a4a);
+  border-radius: var(--radius-md, 12px);
+  color: var(--color-text-primary);
+  font-size: 0.9375rem;
+  font-family: var(--font-family);
+  resize: vertical;
+  min-height: 100px;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.bug-report-textarea:focus {
+  border-color: var(--color-primary, #B87CFF);
+}
+
+.bug-report-textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.bug-report-charcount {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+
+.bug-report-error {
+  font-size: 0.875rem;
+  color: #FF6B6B;
+  margin: 0;
+}
+
+.bug-report-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.bug-report-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md, 12px);
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.bug-report-btn--cancel {
+  background: var(--color-bg-input, #16213e);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border, #2a2a4a);
+}
+
+.bug-report-btn--cancel:hover {
+  background: var(--color-border, #2a2a4a);
+}
+
+.bug-report-btn--primary {
+  background: var(--color-primary, #B87CFF);
+  color: white;
+}
+
+.bug-report-btn--primary:hover {
+  opacity: 0.9;
+}
+
+.bug-report-btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bug-report-success {
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.bug-report-success-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #00E5CC;
+  color: #0A0C14;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 auto 1rem;
+}
+
+.bug-report-success h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.bug-report-success p {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}

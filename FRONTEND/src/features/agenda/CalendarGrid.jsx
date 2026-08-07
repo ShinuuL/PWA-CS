@@ -1,14 +1,16 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import {
   startOfMonth, endOfMonth, startOfWeek, endOfWeek,
-  eachDayOfInterval, format, isSameMonth, addMonths, subMonths, isToday
+  eachDayOfInterval, format, isSameMonth, addMonths, subMonths, isToday, isSameDay
 } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { motion, AnimatePresence } from 'motion/react'
 
 const WEEKDAY_HEADERS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb']
 
-export default function CalendarGrid({ currentMonth, onMonthChange, events = [], onDayClick }) {
+export default function CalendarGrid({ currentMonth, onMonthChange, events = [], onDayClick, selectedDate }) {
+  const [internalSelected, setInternalSelected] = useState(null)
+  const activeSelected = selectedDate || internalSelected
 
   const calendarDays = useMemo(() => {
     const firstDay = startOfMonth(currentMonth)
@@ -36,6 +38,11 @@ export default function CalendarGrid({ currentMonth, onMonthChange, events = [],
     }
   }
 
+  const handleDayClick = (day) => {
+    setInternalSelected(day)
+    if (onDayClick) onDayClick(day)
+  }
+
   const monthKey = format(currentMonth, 'yyyy-MM')
 
   return (
@@ -48,7 +55,7 @@ export default function CalendarGrid({ currentMonth, onMonthChange, events = [],
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         onDragEnd={handleDragEnd}
-        style={{ touchAction: 'pan-y', overflow: 'hidden' }}
+        style={{ touchAction: 'pan-y' }}
       >
         <div className="calendar-grid__weekdays">
           {WEEKDAY_HEADERS.map(day => (
@@ -69,12 +76,13 @@ export default function CalendarGrid({ currentMonth, onMonthChange, events = [],
               const isCurrentMonth = isSameMonth(day, currentMonth)
               const isTodayCell = isToday(day)
               const hasEvent = daysWithEvents[dayKey]
+              const isSelected = activeSelected && isSameDay(day, activeSelected)
 
               return (
                 <button
                   key={i}
-                  className={`calendar-grid__day ${!isCurrentMonth ? 'calendar-grid__day--outside' : ''} ${isTodayCell ? 'calendar-grid__day--today' : ''}`}
-                  onClick={() => onDayClick && onDayClick(day)}
+                  className={`calendar-grid__day ${!isCurrentMonth ? 'calendar-grid__day--outside' : ''} ${isTodayCell ? 'calendar-grid__day--today' : ''} ${isSelected ? 'calendar-grid__day--selected' : ''}`}
+                  onClick={() => handleDayClick(day)}
                   type="button"
                 >
                   <span className="calendar-grid__day-number">{format(day, 'd')}</span>
