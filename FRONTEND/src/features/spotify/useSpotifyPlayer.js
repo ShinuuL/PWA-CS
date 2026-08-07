@@ -165,13 +165,16 @@ export default function useSpotifyPlayer() {
 
   // Auto-resume / auto-pause via SDK when store requests it
   useEffect(() => {
-    if (!isReady || !playerRef.current) return
+    if (!isReady || !playerRef.current || !autoResume) return
 
-    if (autoResume) {
+    if (autoResume === 'pause') {
+      console.log('[spotify-sdk] autoPause triggered')
+      playerRef.current.pause()
+    } else {
       console.log('[spotify-sdk] autoResume triggered — calling player.resume()')
       playerRef.current.resume()
-      useSpotifyStore.setState({ _autoResume: false })
     }
+    useSpotifyStore.setState({ _autoResume: false })
   }, [autoResume, isReady])
 
   // Sync pause from store (togglePlay sets isPlaying=false)

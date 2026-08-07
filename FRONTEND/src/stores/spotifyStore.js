@@ -411,59 +411,42 @@ const useSpotifyStore = create((set, get) => ({
     await get().refreshTokenIfNeeded()
     const { accessToken: freshToken } = get()
 
-    console.log('[spotify] playUri called', { uri, hasDeviceId: !!deviceId, deviceId })
+    console.log('[spotify] playUri called', { uri, hasDeviceId: !!deviceId })
 
-    const headers = {
-      Authorization: `Bearer ${freshToken}`,
-      'Content-Type': 'application/json',
-    }
-
-    try {
-      // Transfer playback to the Web Playback SDK device
-      if (deviceId) {
-        console.log('[spotify] transferring to SDK device', deviceId)
-        const transferRes = await fetch('https://api.spotify.com/v1/me/player', {
-          method: 'PUT',
-          headers,
-          body: JSON.stringify({ device_ids: [deviceId], play: false }),
-        })
-        console.log('[spotify] transfer result', { status: transferRes.status })
-
-        // Play the track on the SDK device
-        console.log('[spotify] PUT /me/player/play', { uris: [uri] })
-        const res = await fetch('https://api.spotify.com/v1/me/player/play', {
-          method: 'PUT',
-          headers,
-          body: JSON.stringify({ uris: [uri] }),
-        })
-        const statusText = await res.text().catch(() => '')
-        console.log('[spotify] play response', { status: res.status, ok: res.ok, body: statusText })
-
-        if (res.ok || res.status === 204) {
-          // SDK picks up the track but browser blocks autoplay — trigger resume via SDK
-          console.log('[spotify] setting _autoResume for SDK')
-          set({ _autoResume: true })
-        } else {
-          console.error('[spotify] play failed', res.status)
-          set({ error: `play ${res.status}` })
-        }
-      } else {
-        // No SDK device — fallback: play directly (will route to active Spotify device)
-        console.log('[spotify] no deviceId, playing directly')
-        const res = await fetch('https://api.spotify.com/v1/me/player/play', {
-          method: 'PUT',
-          headers,
-          body: JSON.stringify({ uris: [uri] }),
-        })
-        if (res.ok || res.status === 204) {
-          set({ isPlaying: true })
-        } else {
-          set({ error: `play ${res.status}` })
-        }
+    if (deviceId) {
+      // SDK device available — transfer playback to it, then resume via SDK
+      console.log('[spotify] transferring to SDK device', deviceId)
+      const headers = {
+        Authorization: `Bearer ${freshToken}`,
+        'Content-Type': 'application/json',
       }
-    } catch (err) {
-      console.error('[spotify] playUri error', err)
-      set({ error: err.message })
+      const transferRes = await fetch('https://api.spotify.com/v1/me/player', {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({ device_ids: [deviceId], play: false }),
+      })
+      console.log('[spotify] transfer result', { status: transferRes.status })
+
+      // SDK picks up the track via player_state_changed — trigger resume
+      console.log('[spotify] setting _autoResume for SDK')
+      set({ _autoResume: true })
+    } else {
+      // No SDK — fallback to REST API (plays on last active Spotify device)
+      console.log('[spotify] no deviceId, playing via REST API')
+      const headers = {
+        Authorization: `Bearer ${freshToken}`,
+        'Content-Type': 'application/json',
+      }
+      const res = await fetch('https://api.spotify.com/v1/me/player/play', {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({ uris: [uri] }),
+      })
+      if (res.ok || res.status === 204) {
+        set({ isPlaying: true })
+      } else {
+        console.error('[spotify] REST play failed', res.status)
+      }
     }
   },
 
@@ -474,22 +457,36 @@ const useSpotifyStore = create((set, get) => ({
     await get().refreshTokenIfNeeded()
     const { accessToken: freshToken } = get()
 
-    console.log('[spotify] togglePlay', { hasDeviceId: !!deviceId, deviceId })
+    console.log('[spotify] togglePlay', { hasDeviceId: !!deviceId })
 
     try {
-      // Check real playback state before toggling
+      // Check real playback state
       const statusRes = await fetch('https://api.spotify.com/v1/me/player', {
         headers: { Authorization: `Bearer ${freshToken}` },
       })
       if (statusRes.ok) {
         const statusData = await statusRes.json()
         const currentlyPlaying = statusData?.is_playing
-        console.log('[spotify] current state', { is_playing: currentlyPlaying, device: statusData?.device?.id })
-        // Just flip the isPlaying state — SDK player handles actual resume/pause
-        set({ isPlaying: !currentlyPlaying, _autoResume: !currentlyPlaying })
+        console.log('[spotify] current state', { is_playing: currentlyPlaying })
+
+        if (currentlyPlaying) {
+          // Pause — use SDK if available, otherwise REST API
+          if (deviceId) {
+            set({ _autoResume: 'pause' })
+          } else {
+            await fetch('https://api.spotify.com/v1/me/player/pause', {
+              method: 'PUT',
+              headers: { Authorization: `Bearer ${freshToken}` },
+            })
+            set({ isPlaying: false })
+          }
+        } else {
+          // Resume — always use SDK resume via _autoResume flag
+          set({ _autoResume: true })
+        }
       } else {
-        console.log('[spotify] no active player, status:', statusRes.status)
-        set({ isPlaying: true, _autoResume: true })
+        // No active player — try to resume
+        set({ _autoResume: true })
       }
     } catch (err) {
       console.error('[spotify] togglePlay error', err)
