@@ -355,16 +355,22 @@ const useSpotifyStore = create((set, get) => ({
       await get().refreshTokenIfNeeded()
       const { accessToken } = get()
       if (accessToken) {
+        const headers = {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        }
+        // Transfer to SDK device first
+        if (deviceId) {
+          await fetch('https://api.spotify.com/v1/me/player', {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify({ device_ids: [deviceId], play: false }),
+          })
+        }
         await fetch('https://api.spotify.com/v1/me/player/play', {
           method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            uris: [randomTrack.uri],
-            ...(deviceId ? { device_ids: [deviceId] } : {}),
-          }),
+          headers,
+          body: JSON.stringify({ uris: [randomTrack.uri] }),
         })
       }
 
@@ -404,44 +410,28 @@ const useSpotifyStore = create((set, get) => ({
       'Content-Type': 'application/json',
     }
 
-    const doPlay = async () => {
-      const body = { uris: [uri] }
-      if (deviceId) body.device_ids = [deviceId]
-      console.log('[spotify] PUT /me/player/play', { body })
+    try {
+      // Step 1: Transfer playback to the Web Playback SDK device first
+      if (deviceId) {
+        console.log('[spotify] transferring to SDK device', deviceId)
+        const transferRes = await fetch('https://api.spotify.com/v1/me/player', {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ device_ids: [deviceId], play: false }),
+        })
+        console.log('[spotify] transfer result', { status: transferRes.status })
+      }
+
+      // Step 2: Now play the track on the active device (which is now the SDK device)
+      const playBody = { uris: [uri] }
+      console.log('[spotify] PUT /me/player/play', { body: playBody })
       const res = await fetch('https://api.spotify.com/v1/me/player/play', {
         method: 'PUT',
         headers,
-        body: JSON.stringify(body),
+        body: JSON.stringify(playBody),
       })
       const statusText = await res.text().catch(() => '')
       console.log('[spotify] play response', { status: res.status, ok: res.ok, body: statusText })
-      return res
-    }
-
-    try {
-      let res = await doPlay()
-
-      // If 404 (no active device), transfer playback first then retry
-      if (res.status === 404) {
-        if (deviceId) {
-          console.log('[spotify] play 404 — transferring to device', deviceId)
-          const transferRes = await fetch('https://api.spotify.com/v1/me/player', {
-            method: 'PUT',
-            headers,
-            body: JSON.stringify({ device_ids: [deviceId], play: false }),
-          })
-          const transferBody = await transferRes.text().catch(() => '')
-          console.log('[spotify] transfer result', { status: transferRes.status, body: transferBody })
-
-          if (transferRes.ok || transferRes.status === 204) {
-            res = await doPlay()
-          }
-        } else {
-          console.error('[spotify] play 404 and no deviceId — SDK ready event never fired')
-          set({ error: 'no_device_available' })
-          return
-        }
-      }
 
       if (!res.ok && res.status !== 204) {
         console.error('[spotify] play failed', res.status)
@@ -480,18 +470,28 @@ const useSpotifyStore = create((set, get) => ({
         console.log('[spotify] no active player, status:', statusRes.status)
       }
 
+      const headers = {
+        Authorization: `Bearer ${freshToken}`,
+        'Content-Type': 'application/json',
+      }
+
+      // When resuming playback, transfer to SDK device first
+      if (shouldPlay && deviceId) {
+        console.log('[spotify] transferring to SDK device before play', deviceId)
+        await fetch('https://api.spotify.com/v1/me/player', {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ device_ids: [deviceId], play: false }),
+        })
+      }
+
       const url = shouldPlay
         ? 'https://api.spotify.com/v1/me/player/play'
         : 'https://api.spotify.com/v1/me/player/pause'
-      const body = deviceId
-        ? JSON.stringify({ device_ids: [deviceId] })
-        : undefined
+      const body = shouldPlay ? JSON.stringify({ uris: [] }) : undefined
       const res = await fetch(url, {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${freshToken}`,
-          ...(body ? { 'Content-Type': 'application/json' } : {}),
-        },
+        headers,
         body,
       })
       const resBody = await res.text().catch(() => '')
