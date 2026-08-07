@@ -44,7 +44,6 @@ export default function useSpotifyPlayer() {
 
   const accessToken = useSpotifyStore((s) => s.accessToken)
   const autoResume = useSpotifyStore((s) => s._autoResume)
-  const isPlaying = useSpotifyStore((s) => s.isPlaying)
   const setDeviceId = useSpotifyStore((s) => s.setDeviceId)
   const setCurrentTrack = useSpotifyStore((s) => s.setCurrentTrack)
   const setIsPlaying = useSpotifyStore((s) => s.setIsPlaying)
@@ -163,7 +162,7 @@ export default function useSpotifyPlayer() {
     return () => clearInterval(interval)
   }, [isReady, setProgress])
 
-  // Auto-resume / auto-pause via SDK when store requests it
+  // Auto-resume via SDK when store requests it
   useEffect(() => {
     if (!isReady || !playerRef.current || !autoResume) return
 
@@ -177,11 +176,19 @@ export default function useSpotifyPlayer() {
     useSpotifyStore.setState({ _autoResume: false })
   }, [autoResume, isReady])
 
-  // Sync pause from store (togglePlay sets isPlaying=false)
+  // SDK actions (next, previous) triggered by store
+  const sdkAction = useSpotifyStore((s) => s._sdkAction)
   useEffect(() => {
-    if (!isReady || !playerRef.current) return
-    // This runs when isPlaying changes — the SDK's player_state_changed handles the actual state
-  }, [isPlaying, isReady])
+    if (!isReady || !playerRef.current || !sdkAction) return
+
+    console.log('[spotify-sdk] executing action', sdkAction)
+    if (sdkAction === 'next') {
+      playerRef.current.nextTrack()
+    } else if (sdkAction === 'previous') {
+      playerRef.current.previousTrack()
+    }
+    useSpotifyStore.setState({ _sdkAction: null })
+  }, [sdkAction, isReady])
 
   const play = useCallback(() => {
     if (playerRef.current) {

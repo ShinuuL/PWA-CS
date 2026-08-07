@@ -1,0 +1,6 @@
+- generic [ref=f2e3]:
+  - banner [ref=f2e4]:
+    - button [ref=f2e5] [cursor=pointer]
+    - generic [ref=f2e7]: CoupleSpace
+  - main [ref=f2e9]:
+    - generic [ref=f2e10]: Checking pairing status...

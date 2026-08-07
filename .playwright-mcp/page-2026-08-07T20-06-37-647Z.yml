@@ -1,0 +1,447 @@
+- generic [ref=e1]:
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - button [ref=e6] [cursor=pointer]
+      - generic [ref=e8]:
+        - img "Naju" [ref=e11] [cursor=pointer]
+        - generic [ref=e14]: Naju
+    - main [ref=e15]:
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]:
+            - generic [ref=e20]: Ultima Lembranca
+            - generic [ref=e25]: Recente
+          - img "Memory photo" [ref=e27]
+          - generic [ref=e28]: July 31, 2026
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - generic [ref=e32]:
+              - generic [ref=e33]:
+                - img "Gabriel" [ref=e34]
+                - generic [ref=e35]: Gabriel está se sentindo
+              - generic [ref=e36]: 😴
+            - generic [ref=e38]:
+              - heading "Como você está se sentindo?" [level=3] [ref=e39]
+              - generic [ref=e40]:
+                - button "😊 Happy" [ref=e41] [cursor=pointer]:
+                  - generic [ref=e42]: 😊
+                  - generic [ref=e43]: Happy
+                - button "😴 Tired" [ref=e44] [cursor=pointer]:
+                  - generic [ref=e45]: 😴
+                  - generic [ref=e46]: Tired
+                - button "😢 Sad" [ref=e47] [cursor=pointer]:
+                  - generic [ref=e48]: 😢
+                  - generic [ref=e49]: Sad
+                - button "💕 Missing" [ref=e50] [cursor=pointer]:
+                  - generic [ref=e51]: 💕
+                  - generic [ref=e52]: Missing
+                - button "🥺 Needy" [ref=e53] [cursor=pointer]:
+                  - generic [ref=e54]: 🥺
+                  - generic [ref=e55]: Needy
+                - button "✏️ Custom" [ref=e56] [cursor=pointer]:
+                  - generic [ref=e57]: ✏️
+                  - generic [ref=e58]: Custom
+          - generic [ref=e59]:
+            - generic [ref=e60]:
+              - heading "Nossa Playlist" [level=3] [ref=e61]
+              - generic [ref=e62]:
+                - button [ref=e63] [cursor=pointer]
+                - button [ref=e65] [cursor=pointer]
+            - generic [ref=e69]:
+              - generic [ref=e70]:
+                - paragraph [ref=e71]: Nenhuma música
+                - paragraph
+              - generic [ref=e72]:
+                - button [ref=e73] [cursor=pointer]
+                - button [ref=e76] [cursor=pointer]
+                - button [ref=e79] [cursor=pointer]
+                - button [ref=e82] [cursor=pointer]
+              - generic [ref=e89]: 0:00 / 0:00
+              - button "Nossa Playlist (53)" [active] [ref=e92] [cursor=pointer]
+            - generic [ref=e108]:
+              - generic [ref=e109]:
+                - heading "Nossa Playlist (53)" [level=3] [ref=e110]
+                - button [ref=e111] [cursor=pointer]
+              - generic [ref=e115]:
+                - generic [ref=e116]:
+                  - img "Aurora" [ref=e117]
+                  - generic [ref=e118]:
+                    - paragraph [ref=e119]: Aurora
+                    - paragraph [ref=e120]: Jão
+                  - button [ref=e121] [cursor=pointer]
+                  - button [ref=e124] [cursor=pointer]
+                - generic [ref=e128]:
+                  - img "Por Você" [ref=e129]
+                  - generic [ref=e130]:
+                    - paragraph [ref=e131]: Por Você
+                    - paragraph [ref=e132]: Jão
+                  - button [ref=e133] [cursor=pointer]
+                  - button [ref=e136] [cursor=pointer]
+                - generic [ref=e140]:
+                  - img "Literatura" [ref=e141]
+                  - generic [ref=e142]:
+                    - paragraph [ref=e143]: Literatura
+                    - paragraph [ref=e144]: Jão
+                  - button [ref=e145] [cursor=pointer]
+                  - button [ref=e148] [cursor=pointer]
+                - generic [ref=e152]:
+                  - img "Julho" [ref=e153]
+                  - generic [ref=e154]:
+                    - paragraph [ref=e155]: Julho
+                    - paragraph [ref=e156]: Jão
+                  - button [ref=e157] [cursor=pointer]
+                  - button [ref=e160] [cursor=pointer]
+                - generic [ref=e164]:
+                  - img "Depois de mim (Mercúrio)" [ref=e165]
+                  - generic [ref=e166]:
+                    - paragraph [ref=e167]: Depois de mim (Mercúrio)
+                    - paragraph [ref=e168]: Ananda
+                  - button [ref=e169] [cursor=pointer]
+                  - button [ref=e172] [cursor=pointer]
+                - generic [ref=e176]:
+                  - img "Caso Perdido" [ref=e177]
+                  - generic [ref=e178]:
+                    - paragraph [ref=e179]: Caso Perdido
+                    - paragraph [ref=e180]: Ananda
+                  - button [ref=e181] [cursor=pointer]
+                  - button [ref=e184] [cursor=pointer]
+                - generic [ref=e188]:
+                  - img "A boba fui eu (Participação especial de Jão)" [ref=e189]
+                  - generic [ref=e190]:
+                    - paragraph [ref=e191]: A boba fui eu (Participação especial de Jão)
+                    - paragraph [ref=e192]: LUDMILLA
+                  - button [ref=e193] [cursor=pointer]
+                  - button [ref=e196] [cursor=pointer]
+                - generic [ref=e200]:
+                  - img "I Don't Know What to Do - Radio Edit" [ref=e201]
+                  - generic [ref=e202]:
+                    - paragraph [ref=e203]: I Don't Know What to Do - Radio Edit
+                    - paragraph [ref=e204]: Tiko's Groove
+                  - button [ref=e205] [cursor=pointer]
+                  - button [ref=e208] [cursor=pointer]
+                - generic [ref=e212]:
+                  - img "Noite Goiana" [ref=e213]
+                  - generic [ref=e214]:
+                    - paragraph [ref=e215]: Noite Goiana
+                    - paragraph [ref=e216]: Vinicius Cavalcante
+                  - button [ref=e217] [cursor=pointer]
+                  - button [ref=e220] [cursor=pointer]
+                - generic [ref=e224]:
+                  - img "Quem Não Bafora Não Transa" [ref=e225]
+                  - generic [ref=e226]:
+                    - paragraph [ref=e227]: Quem Não Bafora Não Transa
+                    - paragraph [ref=e228]: DJ Patrick Muniz
+                  - button [ref=e229] [cursor=pointer]
+                  - button [ref=e232] [cursor=pointer]
+                - generic [ref=e236]:
+                  - img "Hoje Não" [ref=e237]
+                  - generic [ref=e238]:
+                    - paragraph [ref=e239]: Hoje Não
+                    - paragraph [ref=e240]: Luan Santana
+                  - button [ref=e241] [cursor=pointer]
+                  - button [ref=e244] [cursor=pointer]
+                - generic [ref=e248]:
+                  - img "Azul Piscina" [ref=e249]
+                  - generic [ref=e250]:
+                    - paragraph [ref=e251]: Azul Piscina
+                    - paragraph [ref=e252]: Mc Livinho
+                  - button [ref=e253] [cursor=pointer]
+                  - button [ref=e256] [cursor=pointer]
+                - generic [ref=e260]:
+                  - img "Fazer Falta" [ref=e261]
+                  - generic [ref=e262]:
+                    - paragraph [ref=e263]: Fazer Falta
+                    - paragraph [ref=e264]: Mc Livinho
+                  - button [ref=e265] [cursor=pointer]
+                  - button [ref=e268] [cursor=pointer]
+                - generic [ref=e272]:
+                  - img "UNETHICAL" [ref=e273]
+                  - generic [ref=e274]:
+                    - paragraph [ref=e275]: UNETHICAL
+                    - paragraph [ref=e276]: Faouzia
+                  - button [ref=e277] [cursor=pointer]
+                  - button [ref=e280] [cursor=pointer]
+                - generic [ref=e284]:
+                  - img "SORRIA" [ref=e285]
+                  - generic [ref=e286]:
+                    - paragraph [ref=e287]: SORRIA
+                    - paragraph [ref=e288]: Luan Santana
+                  - button [ref=e289] [cursor=pointer]
+                  - button [ref=e292] [cursor=pointer]
+                - generic [ref=e296]:
+                  - img "Bad Romance" [ref=e297]
+                  - generic [ref=e298]:
+                    - paragraph [ref=e299]: Bad Romance
+                    - paragraph [ref=e300]: Lady Gaga
+                  - button [ref=e301] [cursor=pointer]
+                  - button [ref=e304] [cursor=pointer]
+                - generic [ref=e308]:
+                  - img "Throne" [ref=e309]
+                  - generic [ref=e310]:
+                    - paragraph [ref=e311]: Throne
+                    - paragraph [ref=e312]: Bring Me The Horizon
+                  - button [ref=e313] [cursor=pointer]
+                  - button [ref=e316] [cursor=pointer]
+                - generic [ref=e320]:
+                  - img "Disk Me" [ref=e321]
+                  - generic [ref=e322]:
+                    - paragraph [ref=e323]: Disk Me
+                    - paragraph [ref=e324]: Pabllo Vittar
+                  - button [ref=e325] [cursor=pointer]
+                  - button [ref=e328] [cursor=pointer]
+                - generic [ref=e332]:
+                  - img "Seu Crime" [ref=e333]
+                  - generic [ref=e334]:
+                    - paragraph [ref=e335]: Seu Crime
+                    - paragraph [ref=e336]: Pabllo Vittar
+                  - button [ref=e337] [cursor=pointer]
+                  - button [ref=e340] [cursor=pointer]
+                - generic [ref=e344]:
+                  - img "Tropa do Mais Novo" [ref=e345]
+                  - generic [ref=e346]:
+                    - paragraph [ref=e347]: Tropa do Mais Novo
+                    - paragraph [ref=e348]: Chefin
+                  - button [ref=e349] [cursor=pointer]
+                  - button [ref=e352] [cursor=pointer]
+                - generic [ref=e356]:
+                  - img "Me Adora" [ref=e357]
+                  - generic [ref=e358]:
+                    - paragraph [ref=e359]: Me Adora
+                    - paragraph [ref=e360]: Pitty
+                  - button [ref=e361] [cursor=pointer]
+                  - button [ref=e364] [cursor=pointer]
+                - generic [ref=e368]:
+                  - img "Bomba Relógio" [ref=e369]
+                  - generic [ref=e370]:
+                    - paragraph [ref=e371]: Bomba Relógio
+                    - paragraph [ref=e372]: Luísa Sonza
+                  - button [ref=e373] [cursor=pointer]
+                  - button [ref=e376] [cursor=pointer]
+                - generic [ref=e380]:
+                  - img "Se Eu Largar O Freio" [ref=e381]
+                  - generic [ref=e382]:
+                    - paragraph [ref=e383]: Se Eu Largar O Freio
+                    - paragraph [ref=e384]: Péricles
+                  - button [ref=e385] [cursor=pointer]
+                  - button [ref=e388] [cursor=pointer]
+                - generic [ref=e392]:
+                  - img "Supera - Ao Vivo" [ref=e393]
+                  - generic [ref=e394]:
+                    - paragraph [ref=e395]: Supera - Ao Vivo
+                    - paragraph [ref=e396]: Péricles
+                  - button [ref=e397] [cursor=pointer]
+                  - button [ref=e400] [cursor=pointer]
+                - generic [ref=e404]:
+                  - img "Amiga da Minha Mulher" [ref=e405]
+                  - generic [ref=e406]:
+                    - paragraph [ref=e407]: Amiga da Minha Mulher
+                    - paragraph [ref=e408]: Seu Jorge
+                  - button [ref=e409] [cursor=pointer]
+                  - button [ref=e412] [cursor=pointer]
+                - generic [ref=e416]:
+                  - img "Agudo Mágico 3" [ref=e417]
+                  - generic [ref=e418]:
+                    - paragraph [ref=e419]: Agudo Mágico 3
+                    - paragraph [ref=e420]: MC K.K
+                  - button [ref=e421] [cursor=pointer]
+                  - button [ref=e424] [cursor=pointer]
+                - generic [ref=e428]:
+                  - img "Piece Of Your Heart" [ref=e429]
+                  - generic [ref=e430]:
+                    - paragraph [ref=e431]: Piece Of Your Heart
+                    - paragraph [ref=e432]: MEDUZA
+                  - button [ref=e433] [cursor=pointer]
+                  - button [ref=e436] [cursor=pointer]
+                - generic [ref=e440]:
+                  - img "POR AÍ" [ref=e441]
+                  - generic [ref=e442]:
+                    - paragraph [ref=e443]: POR AÍ
+                    - paragraph [ref=e444]: DJ TOPO
+                  - button [ref=e445] [cursor=pointer]
+                  - button [ref=e448] [cursor=pointer]
+                - generic [ref=e452]:
+                  - img "Set do G15 - A Revoada Começou" [ref=e453]
+                  - generic [ref=e454]:
+                    - paragraph [ref=e455]: Set do G15 - A Revoada Começou
+                    - paragraph [ref=e456]: MC G15
+                  - button [ref=e457] [cursor=pointer]
+                  - button [ref=e460] [cursor=pointer]
+                - generic [ref=e464]:
+                  - img "Caso Indefinido - Ao Vivo" [ref=e465]
+                  - generic [ref=e466]:
+                    - paragraph [ref=e467]: Caso Indefinido - Ao Vivo
+                    - paragraph [ref=e468]: Cristiano Araújo
+                  - button [ref=e469] [cursor=pointer]
+                  - button [ref=e472] [cursor=pointer]
+                - generic [ref=e476]:
+                  - img "É Com Ela Que Eu Estou - Ao Vivo" [ref=e477]
+                  - generic [ref=e478]:
+                    - paragraph [ref=e479]: É Com Ela Que Eu Estou - Ao Vivo
+                    - paragraph [ref=e480]: Cristiano Araújo
+                  - button [ref=e481] [cursor=pointer]
+                  - button [ref=e484] [cursor=pointer]
+                - generic [ref=e488]:
+                  - img "Como Faz Com Ela - Ao Vivo" [ref=e489]
+                  - generic [ref=e490]:
+                    - paragraph [ref=e491]: Como Faz Com Ela - Ao Vivo
+                    - paragraph [ref=e492]: Marília Mendonça
+                  - button [ref=e493] [cursor=pointer]
+                  - button [ref=e496] [cursor=pointer]
+                - generic [ref=e500]:
+                  - img "Eu Era" [ref=e501]
+                  - generic [ref=e502]:
+                    - paragraph [ref=e503]: Eu Era
+                    - paragraph [ref=e504]: Marcos & Belutti
+                  - button [ref=e505] [cursor=pointer]
+                  - button [ref=e508] [cursor=pointer]
+                - generic [ref=e512]:
+                  - img "Cuida Bem Dela (Ao Vivo)" [ref=e513]
+                  - generic [ref=e514]:
+                    - paragraph [ref=e515]: Cuida Bem Dela (Ao Vivo)
+                    - paragraph [ref=e516]: Henrique & Juliano
+                  - button [ref=e517] [cursor=pointer]
+                  - button [ref=e520] [cursor=pointer]
+                - generic [ref=e524]:
+                  - img "Te Esperando" [ref=e525]
+                  - generic [ref=e526]:
+                    - paragraph [ref=e527]: Te Esperando
+                    - paragraph [ref=e528]: Luan Santana
+                  - button [ref=e529] [cursor=pointer]
+                  - button [ref=e532] [cursor=pointer]
+                - generic [ref=e536]:
+                  - img "Parem de Transar" [ref=e537]
+                  - generic [ref=e538]:
+                    - paragraph [ref=e539]: Parem de Transar
+                    - paragraph [ref=e540]: Mc Livinho
+                  - button [ref=e541] [cursor=pointer]
+                  - button [ref=e544] [cursor=pointer]
+                - generic [ref=e548]:
+                  - img "Quem Mando Tu Terminar? (To Bonito To Né?)" [ref=e549]
+                  - generic [ref=e550]:
+                    - paragraph [ref=e551]: Quem Mando Tu Terminar? (To Bonito To Né?)
+                    - paragraph [ref=e552]: MC Kekel
+                  - button [ref=e553] [cursor=pointer]
+                  - button [ref=e556] [cursor=pointer]
+                - generic [ref=e560]:
+                  - img "Ela Vem" [ref=e561]
+                  - generic [ref=e562]:
+                    - paragraph [ref=e563]: Ela Vem
+                    - paragraph [ref=e564]: MC G15
+                  - button [ref=e565] [cursor=pointer]
+                  - button [ref=e568] [cursor=pointer]
+                - generic [ref=e572]:
+                  - img "Ô Moça" [ref=e573]
+                  - generic [ref=e574]:
+                    - paragraph [ref=e575]: Ô Moça
+                    - paragraph [ref=e576]: MC Zaquin
+                  - button [ref=e577] [cursor=pointer]
+                  - button [ref=e580] [cursor=pointer]
+                - generic [ref=e584]:
+                  - img "Bem Querer" [ref=e585]
+                  - generic [ref=e586]:
+                    - paragraph [ref=e587]: Bem Querer
+                    - paragraph [ref=e588]: Mc Livinho
+                  - button [ref=e589] [cursor=pointer]
+                  - button [ref=e592] [cursor=pointer]
+                - generic [ref=e596]:
+                  - img "Caso Indefinido" [ref=e597]
+                  - generic [ref=e598]:
+                    - paragraph [ref=e599]: Caso Indefinido
+                    - paragraph [ref=e600]: Cristiano Araújo
+                  - button [ref=e601] [cursor=pointer]
+                  - button [ref=e604] [cursor=pointer]
+                - generic [ref=e608]:
+                  - img "Idiota" [ref=e609]
+                  - generic [ref=e610]:
+                    - paragraph [ref=e611]: Idiota
+                    - paragraph [ref=e612]: Jão
+                  - button [ref=e613] [cursor=pointer]
+                  - button [ref=e616] [cursor=pointer]
+                - generic [ref=e620]:
+                  - img "Vai Lá Em Casa Hoje - Ao Vivo" [ref=e621]
+                  - generic [ref=e622]:
+                    - paragraph [ref=e623]: Vai Lá Em Casa Hoje - Ao Vivo
+                    - paragraph [ref=e624]: George Henrique & Rodrigo
+                  - button [ref=e625] [cursor=pointer]
+                  - button [ref=e628] [cursor=pointer]
+                - generic [ref=e632]:
+                  - img "Varinha Magica - Ao Vivo" [ref=e633]
+                  - generic [ref=e634]:
+                    - paragraph [ref=e635]: Varinha Magica - Ao Vivo
+                    - paragraph [ref=e636]: Pedro Henrique & Fernando
+                  - button [ref=e637] [cursor=pointer]
+                  - button [ref=e640] [cursor=pointer]
+                - generic [ref=e644]:
+                  - img "Estranho - Ao Vivo | Acústico" [ref=e645]
+                  - generic [ref=e646]:
+                    - paragraph [ref=e647]: Estranho - Ao Vivo | Acústico
+                    - paragraph [ref=e648]: Marília Mendonça
+                  - button [ref=e649] [cursor=pointer]
+                  - button [ref=e652] [cursor=pointer]
+                - generic [ref=e656]:
+                  - img "MEIO TERMO - Ao Vivo" [ref=e657]
+                  - generic [ref=e658]:
+                    - paragraph [ref=e659]: MEIO TERMO - Ao Vivo
+                    - paragraph [ref=e660]: Luan Santana
+                  - button [ref=e661] [cursor=pointer]
+                  - button [ref=e664] [cursor=pointer]
+                - generic [ref=e668]:
+                  - img "Apaguei Pra Todos - Ao Vivo" [ref=e669]
+                  - generic [ref=e670]:
+                    - paragraph [ref=e671]: Apaguei Pra Todos - Ao Vivo
+                    - paragraph [ref=e672]: Ferrugem
+                  - button [ref=e673] [cursor=pointer]
+                  - button [ref=e676] [cursor=pointer]
+                - generic [ref=e680]:
+                  - img "Sinal Disfarçado" [ref=e681]
+                  - generic [ref=e682]:
+                    - paragraph [ref=e683]: Sinal Disfarçado
+                    - paragraph [ref=e684]: Zé Ricardo & Thiago
+                  - button [ref=e685] [cursor=pointer]
+                  - button [ref=e688] [cursor=pointer]
+                - generic [ref=e692]:
+                  - img "Gosta De Rua (Ao Vivo)" [ref=e693]
+                  - generic [ref=e694]:
+                    - paragraph [ref=e695]: Gosta De Rua (Ao Vivo)
+                    - paragraph [ref=e696]: Felipe e Rodrigo
+                  - button [ref=e697] [cursor=pointer]
+                  - button [ref=e700] [cursor=pointer]
+                - generic [ref=e704]:
+                  - img "Passa Mal - Ao Vivo" [ref=e705]
+                  - generic [ref=e706]:
+                    - paragraph [ref=e707]: Passa Mal - Ao Vivo
+                    - paragraph [ref=e708]: Marília Mendonça
+                  - button [ref=e709] [cursor=pointer]
+                  - button [ref=e712] [cursor=pointer]
+                - generic [ref=e716]:
+                  - img "Anestesiado - Ao Vivo" [ref=e717]
+                  - generic [ref=e718]:
+                    - paragraph [ref=e719]: Anestesiado - Ao Vivo
+                    - paragraph [ref=e720]: Murilo Huff
+                  - button [ref=e721] [cursor=pointer]
+                  - button [ref=e724] [cursor=pointer]
+                - generic [ref=e728]:
+                  - img "Eu, Você, O Mar e Ela" [ref=e729]
+                  - generic [ref=e730]:
+                    - paragraph [ref=e731]: Eu, Você, O Mar e Ela
+                    - paragraph [ref=e732]: Luan Santana
+                  - button [ref=e733] [cursor=pointer]
+                  - button [ref=e736] [cursor=pointer]
+                - generic [ref=e740]:
+                  - img "O Que Falta Em Você Sou Eu - Ao Vivo" [ref=e741]
+                  - generic [ref=e742]:
+                    - paragraph [ref=e743]: O Que Falta Em Você Sou Eu - Ao Vivo
+                    - paragraph [ref=e744]: Marília Mendonça
+                  - button [ref=e745] [cursor=pointer]
+                  - button [ref=e748] [cursor=pointer]
+              - button "Adicionar música" [ref=e752] [cursor=pointer]
+          - generic [ref=e94]:
+            - generic [ref=e95]:
+              - heading "Nosso Álbum" [level=3] [ref=e96]
+              - button "Ver Tudo" [ref=e97] [cursor=pointer]
+            - generic [ref=e98]:
+              - img "Album photo" [ref=e100] [cursor=pointer]
+              - img "Album photo" [ref=e102] [cursor=pointer]
+              - img "Album photo" [ref=e104] [cursor=pointer]
+              - img "<3" [ref=e106] [cursor=pointer]
+  - iframe

@@ -1,0 +1,244 @@
+[     143ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=160bee07:14335
+[     181ms] [LOG] [Push] subscribeToPush called @ http://127.0.0.1:5173/src/shared/lib/pushSubscription.js:45
+[     182ms] [LOG] [Push] Current permission: denied @ http://127.0.0.1:5173/src/shared/lib/pushSubscription.js:55
+[     183ms] [WARNING] [Push] Notification permission denied by user @ http://127.0.0.1:5173/src/shared/lib/pushSubscription.js:65
+[     984ms] [LOG] [spotify] initializeSpotify started {pairId: d5bff3b4-dbca-44ab-9fbf-eeb9878b7374} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:30
+[    1019ms] [LOG] [spotify] config query result {found: true, has_playlist_id: true, playlist_id: 4mNxDXy6ouHTnZYAtpitV2, has_access_token: true, has_refresh_token: true} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:52
+[    1020ms] [LOG] [spotify] sessionStorage check {hasToken: true, tokenLength: 339, hasExpiresAt: true, expiresAt: 2026-08-07T21:05:58.400Z, now: 2026-08-07T20:28:34.746Z} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:72
+[    1020ms] [LOG] [spotify] restoring valid token from sessionStorage @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:83
+[    1024ms] [LOG] [spotify] fetchPlaylist started {playlistId: 4mNxDXy6ouHTnZYAtpitV2} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:200
+[    1024ms] [LOG] [spotify] refreshTokenIfNeeded: token still valid @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:602
+[    1139ms] [LOG] [spotify-sdk] connecting... @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134352736:107
+[    1141ms] [WARNING] It is recommended that a robustness level be specified. Not specifying the robustness level could result in unexpected behavior. @ https://sdk.scdn.co/embedded/index.js:2
+[    1142ms] [WARNING] com.microsoft.playready.recommendation: Internal testing is highly recommended prior to enabling PlayReady playback on Windows. Failure to do so may cause application instability or playback errors.
+
+Before generating a request, setServerCertificate() must be called with a valid server certificate. Otherwise, generateRequest() could fail. @ https://sdk.scdn.co/embedded/index.js:2
+[    1142ms] [WARNING] com.microsoft.playready.recommendation.3000: Internal testing is highly recommended prior to enabling PlayReady playback on Windows. Failure to do so may cause application instability or playback errors.
+
+Before generating a request, setServerCertificate() must be called with a valid server certificate. Otherwise, generateRequest() could fail. @ https://sdk.scdn.co/embedded/index.js:2
+[    1144ms] [WARNING] com.microsoft.playready.recommendation: Internal testing is highly recommended prior to enabling PlayReady playback on Windows. Failure to do so may cause application instability or playback errors.
+
+Before generating a request, setServerCertificate() must be called with a valid server certificate. Otherwise, generateRequest() could fail. @ https://sdk.scdn.co/embedded/index.js:2
+[    1144ms] [WARNING] com.microsoft.playready.recommendation.3000: Internal testing is highly recommended prior to enabling PlayReady playback on Windows. Failure to do so may cause application instability or playback errors.
+
+Before generating a request, setServerCertificate() must be called with a valid server certificate. Otherwise, generateRequest() could fail. @ https://sdk.scdn.co/embedded/index.js:2
+[    1143ms] EMEError: No supported keysystem was found.
+    at new t (https://sdk.scdn.co/embedded/index.js:3:269936)
+    at t.fatal (https://sdk.scdn.co/embedded/index.js:3:270217)
+    at https://sdk.scdn.co/embedded/index.js:3:225811
+[    1647ms] [LOG] [spotify] fetchPlaylist result {trackCount: 53, hasError: false, error: undefined} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:213
+[    1704ms] [LOG] [spotify-sdk] connect result: true @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134352736:109
+[   20506ms] [LOG] [spotify] refreshTokenIfNeeded: token still valid @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:602
+[   20506ms] [LOG] [spotify] playUri called {uri: spotify:track:2HmsQmrCU24PK5DaeWOCTf, hasDeviceId: false} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:361
+[   20506ms] [LOG] [spotify] no deviceId, playing via REST API @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:386
+[   23713ms] [LOG] [spotify] refreshTokenIfNeeded: token still valid @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:602
+[   23713ms] [LOG] [spotify] playUri called {uri: spotify:track:11syf5T1UaTLXwyc9qtbbo, hasDeviceId: false} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:361
+[   23714ms] [LOG] [spotify] no deviceId, playing via REST API @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:386
+[   26001ms] [LOG] [spotify] refreshTokenIfNeeded: token still valid @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:602
+[   26001ms] [LOG] [spotify] playUri called {uri: spotify:track:11syf5T1UaTLXwyc9qtbbo, hasDeviceId: false} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:361
+[   26001ms] [LOG] [spotify] no deviceId, playing via REST API @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:386
+[   27829ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=160bee07:14335
+[   27856ms] [LOG] [Push] subscribeToPush called @ http://127.0.0.1:5173/src/shared/lib/pushSubscription.js:45
+[   27858ms] [LOG] [Push] Current permission: denied @ http://127.0.0.1:5173/src/shared/lib/pushSubscription.js:55
+[   27858ms] [WARNING] [Push] Notification permission denied by user @ http://127.0.0.1:5173/src/shared/lib/pushSubscription.js:65
+[   28391ms] [LOG] [spotify] initializeSpotify started {pairId: d5bff3b4-dbca-44ab-9fbf-eeb9878b7374} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:30
+[   28425ms] [LOG] [spotify] config query result {found: true, has_playlist_id: true, playlist_id: 4mNxDXy6ouHTnZYAtpitV2, has_access_token: true, has_refresh_token: true} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:52
+[   28425ms] [LOG] [spotify] sessionStorage check {hasToken: true, tokenLength: 339, hasExpiresAt: true, expiresAt: 2026-08-07T21:05:58.400Z, now: 2026-08-07T20:29:02.152Z} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:72
+[   28425ms] [LOG] [spotify] restoring valid token from sessionStorage @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:83
+[   28428ms] [LOG] [spotify] fetchPlaylist started {playlistId: 4mNxDXy6ouHTnZYAtpitV2} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:200
+[   28428ms] [LOG] [spotify] refreshTokenIfNeeded: token still valid @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:602
+[   28538ms] [LOG] [spotify-sdk] connecting... @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134352736:107
+[   28540ms] [WARNING] It is recommended that a robustness level be specified. Not specifying the robustness level could result in unexpected behavior. @ https://sdk.scdn.co/embedded/index.js:2
+[   28540ms] [WARNING] com.microsoft.playready.recommendation: Internal testing is highly recommended prior to enabling PlayReady playback on Windows. Failure to do so may cause application instability or playback errors.
+
+Before generating a request, setServerCertificate() must be called with a valid server certificate. Otherwise, generateRequest() could fail. @ https://sdk.scdn.co/embedded/index.js:2
+[   28541ms] [WARNING] com.microsoft.playready.recommendation.3000: Internal testing is highly recommended prior to enabling PlayReady playback on Windows. Failure to do so may cause application instability or playback errors.
+
+Before generating a request, setServerCertificate() must be called with a valid server certificate. Otherwise, generateRequest() could fail. @ https://sdk.scdn.co/embedded/index.js:2
+[   28542ms] [WARNING] com.microsoft.playready.recommendation: Internal testing is highly recommended prior to enabling PlayReady playback on Windows. Failure to do so may cause application instability or playback errors.
+
+Before generating a request, setServerCertificate() must be called with a valid server certificate. Otherwise, generateRequest() could fail. @ https://sdk.scdn.co/embedded/index.js:2
+[   28542ms] [WARNING] com.microsoft.playready.recommendation.3000: Internal testing is highly recommended prior to enabling PlayReady playback on Windows. Failure to do so may cause application instability or playback errors.
+
+Before generating a request, setServerCertificate() must be called with a valid server certificate. Otherwise, generateRequest() could fail. @ https://sdk.scdn.co/embedded/index.js:2
+[   28542ms] EMEError: No supported keysystem was found.
+    at new t (https://sdk.scdn.co/embedded/index.js:3:269936)
+    at t.fatal (https://sdk.scdn.co/embedded/index.js:3:270217)
+    at https://sdk.scdn.co/embedded/index.js:3:225811
+[   29051ms] [LOG] [spotify-sdk] connect result: true @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134352736:109
+[   29094ms] [LOG] [spotify] fetchPlaylist result {trackCount: 53, hasError: false, error: undefined} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:213
+[   32009ms] [LOG] [spotify] refreshTokenIfNeeded: token still valid @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:602
+[   32009ms] [LOG] [spotify] playUri called {uri: spotify:track:6vOdrnuWDwm6lKtuienvzt, hasDeviceId: false} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:361
+[   32010ms] [LOG] [spotify] no deviceId, playing via REST API @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134334814:386
+[   37610ms] [ERROR] [spotify-sdk] playback_error: Cannot perform operation; no list was loaded. @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134352736:105
+[   38931ms] [ERROR] [spotify-sdk] playback_error: Cannot perform operation; no list was loaded. @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134352736:105
+[   39217ms] [ERROR] [spotify-sdk] playback_error: Cannot perform operation; no list was loaded. @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134352736:105
+[   39410ms] [ERROR] [spotify-sdk] playback_error: Cannot perform operation; no list was loaded. @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134352736:105
+[   55470ms] [LOG] [spotify] initializeSpotify started {pairId: d5bff3b4-dbca-44ab-9fbf-eeb9878b7374} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134569089:30
+[   55511ms] [LOG] [spotify] config query result {found: true, has_playlist_id: true, playlist_id: 4mNxDXy6ouHTnZYAtpitV2, has_access_token: true, has_refresh_token: true} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134569089:52
+[   55511ms] [LOG] [spotify] sessionStorage check {hasToken: true, tokenLength: 339, hasExpiresAt: true, expiresAt: 2026-08-07T21:05:58.400Z, now: 2026-08-07T20:29:29.237Z} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134569089:72
+[   55511ms] [LOG] [spotify] restoring valid token from sessionStorage @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134569089:83
+[   55513ms] [LOG] [spotify] fetchPlaylist started {playlistId: 4mNxDXy6ouHTnZYAtpitV2} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134569089:200
+[   55513ms] [LOG] [spotify] refreshTokenIfNeeded: token still valid @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134569089:608
+[   55514ms] [LOG] [spotify-sdk] connecting... @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134569089:107
+[   56203ms] [LOG] [spotify] fetchPlaylist result {trackCount: 53, hasError: false, error: undefined} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134569089:213
+[   56695ms] [LOG] [spotify-sdk] connect result: true @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134569089:109
+[   67354ms] [LOG] [spotify] initializeSpotify started {pairId: d5bff3b4-dbca-44ab-9fbf-eeb9878b7374} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134580977:30
+[   67389ms] [LOG] [spotify] config query result {found: true, has_playlist_id: true, playlist_id: 4mNxDXy6ouHTnZYAtpitV2, has_access_token: true, has_refresh_token: true} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134580977:52
+[   67389ms] [LOG] [spotify] sessionStorage check {hasToken: true, tokenLength: 339, hasExpiresAt: true, expiresAt: 2026-08-07T21:05:58.400Z, now: 2026-08-07T20:29:41.116Z} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134580977:72
+[   67389ms] [LOG] [spotify] restoring valid token from sessionStorage @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134580977:83
+[   67392ms] [LOG] [spotify] fetchPlaylist started {playlistId: 4mNxDXy6ouHTnZYAtpitV2} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134580977:200
+[   67392ms] [LOG] [spotify] refreshTokenIfNeeded: token still valid @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134580977:614
+[   67392ms] [LOG] [spotify-sdk] connecting... @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134580977:107
+[   67995ms] [LOG] [spotify] fetchPlaylist result {trackCount: 53, hasError: false, error: undefined} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134580977:213
+[   68595ms] [LOG] [spotify-sdk] connect result: true @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134580977:109
+[   78569ms] [LOG] [spotify] initializeSpotify started {pairId: d5bff3b4-dbca-44ab-9fbf-eeb9878b7374} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:31
+[   78608ms] [LOG] [spotify] config query result {found: true, has_playlist_id: true, playlist_id: 4mNxDXy6ouHTnZYAtpitV2, has_access_token: true, has_refresh_token: true} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:53
+[   78608ms] [LOG] [spotify] sessionStorage check {hasToken: true, tokenLength: 339, hasExpiresAt: true, expiresAt: 2026-08-07T21:05:58.400Z, now: 2026-08-07T20:29:52.334Z} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:73
+[   78608ms] [LOG] [spotify] restoring valid token from sessionStorage @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:84
+[   78611ms] [LOG] [spotify] fetchPlaylist started {playlistId: 4mNxDXy6ouHTnZYAtpitV2} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:201
+[   78612ms] [LOG] [spotify] refreshTokenIfNeeded: token still valid @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:615
+[   78612ms] [LOG] [spotify-sdk] connecting... @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134592186:107
+[   79514ms] [LOG] [spotify] fetchPlaylist result {trackCount: 53, hasError: false, error: undefined} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:214
+[   79818ms] [LOG] [spotify-sdk] connect result: true @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134592186:109
+[  104092ms] [ERROR] React has detected a change in the order of Hooks called by %s. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
+
+   Previous render            Next render
+   ------------------------------------------------------
+%s   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ SpotifyPlayer 1. useState                   useState
+2. useState                   useState
+3. useCallback                useCallback
+4. useCallback                useCallback
+5. useSyncExternalStore       useSyncExternalStore
+6. useDebugValue              useDebugValue
+7. useCallback                useCallback
+8. useCallback                useCallback
+9. useSyncExternalStore       useSyncExternalStore
+10. useDebugValue             useDebugValue
+11. useCallback               useCallback
+12. useCallback               useCallback
+13. useSyncExternalStore      useSyncExternalStore
+14. useDebugValue             useDebugValue
+15. useCallback               useCallback
+16. useCallback               useCallback
+17. useSyncExternalStore      useSyncExternalStore
+18. useDebugValue             useDebugValue
+19. useCallback               useCallback
+20. useCallback               useCallback
+21. useSyncExternalStore      useSyncExternalStore
+22. useDebugValue             useDebugValue
+23. useCallback               useCallback
+24. useCallback               useCallback
+25. useSyncExternalStore      useSyncExternalStore
+26. useDebugValue             useDebugValue
+27. useCallback               useCallback
+28. useCallback               useCallback
+29. useSyncExternalStore      useSyncExternalStore
+30. useDebugValue             useDebugValue
+31. useCallback               useCallback
+32. useCallback               useCallback
+33. useSyncExternalStore      useSyncExternalStore
+34. useDebugValue             useDebugValue
+35. useCallback               useCallback
+36. useCallback               useCallback
+37. useSyncExternalStore      useSyncExternalStore
+38. useDebugValue             useDebugValue
+39. useCallback               useCallback
+40. useCallback               useCallback
+41. useSyncExternalStore      useSyncExternalStore
+42. useDebugValue             useDebugValue
+43. useCallback               useCallback
+44. useCallback               useCallback
+45. useSyncExternalStore      useSyncExternalStore
+46. useDebugValue             useDebugValue
+47. useCallback               useCallback
+48. useCallback               useCallback
+49. useSyncExternalStore      useSyncExternalStore
+50. useDebugValue             useDebugValue
+51. useCallback               useCallback
+52. useCallback               useCallback
+53. useSyncExternalStore      useSyncExternalStore
+54. useDebugValue             useDebugValue
+55. useState                  useState
+56. useState                  useState
+57. useCallback               useCallback
+58. useCallback               useCallback
+59. useSyncExternalStore      useSyncExternalStore
+60. useDebugValue             useDebugValue
+61. useCallback               useCallback
+62. useCallback               useCallback
+63. useSyncExternalStore      useSyncExternalStore
+64. useDebugValue             useDebugValue
+65. useCallback               useCallback
+66. useCallback               useCallback
+67. useRef                    useRef
+68. useState                  useState
+69. useState                  useState
+70. useRef                    useRef
+71. useCallback               useCallback
+72. useCallback               useCallback
+73. useSyncExternalStore      useSyncExternalStore
+74. useDebugValue             useDebugValue
+75. useCallback               useCallback
+76. useCallback               useCallback
+77. useSyncExternalStore      useSyncExternalStore
+78. useDebugValue             useDebugValue
+79. useCallback               useCallback
+80. useCallback               useCallback
+81. useSyncExternalStore      useSyncExternalStore
+82. useDebugValue             useDebugValue
+83. useCallback               useCallback
+84. useCallback               useCallback
+85. useSyncExternalStore      useSyncExternalStore
+86. useDebugValue             useDebugValue
+87. useCallback               useCallback
+88. useCallback               useCallback
+89. useSyncExternalStore      useSyncExternalStore
+90. useDebugValue             useDebugValue
+91. useCallback               useCallback
+92. useCallback               useCallback
+93. useSyncExternalStore      useSyncExternalStore
+94. useDebugValue             useDebugValue
+95. useCallback               useCallback
+96. useCallback               useCallback
+97. useSyncExternalStore      useSyncExternalStore
+98. useDebugValue             useDebugValue
+99. useCallback               useCallback
+100. useCallback              useCallback
+101. useSyncExternalStore     useSyncExternalStore
+102. useDebugValue            useDebugValue
+103. useEffect                useEffect
+104. useEffect                useEffect
+105. useEffect                useEffect
+106. useEffect                useCallback
+ @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=160bee07:4179
+[  104095ms] TypeError: Cannot read properties of null (reading 'getSnapshot')
+    at updateSyncExternalStore (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=160bee07:4543:13)
+    at Object.useSyncExternalStore (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=160bee07:13323:12)
+    at exports.useSyncExternalStore (http://127.0.0.1:5173/node_modules/.vite/deps/react.js?v=160bee07:751:31)
+    at useStore (http://127.0.0.1:5173/node_modules/.vite/deps/zustand.js?v=160bee07:36:29)
+    at useBoundStore (http://127.0.0.1:5173/node_modules/.vite/deps/zustand.js?v=160bee07:42:38)
+    at useSpotifyPlayer (http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134617765:164:20)
+    at SpotifyPlayer (http://127.0.0.1:5173/src/features/spotify/SpotifyPlayer.jsx?t=1786134617765:31:41)
+    at Object.react_stack_bottom_frame (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=160bee07:12866:12)
+    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=160bee07:4213:19)
+    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=160bee07:5569:16)
+[  104095ms] [WARNING] %s
+
+%s
+ An error occurred in the <SpotifyPlayer> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=160bee07:5257
+[  123621ms] [LOG] [spotify] fetchPlaylist started {playlistId: 4mNxDXy6ouHTnZYAtpitV2} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:201
+[  123621ms] [LOG] [spotify] refreshTokenIfNeeded: token still valid @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:615
+[  123625ms] [LOG] [spotify] fetchPlaylist started {playlistId: 4mNxDXy6ouHTnZYAtpitV2} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:201
+[  123625ms] [LOG] [spotify] refreshTokenIfNeeded: token still valid @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:615
+[  123627ms] [LOG] [spotify-sdk] connecting... @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134636661:106
+[  123627ms] [LOG] [spotify-sdk] connecting... @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134636661:106
+[  124372ms] [LOG] [spotify] initializeSpotify started {pairId: d5bff3b4-dbca-44ab-9fbf-eeb9878b7374} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:31
+[  124405ms] [LOG] [spotify] config query result {found: true, has_playlist_id: true, playlist_id: 4mNxDXy6ouHTnZYAtpitV2, has_access_token: true, has_refresh_token: true} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:53
+[  124405ms] [LOG] [spotify] sessionStorage check {hasToken: true, tokenLength: 339, hasExpiresAt: true, expiresAt: 2026-08-07T21:05:58.400Z, now: 2026-08-07T20:30:38.131Z} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:73
+[  124405ms] [LOG] [spotify] restoring valid token from sessionStorage @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:84
+[  124499ms] [LOG] [spotify] fetchPlaylist result {trackCount: 53, hasError: false, error: undefined} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:214
+[  124533ms] [LOG] [spotify] fetchPlaylist result {trackCount: 53, hasError: false, error: undefined} @ http://127.0.0.1:5173/src/stores/spotifyStore.js?t=1786134592186:214
+[  124814ms] [LOG] [spotify-sdk] connect result: true @ http://127.0.0.1:5173/src/features/spotify/useSpotifyPlayer.js?t=1786134636661:108

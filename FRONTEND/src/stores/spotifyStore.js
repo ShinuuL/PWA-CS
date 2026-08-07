@@ -19,6 +19,7 @@ const useSpotifyStore = create((set, get) => ({
   pairId: null,
   _refreshPromise: null,
   _autoResume: false,
+  _sdkAction: null,
 
   // Actions
   initializeSpotify: async (pairId) => {
@@ -413,30 +414,38 @@ const useSpotifyStore = create((set, get) => ({
 
     console.log('[spotify] playUri called', { uri, hasDeviceId: !!deviceId })
 
+    const headers = {
+      Authorization: `Bearer ${freshToken}`,
+      'Content-Type': 'application/json',
+    }
+
     if (deviceId) {
-      // SDK device available — transfer playback to it, then resume via SDK
+      // Step 1: Transfer playback to SDK device
       console.log('[spotify] transferring to SDK device', deviceId)
-      const headers = {
-        Authorization: `Bearer ${freshToken}`,
-        'Content-Type': 'application/json',
-      }
-      const transferRes = await fetch('https://api.spotify.com/v1/me/player', {
+      await fetch('https://api.spotify.com/v1/me/player', {
         method: 'PUT',
         headers,
         body: JSON.stringify({ device_ids: [deviceId], play: false }),
       })
-      console.log('[spotify] transfer result', { status: transferRes.status })
 
-      // SDK picks up the track via player_state_changed — trigger resume
-      console.log('[spotify] setting _autoResume for SDK')
-      set({ _autoResume: true })
+      // Step 2: Load the track via REST API (SDK will pick it up via player_state_changed)
+      console.log('[spotify] loading track via REST API', { uris: [uri] })
+      const res = await fetch('https://api.spotify.com/v1/me/player/play', {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({ uris: [uri] }),
+      })
+      console.log('[spotify] REST play response', { status: res.status })
+
+      // Step 3: SDK picks up the track (paused) — trigger resume via SDK
+      // Small delay to let SDK register the state change
+      setTimeout(() => {
+        console.log('[spotify] triggering SDK resume')
+        set({ _autoResume: true })
+      }, 300)
     } else {
-      // No SDK — fallback to REST API (plays on last active Spotify device)
+      // No SDK — play via REST API on last active Spotify device
       console.log('[spotify] no deviceId, playing via REST API')
-      const headers = {
-        Authorization: `Bearer ${freshToken}`,
-        'Content-Type': 'application/json',
-      }
       const res = await fetch('https://api.spotify.com/v1/me/player/play', {
         method: 'PUT',
         headers,
@@ -495,16 +504,22 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   nextTrack: async () => {
-    const { accessToken } = get()
+    const { accessToken, deviceId } = get()
     if (!accessToken) return
 
-    try {
-      await fetch('https://api.spotify.com/v1/me/player/next', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-    } catch (err) {
-      set({ error: err.message })
+    if (deviceId) {
+      // SDK device — set flag for useSpotifyPlayer to call player.nextTrack()
+      set({ _sdkAction: 'next' })
+    } else {
+      // No SDK — use REST API
+      try {
+        await fetch('https://api.spotify.com/v1/me/player/next', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+      } catch (err) {
+        set({ error: err.message })
+      }
     }
   },
 
