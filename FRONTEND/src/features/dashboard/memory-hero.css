@@ -13,9 +13,9 @@
   max-width: 100%;
 }
 
-/* When in grid, stretch to fill row */
+/* When in grid, anchor to top so it doesn't stretch across both rows */
 .dashboard-grid > .memory-hero {
-  align-self: stretch;
+  align-self: start;
   min-width: 0;
   max-width: 100%;
 }
@@ -72,24 +72,34 @@
 /* ===== Image ===== */
 .memory-hero__image-container {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   border-radius: calc(var(--radius-lg, 24px) - 4px);
   overflow: hidden;
   position: relative;
   background: var(--color-bg-card, #1A1D2E);
-  max-height: 60vh;
+  max-height: 45vh;
 }
 
 /* Mobile: slightly shorter hero to reduce vertical footprint */
 @media (max-width: 768px) {
   .memory-hero__image-container {
     aspect-ratio: 16 / 9;
+    max-height: 35vh;
   }
   .memory-hero--card {
     padding: 0.75rem;
   }
   .memory-hero__caption {
     padding: 0.75rem 0.25rem 0.25rem;
+  }
+  .memory-hero__header {
+    margin-bottom: 0.5rem;
+  }
+  .memory-hero__title {
+    font-size: 0.8125rem;
+  }
+  .memory-hero__badge {
+    display: none;
   }
 }
 
