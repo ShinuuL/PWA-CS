@@ -19,7 +19,8 @@ async function supabaseRpc(fn: string, params: Record<string, string>) {
     body: JSON.stringify(params),
   });
   const result = await res.json();
-  return result;
+  // PostgREST wraps scalar function returns in an array — extract the first element
+  return Array.isArray(result) ? result[0] : result;
 }
 
 async function supabaseQuery(table: string, query: string) {
