@@ -215,7 +215,6 @@ const useTodoStore = create((set, get) => ({
       completed: false,
       assigned_to,
       due_at,
-      created_by: user.id,
       created_at: new Date().toISOString()
     }
 
@@ -230,8 +229,7 @@ const useTodoStore = create((set, get) => ({
           title: title.trim(),
           completed: false,
           assigned_to,
-          due_at,
-          created_by: user.id
+          due_at
         })
         .select()
         .single()

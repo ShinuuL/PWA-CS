@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { X, Trash2, Plus, Music } from 'lucide-react'
+import { X, Trash2, Plus, Music, Play } from 'lucide-react'
 import { motion } from 'framer-motion'
 import useSpotifyStore from '../../stores/spotifyStore'
 import './PlaylistManager.css'
@@ -7,6 +7,7 @@ import './PlaylistManager.css'
 export default function PlaylistManager({ onClose, onAddMusic }) {
   const playlistTracks = useSpotifyStore((s) => s.playlistTracks)
   const removeTrack = useSpotifyStore((s) => s.removeTrack)
+  const playUri = useSpotifyStore((s) => s.playUri)
 
   // Escape key handler
   useEffect(() => {
@@ -60,6 +61,9 @@ export default function PlaylistManager({ onClose, onAddMusic }) {
                   <p className="playlist-manager__track-name">{track.name}</p>
                   <p className="playlist-manager__track-artist">{track.artist}</p>
                 </div>
+                <button className="playlist-manager__play-btn" onClick={() => playUri(track.uri)}>
+                  <Play size={16} />
+                </button>
                 <button className="playlist-manager__remove-btn" onClick={() => handleRemove(track)}>
                   <Trash2 size={16} />
                 </button>

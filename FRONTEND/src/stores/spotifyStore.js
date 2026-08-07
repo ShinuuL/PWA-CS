@@ -299,6 +299,28 @@ const useSpotifyStore = create((set, get) => ({
     }
   },
 
+  playUri: async (uri) => {
+    const { accessToken, deviceId } = get()
+    if (!accessToken) return
+
+    try {
+      await fetch('https://api.spotify.com/v1/me/player/play', {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uris: [uri],
+          ...(deviceId ? { device_id: deviceId } : {}),
+        }),
+      })
+      set({ isPlaying: true })
+    } catch (err) {
+      set({ error: err.message })
+    }
+  },
+
   togglePlay: async () => {
     const { isPlaying, accessToken } = get()
     if (!accessToken) return

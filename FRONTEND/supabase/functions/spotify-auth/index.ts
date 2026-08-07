@@ -13,7 +13,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { action, code, redirect_uri, pair_id } = await req.json();
+    const { action, code, redirect_uri, pair_id, code_verifier } = await req.json();
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -23,8 +23,37 @@ serve(async (req: Request) => {
     const spotifyClientSecret = Deno.env.get("SPOTIFY_CLIENT_SECRET")!;
     const encryptionKey = Deno.env.get("SPOTIFY_TOKEN_ENCRYPTION_KEY")!;
 
+    console.log("[spotify-auth] env check", {
+      has_spotify_client_id: !!spotifyClientId,
+      client_id_prefix: spotifyClientId?.substring(0, 6),
+      has_spotify_client_secret: !!spotifyClientSecret,
+      client_secret_length: spotifyClientSecret?.length,
+      has_encryption_key: !!encryptionKey,
+      action,
+    });
+
     if (action === "exchange") {
+      console.log("[spotify-auth] exchange started", { pair_id, redirect_uri, code_length: code?.length });
+
       // Exchange authorization code for tokens
+      const params = new URLSearchParams({
+        grant_type: "authorization_code",
+        code,
+        redirect_uri,
+      });
+
+      if (code_verifier) {
+        params.append("code_verifier", code_verifier);
+      }
+
+      console.log("[spotify-auth] calling Spotify token endpoint", {
+        grant_type: "authorization_code",
+        redirect_uri,
+        code_length: code?.length,
+        client_id_prefix: spotifyClientId?.substring(0, 6),
+        has_code_verifier: !!code_verifier,
+      });
+
       const tokenResponse = await fetch(
         "https://accounts.spotify.com/api/token",
         {
@@ -33,15 +62,20 @@ serve(async (req: Request) => {
             "Content-Type": "application/x-www-form-urlencoded",
             Authorization: `Basic ${btoa(`${spotifyClientId}:${spotifyClientSecret}`)}`,
           },
-          body: new URLSearchParams({
-            grant_type: "authorization_code",
-            code,
-            redirect_uri,
-          }).toString(),
+          body: params.toString(),
         }
       );
 
       const tokenData = await tokenResponse.json();
+
+      console.log("[spotify-auth] Spotify token response", {
+        status: tokenResponse.status,
+        ok: tokenResponse.ok,
+        error: tokenData?.error,
+        error_description: tokenData?.error_description,
+        has_access_token: !!tokenData?.access_token,
+        has_refresh_token: !!tokenData?.refresh_token,
+      });
 
       if (tokenData.error) {
         return new Response(
@@ -53,6 +87,12 @@ serve(async (req: Request) => {
       const { access_token, refresh_token, expires_in } = tokenData;
       const token_expires_at = new Date(Date.now() + expires_in * 1000).toISOString();
 
+      console.log("[spotify-auth] encrypting tokens", {
+        access_token_length: access_token?.length,
+        refresh_token_length: refresh_token?.length,
+        expires_in,
+      });
+
       // Encrypt tokens via pgcrypto
       const { data: encAccess } = await supabase.rpc("encrypt_token", {
         p_token: access_token,
@@ -61,6 +101,13 @@ serve(async (req: Request) => {
       const { data: encRefresh } = await supabase.rpc("encrypt_token", {
         p_token: refresh_token,
         p_key: encryptionKey,
+      });
+
+      console.log("[spotify-auth] encrypt results", {
+        encAccess_type: typeof encAccess,
+        encAccess_length: encAccess?.length,
+        encRefresh_type: typeof encRefresh,
+        encRefresh_length: encRefresh?.length,
       });
 
       // Upsert spotify_config with encrypted tokens
@@ -78,9 +125,11 @@ serve(async (req: Request) => {
         );
 
       if (upsertError) {
-        console.error("Upsert error:", upsertError);
+        console.error("[spotify-auth] upsert error:", upsertError);
         throw upsertError;
       }
+
+      console.log("[spotify-auth] exchange completed successfully", { pair_id });
 
       return new Response(
         JSON.stringify({ access_token, expires_in }),
@@ -89,6 +138,8 @@ serve(async (req: Request) => {
     }
 
     if (action === "refresh") {
+      console.log("[spotify-auth] refresh started", { pair_id });
+
       // Fetch encrypted refresh_token from DB
       const { data: config, error: fetchError } = await supabase
         .from("spotify_config")
@@ -126,6 +177,15 @@ serve(async (req: Request) => {
       );
 
       const tokenData = await tokenResponse.json();
+
+      console.log("[spotify-auth] Spotify refresh response", {
+        status: tokenResponse.status,
+        ok: tokenResponse.ok,
+        error: tokenData?.error,
+        error_description: tokenData?.error_description,
+        has_access_token: !!tokenData?.access_token,
+        has_refresh_token: !!tokenData?.refresh_token,
+      });
 
       // Handle invalid_grant: refresh token expired (6-month Spotify policy)
       if (tokenData.error === "invalid_grant") {

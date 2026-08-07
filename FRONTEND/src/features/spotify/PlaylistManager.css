@@ -111,6 +111,20 @@
   text-overflow: ellipsis;
 }
 
+.playlist-manager__play-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  transition: all 0.2s;
+}
+
+.playlist-manager__play-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .playlist-manager__remove-btn {
   background: transparent;
   border: none;

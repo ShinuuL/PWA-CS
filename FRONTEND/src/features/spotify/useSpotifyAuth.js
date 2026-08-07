@@ -86,26 +86,31 @@ export default function useSpotifyAuth() {
         throw new Error('State mismatch — possible CSRF attack')
       }
 
-      // Get pair_id from authStore
+      // Get user from authStore
       const { user } = (await import('../../stores/authStore')).default.getState()
       if (!user) throw new Error('Not authenticated')
 
-      // Fetch user's pair_id
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('pair_id')
-        .eq('id', user.id)
+      // Fetch user's pair_id from pairs table
+      const { data: pair } = await supabase
+        .from('pairs')
+        .select('id')
+        .or(`user_one.eq.${user.id},user_two.eq.${user.id}`)
+        .eq('code_used', true)
         .single()
 
-      if (!profile?.pair_id) throw new Error('No pair found')
+      if (!pair) throw new Error('No pair found')
+
+      // Get code_verifier from localStorage (PKCE)
+      const codeVerifier = localStorage.getItem('spotify_code_verifier')
 
       // Call Edge Function to exchange code for tokens
       const { data, error } = await supabase.functions.invoke('spotify-auth', {
         body: {
           action: 'exchange',
           code,
+          code_verifier: codeVerifier,
           redirect_uri: import.meta.env.VITE_SPOTIFY_REDIRECT_URI,
-          pair_id: profile.pair_id,
+          pair_id: pair.id,
         },
       })
 

@@ -57,8 +57,12 @@ export default function useSpotifyPlayer() {
 
         const player = new Spotify.Player({
           name: 'CoupleSpace',
-          getOAuthToken: (cb) => {
-            // Get current token from store
+          getOAuthToken: async (cb) => {
+            const store = useSpotifyStore.getState()
+            const { tokenExpiresAt } = store
+            if (!tokenExpiresAt || tokenExpiresAt < Date.now() + 5 * 60 * 1000) {
+              await useSpotifyStore.getState().refreshTokenIfNeeded()
+            }
             const currentToken = useSpotifyStore.getState().accessToken
             cb(currentToken)
           },
@@ -125,6 +129,27 @@ export default function useSpotifyPlayer() {
       setIsReady(false)
     }
   }, [accessToken, setDeviceId, setCurrentTrack, setIsPlaying, setProgress, setError])
+
+  // Progress polling
+  useEffect(() => {
+    if (!isReady) return
+
+    const interval = setInterval(async () => {
+      const player = playerRef.current
+      if (!player) return
+
+      try {
+        const state = await player.getCurrentState()
+        if (state && !state.paused) {
+          setProgress(state.position)
+        }
+      } catch {
+        // ignore polling errors
+      }
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [isReady, setProgress])
 
   const play = useCallback(() => {
     if (playerRef.current) {

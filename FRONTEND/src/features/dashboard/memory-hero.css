@@ -72,6 +72,7 @@
   overflow: hidden;
   position: relative;
   background: var(--color-bg-card, #1A1D2E);
+  max-height: 60vh;
 }
 
 /* Mobile: slightly shorter hero to reduce vertical footprint */

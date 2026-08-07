@@ -5,13 +5,14 @@
   min-height: 100vh;
   background: transparent;
   padding: 1rem;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0));
   z-index: 1;
 }
 
 /* Prevent any horizontal overflow inside the dashboard */
 .dashboard {
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .dashboard > * {
@@ -28,10 +29,12 @@
   max-width: 1100px;
   margin: 0 auto;
   width: 100%;
+  align-items: start;
 }
 
 .dashboard-grid > .memory-hero {
   grid-row: 1 / 3;
+  align-self: start;
 }
 
 .dashboard-grid > .right-column {

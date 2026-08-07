@@ -26,11 +26,26 @@ export default function ListsTab() {
   const [deleteConfirm, setDeleteConfirm] = useState(null)
   const [deleteItemConfirm, setDeleteItemConfirm] = useState(null)
 
+  // Resolve partner ID from items
+  const partnerId = useMemo(() => {
+    if (!user) return null
+    const otherCreator = items.find(i => i.created_by && i.created_by !== user.id)
+    return otherCreator?.created_by || null
+  }, [items, user])
+
   // Fetch profiles for assignee badges
   useEffect(() => {
+    const resolveUserId = (val) => {
+      if (val === 'me') return user?.id
+      if (val === 'partner') return partnerId
+      // Already a UUID
+      if (val && val.includes('-')) return val
+      return null
+    }
+
     const userIds = [...new Set([
       ...items.map(i => i.created_by).filter(Boolean),
-      ...items.map(i => i.assigned_to).filter(Boolean)
+      ...items.map(i => resolveUserId(i.assigned_to)).filter(Boolean)
     ])]
     const missing = userIds.filter(id => !profiles[id])
     if (missing.length === 0) return
@@ -47,7 +62,7 @@ export default function ListsTab() {
       }
     }
     fetchProfiles()
-  }, [items, profiles])
+  }, [items, profiles, user, partnerId])
 
   const activeList = useMemo(() => lists.find(l => l.id === activeListId), [lists, activeListId])
 
@@ -63,12 +78,6 @@ export default function ListsTab() {
       completedItems: activeItems.filter(i => i.completed)
     }
   }, [activeItems])
-
-  const partnerId = useMemo(() => {
-    if (!user) return null
-    const otherCreator = items.find(i => i.created_by !== user.id)
-    return otherCreator?.created_by || null
-  }, [items, user])
 
   const handleCreateList = async (formData) => {
     const result = await createList(formData)

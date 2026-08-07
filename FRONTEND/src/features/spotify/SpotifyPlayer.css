@@ -37,6 +37,20 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.spotify-player__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.spotify-player__header-btn--disconnect {
+  color: #ff6b6b;
+}
+
+.spotify-player__header-btn--disconnect:hover {
+  background: rgba(255, 107, 107, 0.15);
+}
+
 .spotify-player__state {
   display: flex;
   flex-direction: column;
@@ -150,6 +164,7 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
+  margin-left: 5px;
 }
 
 .spotify-player__control-btn {
