@@ -397,20 +397,60 @@ const useSpotifyStore = create((set, get) => ({
     await get().refreshTokenIfNeeded()
     const { accessToken: freshToken } = get()
 
-    try {
-      await fetch('https://api.spotify.com/v1/me/player/play', {
+    console.log('[spotify] playUri called', { uri, hasDeviceId: !!deviceId, deviceId })
+
+    const headers = {
+      Authorization: `Bearer ${freshToken}`,
+      'Content-Type': 'application/json',
+    }
+
+    const doPlay = async () => {
+      const body = { uris: [uri] }
+      if (deviceId) body.device_ids = [deviceId]
+      console.log('[spotify] PUT /me/player/play', { body })
+      const res = await fetch('https://api.spotify.com/v1/me/player/play', {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${freshToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          uris: [uri],
-          ...(deviceId ? { device_ids: [deviceId] } : {}),
-        }),
+        headers,
+        body: JSON.stringify(body),
       })
-      set({ isPlaying: true })
+      const statusText = await res.text().catch(() => '')
+      console.log('[spotify] play response', { status: res.status, ok: res.ok, body: statusText })
+      return res
+    }
+
+    try {
+      let res = await doPlay()
+
+      // If 404 (no active device), transfer playback first then retry
+      if (res.status === 404) {
+        if (deviceId) {
+          console.log('[spotify] play 404 — transferring to device', deviceId)
+          const transferRes = await fetch('https://api.spotify.com/v1/me/player', {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify({ device_ids: [deviceId], play: false }),
+          })
+          const transferBody = await transferRes.text().catch(() => '')
+          console.log('[spotify] transfer result', { status: transferRes.status, body: transferBody })
+
+          if (transferRes.ok || transferRes.status === 204) {
+            res = await doPlay()
+          }
+        } else {
+          console.error('[spotify] play 404 and no deviceId — SDK ready event never fired')
+          set({ error: 'no_device_available' })
+          return
+        }
+      }
+
+      if (!res.ok && res.status !== 204) {
+        console.error('[spotify] play failed', res.status)
+        set({ error: `play ${res.status}` })
+      } else {
+        set({ isPlaying: true })
+      }
     } catch (err) {
+      console.error('[spotify] playUri error', err)
       set({ error: err.message })
     }
   },
@@ -422,6 +462,8 @@ const useSpotifyStore = create((set, get) => ({
     await get().refreshTokenIfNeeded()
     const { accessToken: freshToken } = get()
 
+    console.log('[spotify] togglePlay', { hasDeviceId: !!deviceId, deviceId })
+
     try {
       // Check real playback state before toggling
       let shouldPlay = false
@@ -431,9 +473,11 @@ const useSpotifyStore = create((set, get) => ({
       if (statusRes.ok) {
         const statusData = await statusRes.json()
         shouldPlay = !statusData?.is_playing
+        console.log('[spotify] current state', { is_playing: statusData?.is_playing, device: statusData?.device?.id })
       } else {
         // No device — always try to start playback
         shouldPlay = true
+        console.log('[spotify] no active player, status:', statusRes.status)
       }
 
       const url = shouldPlay
@@ -442,7 +486,7 @@ const useSpotifyStore = create((set, get) => ({
       const body = deviceId
         ? JSON.stringify({ device_ids: [deviceId] })
         : undefined
-      await fetch(url, {
+      const res = await fetch(url, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${freshToken}`,
@@ -450,8 +494,11 @@ const useSpotifyStore = create((set, get) => ({
         },
         body,
       })
+      const resBody = await res.text().catch(() => '')
+      console.log('[spotify] togglePlay response', { url, status: res.status, body: resBody })
       set({ isPlaying: shouldPlay })
     } catch (err) {
+      console.error('[spotify] togglePlay error', err)
       set({ error: err.message })
     }
   },
