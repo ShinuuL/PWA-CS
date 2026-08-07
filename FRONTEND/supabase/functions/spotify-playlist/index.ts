@@ -19,7 +19,7 @@ async function supabaseRpc(fn: string, params: Record<string, string>) {
     body: JSON.stringify(params),
   });
   const result = await res.json();
-  return result;
+  return Array.isArray(result) ? result[0] : result;
 }
 
 async function supabaseQuery(table: string, query: string) {
@@ -49,24 +49,38 @@ Deno.serve(async (req: Request) => {
 
     const config = await supabaseQuery(
       "spotify_config",
-      `select=access_token,spotify_playlist_id&pair_id=eq.${pair_id}&limit=1`
+      `select=access_token,refresh_token,spotify_playlist_id&pair_id=eq.${pair_id}&limit=1`
     );
 
-    if (!config?.access_token) {
+    if (!config) {
       return new Response(
-        JSON.stringify({ error: "no_config" }),
+        JSON.stringify({ error: "no_config", detail: "no spotify_config row for this pair" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const accessToken = await supabaseRpc("decrypt_token", {
-      p_encrypted: config.access_token,
-      p_key: ENCRYPTION_KEY,
-    });
+    if (!config.access_token) {
+      return new Response(
+        JSON.stringify({ error: "no_config", detail: "access_token column is null" }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    let accessToken: string | null = null;
+    let decryptError: string | null = null;
+
+    try {
+      accessToken = await supabaseRpc("decrypt_token", {
+        p_encrypted: config.access_token,
+        p_key: ENCRYPTION_KEY,
+      });
+    } catch (e) {
+      decryptError = e.message;
+    }
 
     if (!accessToken) {
       return new Response(
-        JSON.stringify({ error: "token_decrypt_failed" }),
+        JSON.stringify({ error: "token_decrypt_failed", detail: decryptError }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -75,7 +89,7 @@ Deno.serve(async (req: Request) => {
 
     if (!targetPlaylistId) {
       return new Response(
-        JSON.stringify({ error: "no_playlist_id" }),
+        JSON.stringify({ error: "no_playlist_id", detail: "no playlist_id in request or config" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -160,6 +174,7 @@ Deno.serve(async (req: Request) => {
       { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
+    console.error("[spotify-playlist] error", error.message);
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

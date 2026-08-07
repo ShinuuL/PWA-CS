@@ -7,17 +7,18 @@ const loadSpotifySDK = () => {
       resolve(window.Spotify)
       return
     }
+
+    window.onSpotifyWebPlaybackSDKReady = () => {}
+
     const script = document.createElement('script')
     script.src = 'https://sdk.scdn.co/spotify-player.js'
     script.onload = () => {
-      // Wait a bit for window.Spotify to be defined
       const check = setInterval(() => {
         if (window.Spotify) {
           clearInterval(check)
           resolve(window.Spotify)
         }
       }, 100)
-      // Timeout after 5 seconds
       setTimeout(() => {
         clearInterval(check)
         if (!window.Spotify) {
@@ -39,6 +40,7 @@ export default function useSpotifyPlayer() {
   const cancelledRef = useRef(false)
 
   const accessToken = useSpotifyStore((s) => s.accessToken)
+  const autoResume = useSpotifyStore((s) => s._autoResume)
   const setDeviceId = useSpotifyStore((s) => s.setDeviceId)
   const setCurrentTrack = useSpotifyStore((s) => s.setCurrentTrack)
   const setIsPlaying = useSpotifyStore((s) => s.setIsPlaying)
@@ -77,7 +79,7 @@ export default function useSpotifyPlayer() {
 
         player.addListener('player_state_changed', (state) => {
           if (cancelledRef.current) return
-          if (!state) return // null state means player is not active
+          if (!state) return
 
           const track = state.track_window?.current_track
           if (track) {
@@ -95,17 +97,19 @@ export default function useSpotifyPlayer() {
 
         player.addListener('account_error', ({ message }) => {
           if (cancelledRef.current) return
+          console.error('[spotify-sdk] account_error:', message)
           setHasPremium(false)
           setError('premium_required')
         })
 
         player.addListener('authentication_error', ({ message }) => {
           if (cancelledRef.current) return
+          console.error('[spotify-sdk] authentication_error:', message)
           setError('auth_expired')
         })
 
         player.addListener('playback_error', ({ message }) => {
-          console.error('Playback error:', message)
+          console.error('[spotify-sdk] playback_error:', message)
         })
 
         player.connect().then((success) => {
@@ -150,6 +154,31 @@ export default function useSpotifyPlayer() {
 
     return () => clearInterval(interval)
   }, [isReady, setProgress])
+
+  // Auto-resume via SDK when store requests it
+  useEffect(() => {
+    if (!isReady || !playerRef.current || !autoResume) return
+
+    if (autoResume === 'pause') {
+      playerRef.current.pause()
+    } else {
+      playerRef.current.resume()
+    }
+    useSpotifyStore.setState({ _autoResume: false })
+  }, [autoResume, isReady])
+
+  // SDK actions (next, previous) triggered by store
+  const sdkAction = useSpotifyStore((s) => s._sdkAction)
+  useEffect(() => {
+    if (!isReady || !playerRef.current || !sdkAction) return
+
+    if (sdkAction === 'next') {
+      playerRef.current.nextTrack()
+    } else if (sdkAction === 'previous') {
+      playerRef.current.previousTrack()
+    }
+    useSpotifyStore.setState({ _sdkAction: null })
+  }, [sdkAction, isReady])
 
   const play = useCallback(() => {
     if (playerRef.current) {
