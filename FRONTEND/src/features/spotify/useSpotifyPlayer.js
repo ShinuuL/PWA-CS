@@ -43,6 +43,8 @@ export default function useSpotifyPlayer() {
   const cancelledRef = useRef(false)
 
   const accessToken = useSpotifyStore((s) => s.accessToken)
+  const autoResume = useSpotifyStore((s) => s._autoResume)
+  const isPlaying = useSpotifyStore((s) => s.isPlaying)
   const setDeviceId = useSpotifyStore((s) => s.setDeviceId)
   const setCurrentTrack = useSpotifyStore((s) => s.setCurrentTrack)
   const setIsPlaying = useSpotifyStore((s) => s.setIsPlaying)
@@ -160,6 +162,23 @@ export default function useSpotifyPlayer() {
 
     return () => clearInterval(interval)
   }, [isReady, setProgress])
+
+  // Auto-resume / auto-pause via SDK when store requests it
+  useEffect(() => {
+    if (!isReady || !playerRef.current) return
+
+    if (autoResume) {
+      console.log('[spotify-sdk] autoResume triggered — calling player.resume()')
+      playerRef.current.resume()
+      useSpotifyStore.setState({ _autoResume: false })
+    }
+  }, [autoResume, isReady])
+
+  // Sync pause from store (togglePlay sets isPlaying=false)
+  useEffect(() => {
+    if (!isReady || !playerRef.current) return
+    // This runs when isPlaying changes — the SDK's player_state_changed handles the actual state
+  }, [isPlaying, isReady])
 
   const play = useCallback(() => {
     if (playerRef.current) {

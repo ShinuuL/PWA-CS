@@ -18,6 +18,7 @@ const useSpotifyStore = create((set, get) => ({
   accessToken: null,
   pairId: null,
   _refreshPromise: null,
+  _autoResume: false,
 
   // Actions
   initializeSpotify: async (pairId) => {
@@ -366,12 +367,19 @@ const useSpotifyStore = create((set, get) => ({
             headers,
             body: JSON.stringify({ device_ids: [deviceId], play: false }),
           })
+          await fetch('https://api.spotify.com/v1/me/player/play', {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify({ uris: [randomTrack.uri] }),
+          })
+          set({ _autoResume: true })
+        } else {
+          await fetch('https://api.spotify.com/v1/me/player/play', {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify({ uris: [randomTrack.uri] }),
+          })
         }
-        await fetch('https://api.spotify.com/v1/me/player/play', {
-          method: 'PUT',
-          headers,
-          body: JSON.stringify({ uris: [randomTrack.uri] }),
-        })
       }
 
       // Record in play history
@@ -411,7 +419,7 @@ const useSpotifyStore = create((set, get) => ({
     }
 
     try {
-      // Step 1: Transfer playback to the Web Playback SDK device first
+      // Transfer playback to the Web Playback SDK device
       if (deviceId) {
         console.log('[spotify] transferring to SDK device', deviceId)
         const transferRes = await fetch('https://api.spotify.com/v1/me/player', {
@@ -420,24 +428,38 @@ const useSpotifyStore = create((set, get) => ({
           body: JSON.stringify({ device_ids: [deviceId], play: false }),
         })
         console.log('[spotify] transfer result', { status: transferRes.status })
-      }
 
-      // Step 2: Now play the track on the active device (which is now the SDK device)
-      const playBody = { uris: [uri] }
-      console.log('[spotify] PUT /me/player/play', { body: playBody })
-      const res = await fetch('https://api.spotify.com/v1/me/player/play', {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify(playBody),
-      })
-      const statusText = await res.text().catch(() => '')
-      console.log('[spotify] play response', { status: res.status, ok: res.ok, body: statusText })
+        // Play the track on the SDK device
+        console.log('[spotify] PUT /me/player/play', { uris: [uri] })
+        const res = await fetch('https://api.spotify.com/v1/me/player/play', {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ uris: [uri] }),
+        })
+        const statusText = await res.text().catch(() => '')
+        console.log('[spotify] play response', { status: res.status, ok: res.ok, body: statusText })
 
-      if (!res.ok && res.status !== 204) {
-        console.error('[spotify] play failed', res.status)
-        set({ error: `play ${res.status}` })
+        if (res.ok || res.status === 204) {
+          // SDK picks up the track but browser blocks autoplay — trigger resume via SDK
+          console.log('[spotify] setting _autoResume for SDK')
+          set({ _autoResume: true })
+        } else {
+          console.error('[spotify] play failed', res.status)
+          set({ error: `play ${res.status}` })
+        }
       } else {
-        set({ isPlaying: true })
+        // No SDK device — fallback: play directly (will route to active Spotify device)
+        console.log('[spotify] no deviceId, playing directly')
+        const res = await fetch('https://api.spotify.com/v1/me/player/play', {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ uris: [uri] }),
+        })
+        if (res.ok || res.status === 204) {
+          set({ isPlaying: true })
+        } else {
+          set({ error: `play ${res.status}` })
+        }
       }
     } catch (err) {
       console.error('[spotify] playUri error', err)
@@ -456,47 +478,19 @@ const useSpotifyStore = create((set, get) => ({
 
     try {
       // Check real playback state before toggling
-      let shouldPlay = false
       const statusRes = await fetch('https://api.spotify.com/v1/me/player', {
         headers: { Authorization: `Bearer ${freshToken}` },
       })
       if (statusRes.ok) {
         const statusData = await statusRes.json()
-        shouldPlay = !statusData?.is_playing
-        console.log('[spotify] current state', { is_playing: statusData?.is_playing, device: statusData?.device?.id })
+        const currentlyPlaying = statusData?.is_playing
+        console.log('[spotify] current state', { is_playing: currentlyPlaying, device: statusData?.device?.id })
+        // Just flip the isPlaying state — SDK player handles actual resume/pause
+        set({ isPlaying: !currentlyPlaying, _autoResume: !currentlyPlaying })
       } else {
-        // No device — always try to start playback
-        shouldPlay = true
         console.log('[spotify] no active player, status:', statusRes.status)
+        set({ isPlaying: true, _autoResume: true })
       }
-
-      const headers = {
-        Authorization: `Bearer ${freshToken}`,
-        'Content-Type': 'application/json',
-      }
-
-      // When resuming playback, transfer to SDK device first
-      if (shouldPlay && deviceId) {
-        console.log('[spotify] transferring to SDK device before play', deviceId)
-        await fetch('https://api.spotify.com/v1/me/player', {
-          method: 'PUT',
-          headers,
-          body: JSON.stringify({ device_ids: [deviceId], play: false }),
-        })
-      }
-
-      const url = shouldPlay
-        ? 'https://api.spotify.com/v1/me/player/play'
-        : 'https://api.spotify.com/v1/me/player/pause'
-      const body = shouldPlay ? JSON.stringify({ uris: [] }) : undefined
-      const res = await fetch(url, {
-        method: 'PUT',
-        headers,
-        body,
-      })
-      const resBody = await res.text().catch(() => '')
-      console.log('[spotify] togglePlay response', { url, status: res.status, body: resBody })
-      set({ isPlaying: shouldPlay })
     } catch (err) {
       console.error('[spotify] togglePlay error', err)
       set({ error: err.message })
