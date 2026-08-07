@@ -22,8 +22,12 @@ const useSpotifyStore = create((set, get) => ({
   // Actions
   initializeSpotify: async (pairId) => {
     const { user } = useAuthStore.getState()
-    if (!user || !pairId) return
+    if (!user || !pairId) {
+      console.log('[spotify] initializeSpotify skipped', { hasUser: !!user, pairId })
+      return
+    }
 
+    console.log('[spotify] initializeSpotify started', { pairId })
     set({ isLoading: true, pairId, error: null })
 
     try {
@@ -31,11 +35,27 @@ const useSpotifyStore = create((set, get) => ({
         .from('spotify_config')
         .select('*')
         .eq('pair_id', pairId)
-        .single()
+        .maybeSingle()
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
+        // PGRST116 = no rows found (expected before first Spotify connect)
+        // 406 = Not Acceptable (RLS or content negotiation issue — treat as no config)
+        if (error.code === 'PGRST116' || error.message?.includes('406')) {
+          console.log('[spotify] no config found (expected before first connect)', { code: error.code })
+          set({ isConnected: false, isLoading: false })
+          return
+        }
+        console.error('[spotify] config query error', error)
         throw error
       }
+
+      console.log('[spotify] config query result', {
+        found: !!config,
+        has_playlist_id: !!config?.spotify_playlist_id,
+        playlist_id: config?.spotify_playlist_id || '(null)',
+        has_access_token: !!config?.access_token,
+        has_refresh_token: !!config?.refresh_token,
+      })
 
       if (config) {
         set({
@@ -52,22 +72,38 @@ const useSpotifyStore = create((set, get) => ({
         const savedToken = sessionStorage.getItem('spotify_access_token')
         const savedExpiresAt = sessionStorage.getItem('spotify_token_expires_at')
 
+        console.log('[spotify] sessionStorage check', {
+          hasToken: !!savedToken,
+          tokenLength: savedToken?.length,
+          hasExpiresAt: !!savedExpiresAt,
+          expiresAt: savedExpiresAt ? new Date(Number(savedExpiresAt)).toISOString() : '(none)',
+          now: new Date().toISOString(),
+          isExpired: savedExpiresAt ? Number(savedExpiresAt) < Date.now() + 5 * 60 * 1000 : '(no expiry)',
+        })
+
         if (savedToken && savedExpiresAt) {
           const expiresAt = Number(savedExpiresAt)
           if (expiresAt > Date.now() + 5 * 60 * 1000) {
+            console.log('[spotify] restoring valid token from sessionStorage')
             set({ accessToken: savedToken, tokenExpiresAt: expiresAt, isLoading: false })
           } else {
+            console.log('[spotify] token expired, refreshing...')
             set({ isLoading: false })
             await get().refreshTokenIfNeeded()
+            console.log('[spotify] refresh completed, accessToken:', !!get().accessToken)
           }
         } else {
+          console.log('[spotify] no token in sessionStorage, refreshing...')
           set({ isLoading: false })
           await get().refreshTokenIfNeeded()
+          console.log('[spotify] refresh completed, accessToken:', !!get().accessToken)
         }
       } else {
+        console.log('[spotify] no config found for pair_id:', pairId)
         set({ isConnected: false, isLoading: false })
       }
     } catch (err) {
+      console.error('[spotify] initializeSpotify error', err)
       set({ error: err.message, isLoading: false })
     }
   },
@@ -113,9 +149,20 @@ const useSpotifyStore = create((set, get) => ({
         .from('spotify_config')
         .select('*')
         .eq('pair_id', pairId)
-        .single()
+        .maybeSingle()
 
-      if (error) throw error
+      if (error) {
+        if (error.code === 'PGRST116' || error.message?.includes('406')) {
+          set({ isConnected: false })
+          return
+        }
+        throw error
+      }
+
+      if (!config) {
+        set({ isConnected: false })
+        return
+      }
 
       set({
         config: {
@@ -161,8 +208,12 @@ const useSpotifyStore = create((set, get) => ({
 
   fetchPlaylist: async () => {
     const { pairId, config } = get()
-    if (!pairId || !config?.playlist_id) return
+    if (!pairId || !config?.playlist_id) {
+      console.log('[spotify] fetchPlaylist skipped', { pairId, playlistId: config?.playlist_id })
+      return
+    }
 
+    console.log('[spotify] fetchPlaylist started', { playlistId: config.playlist_id })
     await get().refreshTokenIfNeeded()
     set({ isLoading: true })
     try {
@@ -174,10 +225,20 @@ const useSpotifyStore = create((set, get) => ({
         },
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('[spotify] fetchPlaylist edge function error', error)
+        throw error
+      }
+
+      console.log('[spotify] fetchPlaylist result', {
+        trackCount: data.tracks?.length || 0,
+        hasError: !!data.error,
+        error: data.error,
+      })
 
       set({ playlistTracks: data.tracks || [], isLoading: false })
     } catch (err) {
+      console.error('[spotify] fetchPlaylist error', err)
       set({ error: err.message, isLoading: false })
     }
   },
@@ -302,7 +363,7 @@ const useSpotifyStore = create((set, get) => ({
           },
           body: JSON.stringify({
             uris: [randomTrack.uri],
-            ...(deviceId ? { device_id: deviceId } : {}),
+            ...(deviceId ? { device_ids: [deviceId] } : {}),
           }),
         })
       }
@@ -345,7 +406,7 @@ const useSpotifyStore = create((set, get) => ({
         },
         body: JSON.stringify({
           uris: [uri],
-          ...(deviceId ? { device_id: deviceId } : {}),
+          ...(deviceId ? { device_ids: [deviceId] } : {}),
         }),
       })
       set({ isPlaying: true })
@@ -355,16 +416,24 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   togglePlay: async () => {
-    const { isPlaying, accessToken } = get()
+    const { isPlaying, accessToken, deviceId } = get()
     if (!accessToken) return
 
     await get().refreshTokenIfNeeded()
     const { accessToken: freshToken } = get()
 
     try {
-      await fetch(`https://api.spotify.com/v1/me/player/${isPlaying ? 'pause' : 'play'}`, {
+      const body = deviceId ? JSON.stringify({ device_ids: [deviceId] }) : undefined
+      const url = isPlaying
+        ? 'https://api.spotify.com/v1/me/player/pause'
+        : 'https://api.spotify.com/v1/me/player/play'
+      await fetch(url, {
         method: 'PUT',
-        headers: { Authorization: `Bearer ${freshToken}` },
+        headers: {
+          Authorization: `Bearer ${freshToken}`,
+          ...(body ? { 'Content-Type': 'application/json' } : {}),
+        },
+        body,
       })
       set({ isPlaying: !isPlaying })
     } catch (err) {
@@ -487,6 +556,11 @@ const useSpotifyStore = create((set, get) => ({
 
   setAccessToken: (token, expiresIn) => {
     const expiresAt = Date.now() + expiresIn * 1000
+    console.log('[spotify] setAccessToken', {
+      tokenLength: token?.length,
+      expiresIn,
+      expiresAt: new Date(expiresAt).toISOString(),
+    })
     sessionStorage.setItem('spotify_access_token', token)
     sessionStorage.setItem('spotify_token_expires_at', String(expiresAt))
     set({ accessToken: token, tokenExpiresAt: expiresAt })
@@ -494,18 +568,40 @@ const useSpotifyStore = create((set, get) => ({
 
   refreshTokenIfNeeded: async () => {
     const { tokenExpiresAt, pairId, _refreshPromise } = get()
-    if (!pairId) return
-    if (_refreshPromise) return _refreshPromise
+    if (!pairId) {
+      console.log('[spotify] refreshTokenIfNeeded skipped: no pairId')
+      return
+    }
+    if (_refreshPromise) {
+      console.log('[spotify] refreshTokenIfNeeded: reusing existing promise')
+      return _refreshPromise
+    }
     if (!tokenExpiresAt || tokenExpiresAt < Date.now() + 5 * 60 * 1000) {
+      console.log('[spotify] refreshTokenIfNeeded: refresh needed', {
+        hasTokenExpiresAt: !!tokenExpiresAt,
+        expiresAt: tokenExpiresAt ? new Date(tokenExpiresAt).toISOString() : '(none)',
+      })
       const promise = (async () => {
         try {
+          console.log('[spotify] calling spotify-auth refresh...')
           const { data, error } = await supabase.functions.invoke('spotify-auth', {
             body: { action: 'refresh', pair_id: pairId },
           })
 
-          if (error) throw error
+          if (error) {
+            console.error('[spotify] refresh edge function error', error)
+            throw error
+          }
+
+          console.log('[spotify] refresh response', {
+            hasError: !!data.error,
+            error: data.error,
+            hasAccessToken: !!data.access_token,
+            expiresIn: data.expires_in,
+          })
 
           if (data.error === 'reconnect_required') {
+            console.log('[spotify] refresh: reconnect required, disconnecting')
             get().disconnect()
             set({ error: 'Spotify token expired. Please reconnect.', _refreshPromise: null })
             return
@@ -513,12 +609,16 @@ const useSpotifyStore = create((set, get) => ({
 
           get().setAccessToken(data.access_token, data.expires_in)
           set({ _refreshPromise: null })
+          console.log('[spotify] refresh completed successfully')
         } catch (err) {
+          console.error('[spotify] refreshTokenIfNeeded error', err)
           set({ error: err.message, _refreshPromise: null })
         }
       })()
       set({ _refreshPromise: promise })
       return promise
+    } else {
+      console.log('[spotify] refreshTokenIfNeeded: token still valid')
     }
   },
 
@@ -534,14 +634,19 @@ const useSpotifyStore = create((set, get) => ({
 
   fetchUserPlaylists: async () => {
     const { accessToken } = get()
+    console.log('[spotify] fetchUserPlaylists called', { hasAccessToken: !!accessToken })
+
     if (!accessToken) {
+      console.log('[spotify] fetchUserPlaylists: no token, attempting refresh...')
       await get().refreshTokenIfNeeded()
       const retryToken = get().accessToken
+      console.log('[spotify] fetchUserPlaylists: after refresh', { hasRetryToken: !!retryToken })
       if (!retryToken) return []
       return get().fetchUserPlaylists()
     }
 
     try {
+      console.log('[spotify] fetchUserPlaylists: fetching from Spotify API...')
       const response = await fetch(
         'https://api.spotify.com/v1/me/playlists?limit=50',
         {
@@ -549,7 +654,13 @@ const useSpotifyStore = create((set, get) => ({
         }
       )
 
+      console.log('[spotify] fetchUserPlaylists: response', {
+        status: response.status,
+        ok: response.ok,
+      })
+
       if (response.status === 401) {
+        console.log('[spotify] fetchUserPlaylists: 401, refreshing token...')
         await get().refreshTokenIfNeeded()
         const retryToken = get().accessToken
         if (!retryToken) return []
@@ -559,24 +670,43 @@ const useSpotifyStore = create((set, get) => ({
         )
         if (!retryResponse.ok) throw new Error('Failed to fetch playlists')
         const retryData = await retryResponse.json()
-        return retryData.items?.map((pl) => ({
-          id: pl.id,
-          name: pl.name,
-          trackCount: pl.tracks.total,
-          image: pl.images?.[0]?.url || null,
-        })) || []
+        const playlists = (retryData.items || [])
+          .filter((pl) => pl && pl.id)
+          .map((pl) => ({
+            id: pl.id,
+            name: pl.name,
+            trackCount: pl.items?.total ?? pl.tracks?.total ?? 0,
+            image: pl.images?.[0]?.url || null,
+          }))
+        console.log('[spotify] fetchUserPlaylists: success (after refresh)', { count: playlists.length })
+        return playlists
       }
 
-      if (!response.ok) throw new Error('Failed to fetch playlists')
+      if (!response.ok) {
+        const errBody = await response.text()
+        console.error('[spotify] fetchUserPlaylists: error', { status: response.status, body: errBody })
+        throw new Error('Failed to fetch playlists')
+      }
 
       const data = await response.json()
-      return data.items?.map((pl) => ({
-        id: pl.id,
-        name: pl.name,
-        trackCount: pl.tracks.total,
-        image: pl.images?.[0]?.url || null,
-      })) || []
+      if (data.items?.length > 0) {
+        const first = data.items[0]
+        console.log('[spotify] fetchUserPlaylists: first item keys', Object.keys(first))
+        console.log('[spotify] fetchUserPlaylists: tracks?', JSON.stringify(first.tracks), 'items?', JSON.stringify(first.items))
+      }
+      console.log('[spotify] fetchUserPlaylists: totalItems', data.items?.length)
+      const playlists = (data.items || [])
+        .filter((pl) => pl && pl.id)
+        .map((pl) => ({
+          id: pl.id,
+          name: pl.name,
+          trackCount: pl.items?.total ?? pl.tracks?.total ?? 0,
+          image: pl.images?.[0]?.url || null,
+        }))
+      console.log('[spotify] fetchUserPlaylists: success', { count: playlists.length })
+      return playlists
     } catch (err) {
+      console.error('[spotify] fetchUserPlaylists error', err)
       set({ error: err.message })
       return []
     }

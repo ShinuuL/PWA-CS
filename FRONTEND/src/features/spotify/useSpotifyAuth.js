@@ -58,6 +58,8 @@ export default function useSpotifyAuth() {
           'user-read-playback-state',
           'user-modify-playback-state',
           'user-read-currently-playing',
+          'user-read-email',
+          'user-read-private',
         ].join(' '),
         redirect_uri: redirectUri,
         code_challenge_method: 'S256',

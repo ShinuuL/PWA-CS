@@ -7,10 +7,14 @@ const loadSpotifySDK = () => {
       resolve(window.Spotify)
       return
     }
+
+    // Define callback BEFORE loading SDK to prevent "onSpotifyWebPlaybackSDKReady is not defined" error
+    window.onSpotifyWebPlaybackSDKReady = () => {}
+
     const script = document.createElement('script')
     script.src = 'https://sdk.scdn.co/spotify-player.js'
     script.onload = () => {
-      // Wait a bit for window.Spotify to be defined
+      // Wait for window.Spotify to be defined by the SDK
       const check = setInterval(() => {
         if (window.Spotify) {
           clearInterval(check)
@@ -71,6 +75,7 @@ export default function useSpotifyPlayer() {
 
         player.addListener('ready', ({ device_id }) => {
           if (cancelledRef.current) return
+          console.log('[spotify-sdk] player ready', { device_id })
           setDeviceId(device_id)
           setIsReady(true)
         })
@@ -78,6 +83,7 @@ export default function useSpotifyPlayer() {
         player.addListener('player_state_changed', (state) => {
           if (cancelledRef.current) return
           if (!state) return // null state means player is not active
+          console.log('[spotify-sdk] state changed', { paused: state.paused, position: state.position })
 
           const track = state.track_window?.current_track
           if (track) {
@@ -95,20 +101,24 @@ export default function useSpotifyPlayer() {
 
         player.addListener('account_error', ({ message }) => {
           if (cancelledRef.current) return
+          console.error('[spotify-sdk] account_error:', message)
           setHasPremium(false)
           setError('premium_required')
         })
 
         player.addListener('authentication_error', ({ message }) => {
           if (cancelledRef.current) return
+          console.error('[spotify-sdk] authentication_error:', message)
           setError('auth_expired')
         })
 
         player.addListener('playback_error', ({ message }) => {
-          console.error('Playback error:', message)
+          console.error('[spotify-sdk] playback_error:', message)
         })
 
+        console.log('[spotify-sdk] connecting...')
         player.connect().then((success) => {
+          console.log('[spotify-sdk] connect result:', success)
           if (success) {
             playerRef.current = player
           }
