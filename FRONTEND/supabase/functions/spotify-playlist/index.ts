@@ -19,7 +19,6 @@ async function supabaseRpc(fn: string, params: Record<string, string>) {
     body: JSON.stringify(params),
   });
   const result = await res.json();
-  // PostgREST wraps scalar function returns in an array — extract the first element
   return Array.isArray(result) ? result[0] : result;
 }
 
@@ -44,36 +43,16 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  const startTime = Date.now();
-
   try {
     const body = await req.json();
     const { action, playlist_id, track_uri, pair_id } = body;
-
-    console.log("[spotify-playlist] request received", {
-      action,
-      pair_id,
-      playlist_id: playlist_id || "(none)",
-      has_track_uri: !!track_uri,
-      has_encryption_key: !!ENCRYPTION_KEY,
-      encryption_key_length: ENCRYPTION_KEY?.length,
-    });
 
     const config = await supabaseQuery(
       "spotify_config",
       `select=access_token,refresh_token,spotify_playlist_id&pair_id=eq.${pair_id}&limit=1`
     );
 
-    console.log("[spotify-playlist] config query result", {
-      found: !!config,
-      has_access_token: !!config?.access_token,
-      access_token_length: config?.access_token?.length,
-      has_refresh_token: !!config?.refresh_token,
-      spotify_playlist_id: config?.spotify_playlist_id || "(null)",
-    });
-
     if (!config) {
-      console.error("[spotify-playlist] no config row found for pair_id:", pair_id);
       return new Response(
         JSON.stringify({ error: "no_config", detail: "no spotify_config row for this pair" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -81,7 +60,6 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!config.access_token) {
-      console.error("[spotify-playlist] config exists but access_token is null/empty");
       return new Response(
         JSON.stringify({ error: "no_config", detail: "access_token column is null" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -100,14 +78,7 @@ Deno.serve(async (req: Request) => {
       decryptError = e.message;
     }
 
-    console.log("[spotify-playlist] decrypt result", {
-      success: !!accessToken,
-      token_length: accessToken?.length,
-      decrypt_error: decryptError,
-    });
-
     if (!accessToken) {
-      console.error("[spotify-playlist] token decryption failed", { decryptError });
       return new Response(
         JSON.stringify({ error: "token_decrypt_failed", detail: decryptError }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -117,43 +88,23 @@ Deno.serve(async (req: Request) => {
     const targetPlaylistId = playlist_id || config.spotify_playlist_id;
 
     if (!targetPlaylistId) {
-      console.error("[spotify-playlist] no playlist_id provided and none in config");
       return new Response(
         JSON.stringify({ error: "no_playlist_id", detail: "no playlist_id in request or config" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log("[spotify-playlist] proceeding with action", {
-      action,
-      targetPlaylistId,
-      token_length: accessToken.length,
-    });
-
     if (action === "get_tracks") {
-      console.log("[spotify-playlist] get_tracks started", { playlistId: targetPlaylistId });
       let allTracks: any[] = [];
       let url = `https://api.spotify.com/v1/playlists/${targetPlaylistId}/items?limit=100`;
-      let pageCount = 0;
 
       while (url) {
-        pageCount++;
         const response = await fetch(url, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
 
-        console.log("[spotify-playlist] Spotify API response", {
-          page: pageCount,
-          status: response.status,
-          ok: response.ok,
-        });
-
         if (!response.ok) {
           const errBody = await response.text();
-          console.error("[spotify-playlist] Spotify API error", {
-            status: response.status,
-            body: errBody.substring(0, 500),
-          });
           return new Response(
             JSON.stringify({ error: `spotify_${response.status}`, detail: errBody }),
             { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -172,19 +123,7 @@ Deno.serve(async (req: Request) => {
 
         allTracks = allTracks.concat(tracks);
         url = data.next || null;
-
-        console.log("[spotify-playlist] page fetched", {
-          page: pageCount,
-          tracksInPage: tracks.length,
-          totalSoFar: allTracks.length,
-          hasNext: !!data.next,
-        });
       }
-
-      console.log("[spotify-playlist] get_tracks completed", {
-        totalTracks: allTracks.length,
-        elapsed: Date.now() - startTime,
-      });
 
       return new Response(
         JSON.stringify({ tracks: allTracks }),
@@ -193,7 +132,6 @@ Deno.serve(async (req: Request) => {
     }
 
     if (action === "add_track") {
-      console.log("[spotify-playlist] add_track", { playlistId: targetPlaylistId, track_uri });
       const response = await fetch(
         `https://api.spotify.com/v1/playlists/${targetPlaylistId}/items`,
         {
@@ -206,11 +144,6 @@ Deno.serve(async (req: Request) => {
         }
       );
       const respBody = await response.text();
-      console.log("[spotify-playlist] add_track result", {
-        status: response.status,
-        ok: response.ok,
-        body: respBody.substring(0, 300),
-      });
       return new Response(
         JSON.stringify({ success: response.ok, status: response.status, detail: respBody }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -218,7 +151,6 @@ Deno.serve(async (req: Request) => {
     }
 
     if (action === "remove_track") {
-      console.log("[spotify-playlist] remove_track", { playlistId: targetPlaylistId, track_uri });
       const response = await fetch(
         `https://api.spotify.com/v1/playlists/${targetPlaylistId}/items`,
         {
@@ -231,28 +163,18 @@ Deno.serve(async (req: Request) => {
         }
       );
       const respBody = await response.text();
-      console.log("[spotify-playlist] remove_track result", {
-        status: response.status,
-        ok: response.ok,
-        body: respBody.substring(0, 300),
-      });
       return new Response(
         JSON.stringify({ success: response.ok, status: response.status, detail: respBody }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.error("[spotify-playlist] invalid action:", action);
     return new Response(
       JSON.stringify({ error: "invalid_action" }),
       { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("[spotify-playlist] unhandled error", {
-      message: error.message,
-      stack: error.stack,
-      elapsed: Date.now() - startTime,
-    });
+    console.error("[spotify-playlist] error", error.message);
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

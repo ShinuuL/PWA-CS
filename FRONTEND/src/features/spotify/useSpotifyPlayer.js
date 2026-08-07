@@ -8,20 +8,17 @@ const loadSpotifySDK = () => {
       return
     }
 
-    // Define callback BEFORE loading SDK to prevent "onSpotifyWebPlaybackSDKReady is not defined" error
     window.onSpotifyWebPlaybackSDKReady = () => {}
 
     const script = document.createElement('script')
     script.src = 'https://sdk.scdn.co/spotify-player.js'
     script.onload = () => {
-      // Wait for window.Spotify to be defined by the SDK
       const check = setInterval(() => {
         if (window.Spotify) {
           clearInterval(check)
           resolve(window.Spotify)
         }
       }, 100)
-      // Timeout after 5 seconds
       setTimeout(() => {
         clearInterval(check)
         if (!window.Spotify) {
@@ -76,15 +73,13 @@ export default function useSpotifyPlayer() {
 
         player.addListener('ready', ({ device_id }) => {
           if (cancelledRef.current) return
-          console.log('[spotify-sdk] player ready', { device_id })
           setDeviceId(device_id)
           setIsReady(true)
         })
 
         player.addListener('player_state_changed', (state) => {
           if (cancelledRef.current) return
-          if (!state) return // null state means player is not active
-          console.log('[spotify-sdk] state changed', { paused: state.paused, position: state.position })
+          if (!state) return
 
           const track = state.track_window?.current_track
           if (track) {
@@ -117,9 +112,7 @@ export default function useSpotifyPlayer() {
           console.error('[spotify-sdk] playback_error:', message)
         })
 
-        console.log('[spotify-sdk] connecting...')
         player.connect().then((success) => {
-          console.log('[spotify-sdk] connect result:', success)
           if (success) {
             playerRef.current = player
           }
@@ -167,10 +160,8 @@ export default function useSpotifyPlayer() {
     if (!isReady || !playerRef.current || !autoResume) return
 
     if (autoResume === 'pause') {
-      console.log('[spotify-sdk] autoPause triggered')
       playerRef.current.pause()
     } else {
-      console.log('[spotify-sdk] autoResume triggered — calling player.resume()')
       playerRef.current.resume()
     }
     useSpotifyStore.setState({ _autoResume: false })
@@ -181,7 +172,6 @@ export default function useSpotifyPlayer() {
   useEffect(() => {
     if (!isReady || !playerRef.current || !sdkAction) return
 
-    console.log('[spotify-sdk] executing action', sdkAction)
     if (sdkAction === 'next') {
       playerRef.current.nextTrack()
     } else if (sdkAction === 'previous') {
