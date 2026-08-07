@@ -416,17 +416,32 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   togglePlay: async () => {
-    const { isPlaying, accessToken, deviceId } = get()
+    const { accessToken, deviceId } = get()
     if (!accessToken) return
 
     await get().refreshTokenIfNeeded()
     const { accessToken: freshToken } = get()
 
     try {
-      const body = deviceId ? JSON.stringify({ device_ids: [deviceId] }) : undefined
-      const url = isPlaying
-        ? 'https://api.spotify.com/v1/me/player/pause'
-        : 'https://api.spotify.com/v1/me/player/play'
+      // Check real playback state before toggling
+      let shouldPlay = false
+      const statusRes = await fetch('https://api.spotify.com/v1/me/player', {
+        headers: { Authorization: `Bearer ${freshToken}` },
+      })
+      if (statusRes.ok) {
+        const statusData = await statusRes.json()
+        shouldPlay = !statusData?.is_playing
+      } else {
+        // No device — always try to start playback
+        shouldPlay = true
+      }
+
+      const url = shouldPlay
+        ? 'https://api.spotify.com/v1/me/player/play'
+        : 'https://api.spotify.com/v1/me/player/pause'
+      const body = deviceId
+        ? JSON.stringify({ device_ids: [deviceId] })
+        : undefined
       await fetch(url, {
         method: 'PUT',
         headers: {
@@ -435,7 +450,7 @@ const useSpotifyStore = create((set, get) => ({
         },
         body,
       })
-      set({ isPlaying: !isPlaying })
+      set({ isPlaying: shouldPlay })
     } catch (err) {
       set({ error: err.message })
     }
