@@ -17,6 +17,7 @@ const ChatSettings = lazy(() => import('./features/chat/ChatSettings'))
 const AlbumPage = lazy(() => import('./features/album/AlbumPage'))
 const HomePage = lazy(() => import('./features/dashboard/HomePage'))
 const AgendaPage = lazy(() => import('./features/agenda/AgendaPage'))
+const SpotifyPage = lazy(() => import('./features/spotify/SpotifyPage'))
 const SpotifyCallback = lazy(() => import('./features/spotify/SpotifyCallback'))
 
 function App() {
@@ -99,6 +100,18 @@ function App() {
               <AppShell>
                 <PairingGate>
                   <AgendaPage />
+                </PairingGate>
+              </AppShell>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/spotify"
+          element={
+            <ProtectedRoute>
+              <AppShell>
+                <PairingGate>
+                  <SpotifyPage />
                 </PairingGate>
               </AppShell>
             </ProtectedRoute>

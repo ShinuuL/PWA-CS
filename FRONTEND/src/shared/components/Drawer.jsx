@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
-import { Home, MessageCircle, Images, CalendarDays, Settings, LogOut } from 'lucide-react'
+import { Home, MessageCircle, Images, CalendarDays, Music, Settings, LogOut } from 'lucide-react'
 import useAuthStore from '../../stores/authStore'
 import { useAuth } from '../../features/auth/useAuth'
 import { supabase } from '../lib/supabase'
@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { path: '/chat', label: 'Chat', icon: MessageCircle, requiresPairing: true },
   { path: '/album', label: 'Álbum', icon: Images, requiresPairing: true },
   { path: '/agenda', label: 'Agenda', icon: CalendarDays, requiresPairing: true },
+  { path: '/spotify', label: 'Spotify', icon: Music, requiresPairing: true },
   { path: '/settings', label: 'Configurações', icon: Settings, requiresPairing: false },
 ]
 
