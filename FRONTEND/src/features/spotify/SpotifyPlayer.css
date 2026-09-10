@@ -153,6 +153,29 @@
   gap: 1rem 1.25rem;
 }
 
+.spotify-player__playing--idle {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'info'
+    'controls'
+    'progress'
+    'queue'
+    'playlist';
+  text-align: center;
+}
+
+.spotify-player__playing--idle .spotify-player__controls {
+  justify-content: center;
+}
+
+.spotify-player__playing--idle .spotify-player__progress-container {
+  text-align: left;
+}
+
+.spotify-player__playing--idle > .spotify-player__btn {
+  justify-self: center;
+}
+
 .spotify-player__album-art {
   grid-area: art;
   width: min(100%, 178px);

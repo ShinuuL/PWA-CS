@@ -26,7 +26,7 @@ export default function SpotifyPage() {
       <header className="spotify-page__header">
         <div className="spotify-page__heading-group">
           <p className="spotify-page__eyebrow">Ritual compartilhado</p>
-          <h1 className="spotify-page__title">Uma trilha para o momento de vocês.</h1>
+          <h1 className="spotify-page__title">Uma trilha para nosso momento</h1>
           <p className="spotify-page__subtitle">
             O Spotify ganha um palco próprio, com a playlist do casal e controles simples para ouvir juntos.
           </p>

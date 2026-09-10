@@ -172,7 +172,7 @@ export default function SpotifyPlayer() {
 
       case 'playing':
         return (
-          <div className="spotify-player__playing">
+          <div className={`spotify-player__playing${currentTrack?.albumArt ? '' : ' spotify-player__playing--idle'}`}>
             {currentTrack?.albumArt && (
               <img src={currentTrack.albumArt} alt={currentTrack.name} className="spotify-player__album-art" />
             )}
