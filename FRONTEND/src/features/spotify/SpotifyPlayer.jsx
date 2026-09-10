@@ -206,8 +206,8 @@ export default function SpotifyPlayer() {
               </span>
             </div>
             {queueTracks.length > 0 && (
-              <section className="spotify-player__queue" aria-label="Próximas músicas da playlist">
-                <p className="spotify-player__queue-title">Na fila</p>
+              <section className="spotify-player__queue" aria-label="Prévia da playlist">
+                <p className="spotify-player__queue-title">Na playlist</p>
                 <ul className="spotify-player__queue-list">
                   {queueTracks.map((track) => (
                     <li key={track.uri} className="spotify-player__queue-track">

@@ -179,6 +179,7 @@
 }
 
 .partner-mood__name { color: var(--color-text-secondary, #a2a5b9); font-size: 0.8125rem; line-height: 1.35; }
+.partner-mood__presence { display: inline-flex; align-items: center; gap: 0.25rem; color: var(--color-text-secondary, #a2a5b9); font-size: 0.6875rem; line-height: 1; white-space: nowrap; }
 
 .partner-mood__emoji {
   margin: 0.375rem 0;
@@ -228,7 +229,7 @@
 
 .mood-modal__emoji-input { min-height: 44px; margin-bottom: 0.75rem; padding: 0.625rem 0.75rem; }
 .mood-modal__input { min-height: 96px; padding: 0.75rem; resize: vertical; }
-.mood-modal__emoji-input::placeholder, .mood-modal__input::placeholder { color: var(--color-text-tertiary, #6f758d); }
+.mood-modal__emoji-input::placeholder, .mood-modal__input::placeholder { color: var(--color-text-secondary, #a2a5b9); }
 
 .mood-modal__emoji-input:focus,
 .mood-modal__input:focus {

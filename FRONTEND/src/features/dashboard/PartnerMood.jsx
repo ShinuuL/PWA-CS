@@ -1,6 +1,10 @@
 import { motion, AnimatePresence } from 'motion/react'
 import useDashboardStore from '../../stores/dashboardStore'
 import useAuthStore from '../../stores/authStore'
+import { usePairing } from '../pairing/usePairing'
+import { useAuth } from '../auth/useAuth'
+import { usePresence } from '../../hooks/usePresence'
+import StatusDot from '../../shared/components/StatusDot'
 
 const MOOD_EMOJIS = {
   happy: '😊',
@@ -17,6 +21,10 @@ function getMoodEmoji(type) {
 export default function PartnerMood() {
   const partnerMood = useDashboardStore((s) => s.partnerMood)
   const profile = useAuthStore((s) => s.profile)
+  const { user } = useAuth()
+  const { pair } = usePairing()
+  const partnerId = pair ? (pair.user_one === user?.id ? pair.user_two : pair.user_one) : null
+  const { isOnline } = usePresence(pair?.id, partnerId, user?.id)
 
   return (
     <div className="partner-mood">
@@ -37,6 +45,10 @@ export default function PartnerMood() {
               />
               <span className="partner-mood__name">
                 {profile?.display_name || 'Parceiro(a)'} está se sentindo
+              </span>
+              <span className="partner-mood__presence">
+                <StatusDot isOnline={isOnline} size={6} />
+                {isOnline ? 'online' : 'offline'}
               </span>
             </div>
             <div className="partner-mood__emoji">
