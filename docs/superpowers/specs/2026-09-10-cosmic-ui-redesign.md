@@ -49,11 +49,19 @@ Todas as rotas principais usam o mesmo vocabulário visual:
 
 `SpotifyPlayer.css`, `SpotifySearch.css` e `PlaylistManager.css` devem convergir para o Spotify v3:
 
+- Spotify é uma tela própria em `/spotify`; o dashboard não renderiza o player completo.
+
 - player atual com capa em destaque, metadados, progresso e controles;
 - fila da playlist visível sem esconder o estado atual;
 - ação para adicionar música com hierarquia secundária;
 - estados não conectado, sem playlist, playlist vazia, Premium necessário, carregando e erro continuam acessíveis e coerentes;
 - verde Spotify somente como acento contextual, sem substituir a identidade lilás do produto.
+
+### Navegação e composição
+
+- O Drawer inclui uma entrada `Spotify` protegida por pairing.
+- `SpotifyPage` inicializa e limpa o ciclo de vida do player; `HomePage` não inicializa Spotify.
+- O dashboard concentra memória, humor, mood e álbum, sem uma playlist completa comprimida na coluna lateral.
 
 ### Chat
 

@@ -83,6 +83,40 @@ Run `npm.cmd run lint` and the existing test suite. Build if CSS import ordering
 
 Commit with `feat: align dashboard and spotify surfaces`.
 
+### Task 2A: Dedicated Spotify route and dashboard composition
+
+**Files:**
+- Create: `FRONTEND/src/features/spotify/SpotifyPage.jsx`
+- Create: `FRONTEND/src/features/spotify/spotify-page.css`
+- Modify: `FRONTEND/src/App.jsx`
+- Modify: `FRONTEND/src/shared/components/Drawer.jsx`
+- Modify: `FRONTEND/src/features/dashboard/HomePage.jsx`
+- Modify: `FRONTEND/src/features/dashboard/dashboard.css`
+
+**Interfaces:**
+- Consumes: existing `SpotifyPlayer`, `useSpotifyStore`, `usePairing`, `ProtectedRoute`, `PairingGate` and Drawer navigation.
+- Produces: authenticated `/spotify` route with full-width player; dashboard without embedded Spotify player.
+
+- [ ] **Step 1: Add a dedicated page shell**
+
+Create `SpotifyPage` with the same pairing-aware initialization currently used by `HomePage`, render `SpotifyPlayer` once, and clean auto-rotate/visibility handlers on unmount.
+
+- [ ] **Step 2: Move the route and navigation**
+
+Add lazy route `/spotify` inside `ProtectedRoute` + `AppShell` + `PairingGate`, and add a pairing-required `Spotify` Drawer item using the existing icon library.
+
+- [ ] **Step 3: Remove Spotify from dashboard composition**
+
+Stop initializing Spotify in `HomePage`, remove its player import/render, and keep memory, mood, partner mood and mini album in the approved grid.
+
+- [ ] **Step 4: Style the page shell**
+
+Use a centered responsive content column, page heading and full-width player surface; do not duplicate player controls or stores.
+
+- [ ] **Step 5: Run tests and commit**
+
+Run lint, tests and build. Commit with `feat: add dedicated spotify screen`.
+
 ### Task 3: Communication, organization and account surfaces
 
 **Files:**
