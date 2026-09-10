@@ -425,6 +425,7 @@ export default function ChatView() {
   const [viewerSrc, setViewerSrc] = useState(null)
   const messagesEndRef = useRef(null)
   const scrollContainerRef = useRef(null)
+  const inputRef = useRef(null)
   const [unreadCount, setUnreadCount] = useState(0)
   const typingTimerRef = useRef(null)
 
@@ -485,6 +486,7 @@ export default function ChatView() {
     sendMessage(inputValue)
     setInputValue('')
     setTyping(false)
+    requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }))
   }
 
   const handleKeyDown = (e) => {
@@ -677,13 +679,13 @@ export default function ChatView() {
                 <Mic size={20} />
               </button>
               <input
+                ref={inputRef}
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Digite uma mensagem…"
                 className="chat-input"
-                disabled={sending}
               />
               <button
                 className="chat-send-btn"
