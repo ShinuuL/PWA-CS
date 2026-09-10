@@ -4,6 +4,8 @@ import useAuthStore from './authStore'
 
 const useNotesStore = create((set, get) => ({
   notes: [],
+  generation: 0,
+  sessionUserId: null,
   loading: false,
   error: null,
   pairId: null,
@@ -13,9 +15,13 @@ const useNotesStore = create((set, get) => ({
     const { user } = useAuthStore.getState()
     const current = get()
     if (!user || !pairId) return
-    if (current.pairId === pairId && current.subscription) return
+    if (current.pairId === pairId && current.sessionUserId === user.id && current.subscription) return
 
-    set({ loading: true, pairId, error: null })
+    get().cleanup()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user.id
+
+    set({ loading: true, sessionUserId: user.id, pairId, error: null })
 
     try {
       const { data: notes, error } = await supabase
@@ -24,6 +30,7 @@ const useNotesStore = create((set, get) => ({
         .eq('pair_id', pairId)
         .order('created_at', { ascending: false })
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       set({ notes: notes || [], loading: false })
 
@@ -42,6 +49,7 @@ const useNotesStore = create((set, get) => ({
           table: 'shared_notes',
           filter: `pair_id=eq.${pairId}`
         }, (payload) => {
+          if (!isCurrent()) return
           const state = get()
           if (payload.eventType === 'INSERT') {
             const alreadyPresent = state.notes.some(n => n.id === payload.new.id)
@@ -58,12 +66,15 @@ const useNotesStore = create((set, get) => ({
 
       set({ subscription: channel })
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       set({ error: err.message, loading: false })
     }
   },
 
   createNote: async (title, body = '') => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { pairId } = get()
     if (!user || !pairId || !title.trim()) return { error: 'Title is required' }
 
@@ -93,12 +104,14 @@ const useNotesStore = create((set, get) => ({
         .select()
         .single()
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
 
       // Replace optimistic with real data
       set({ notes: get().notes.map(n => n.id === tempId ? newNote : n) })
       return { success: true, note: newNote }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback optimistic update
       set({ notes: get().notes.filter(n => n.id !== tempId) })
       return { error: err.message }
@@ -107,6 +120,8 @@ const useNotesStore = create((set, get) => ({
 
   updateNote: async (noteId, title, body) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const previousNotes = get().notes
@@ -124,9 +139,11 @@ const useNotesStore = create((set, get) => ({
         .update({ title: title.trim(), body, updated_at: new Date().toISOString() })
         .eq('id', noteId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ notes: previousNotes })
       return { error: err.message }
@@ -135,6 +152,8 @@ const useNotesStore = create((set, get) => ({
 
   deleteNote: async (noteId) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const previousNotes = get().notes
@@ -148,9 +167,11 @@ const useNotesStore = create((set, get) => ({
         .delete()
         .eq('id', noteId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ notes: previousNotes })
       return { error: err.message }
@@ -159,6 +180,7 @@ const useNotesStore = create((set, get) => ({
 
   cleanup: () => {
     const { subscription } = get()
+    set({ generation: get().generation + 1, sessionUserId: null, error: null })
     if (subscription) {
       supabase.removeChannel(subscription)
     }

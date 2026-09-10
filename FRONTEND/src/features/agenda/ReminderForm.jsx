@@ -61,7 +61,9 @@ export default function ReminderForm({ onSubmit, onCancel, initialReminder }) {
 
   return (
     <form className="reminder-form" onSubmit={handleSubmit}>
+      <label className="sr-only" htmlFor="reminder-title">Título do lembrete</label>
       <input
+        id="reminder-title"
         className="reminder-form__input"
         type="text"
         placeholder="Título do lembrete"
@@ -72,6 +74,7 @@ export default function ReminderForm({ onSubmit, onCancel, initialReminder }) {
         type="button"
         className="reminder-form__date-btn"
         onClick={() => setShowDatePicker(true)}
+        aria-label={`Data e hora do lembrete: ${formattedDate}`}
       >
         <Calendar size={16} />
         <span className="reminder-form__date-text">{formattedDate}</span>
@@ -83,7 +86,9 @@ export default function ReminderForm({ onSubmit, onCancel, initialReminder }) {
           onCancel={() => setShowDatePicker(false)}
         />
       )}
+      <label className="sr-only" htmlFor="reminder-notes">Notas do lembrete</label>
       <textarea
+        id="reminder-notes"
         className="reminder-form__textarea"
         placeholder="Notas (opcional)"
         value={notes}
@@ -91,7 +96,9 @@ export default function ReminderForm({ onSubmit, onCancel, initialReminder }) {
         rows={3}
       />
       <div className="reminder-form__row">
+        <label className="sr-only" htmlFor="reminder-priority">Prioridade</label>
         <select
+          id="reminder-priority"
           className="reminder-form__select"
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
@@ -100,7 +107,9 @@ export default function ReminderForm({ onSubmit, onCancel, initialReminder }) {
             <option key={p.value} value={p.value}>{p.label}</option>
           ))}
         </select>
+        <label className="sr-only" htmlFor="reminder-category">Categoria</label>
         <select
+          id="reminder-category"
           className="reminder-form__select"
           value={category}
           onChange={(e) => setCategory(e.target.value)}

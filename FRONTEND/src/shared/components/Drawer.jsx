@@ -7,13 +7,14 @@ import { useAuth } from '../../features/auth/useAuth'
 import { supabase } from '../lib/supabase'
 import PartnerProfileModal from '../../features/profile/PartnerProfileModal'
 import './drawer.css'
+import { useDialogFocus } from '../../hooks/useDialogFocus'
 
 const NAV_ITEMS = [
-  { path: '/home', label: 'Homepage', icon: Home, requiresPairing: false },
+  { path: '/home', label: 'Início', icon: Home, requiresPairing: false },
   { path: '/chat', label: 'Chat', icon: MessageCircle, requiresPairing: true },
-  { path: '/album', label: 'Album', icon: Images, requiresPairing: true },
+  { path: '/album', label: 'Álbum', icon: Images, requiresPairing: true },
   { path: '/agenda', label: 'Agenda', icon: CalendarDays, requiresPairing: true },
-  { path: '/settings', label: 'Settings', icon: Settings, requiresPairing: false },
+  { path: '/settings', label: 'Configurações', icon: Settings, requiresPairing: false },
 ]
 
 export default function Drawer({ open, onClose, isPaired }) {
@@ -23,6 +24,9 @@ export default function Drawer({ open, onClose, isPaired }) {
   const { user, profile } = useAuth()
   const [partner, setPartner] = useState(null)
   const [showPartnerModal, setShowPartnerModal] = useState(false)
+  const [signOutError, setSignOutError] = useState(null)
+  const [signingOut, setSigningOut] = useState(false)
+  const drawerRef = useDialogFocus(open && !showPartnerModal, onClose)
 
   useEffect(() => {
     if (!user) return
@@ -58,8 +62,11 @@ export default function Drawer({ open, onClose, isPaired }) {
   }
 
   const handleSignOut = async () => {
-    await signOut()
-    onClose()
+    setSigningOut(true)
+    setSignOutError(null)
+    try { await signOut(); onClose() }
+    catch { setSignOutError('Não foi possível sair. Tente novamente.') }
+    finally { setSigningOut(false) }
   }
 
   const getInitials = (name) => {
@@ -82,6 +89,11 @@ export default function Drawer({ open, onClose, isPaired }) {
             />
             <motion.div
               className="drawer"
+              ref={drawerRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menu principal"
+              tabIndex={-1}
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}
@@ -89,6 +101,7 @@ export default function Drawer({ open, onClose, isPaired }) {
             >
               <div className="drawer-header">
                 <h2>CoupleSpace</h2>
+                <button className="drawer-close" onClick={onClose} aria-label="Fechar menu">×</button>
               </div>
 
               <nav className="drawer-nav">
@@ -136,6 +149,8 @@ export default function Drawer({ open, onClose, isPaired }) {
                       key={item.path}
                       className={`drawer-nav-item${active ? ' active' : ''}${locked ? ' locked' : ''}`}
                       onClick={() => handleNav(item)}
+                      disabled={locked}
+                      aria-current={active ? 'page' : undefined}
                     >
                       <Icon size={20} />
                       <span>{item.label}</span>
@@ -146,9 +161,10 @@ export default function Drawer({ open, onClose, isPaired }) {
               </nav>
 
               <div className="drawer-footer">
-                <button className="drawer-signout" onClick={handleSignOut}>
+                {signOutError && <p role="alert">{signOutError}</p>}
+                <button className="drawer-signout" onClick={handleSignOut} disabled={signingOut}>
                   <LogOut size={20} />
-                  <span>Sign Out</span>
+                  <span>{signingOut ? 'Saindo…' : 'Sair da conta'}</span>
                 </button>
               </div>
             </motion.div>

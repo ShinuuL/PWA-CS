@@ -167,15 +167,17 @@ export default function ImagePicker({ onSendImage }) {
               <div className="chat-image-preview__actions">
                 <button
                   className="chat-image-preview__cancel"
+                  type="button"
                   onClick={handleCancel}
                 >
-                  Cancel
+                  Cancelar
                 </button>
                 <button
                   className="chat-image-preview__send"
+                  type="button"
                   onClick={handleSend}
                 >
-                  Send
+                  Enviar
                 </button>
               </div>
             </motion.div>

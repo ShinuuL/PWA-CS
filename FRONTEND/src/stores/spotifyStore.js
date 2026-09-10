@@ -2,7 +2,17 @@ import { create } from 'zustand'
 import { supabase } from '../shared/lib/supabase'
 import useAuthStore from './authStore'
 
-const useSpotifyStore = create((set, get) => ({
+let spotifyGeneration = 0
+
+const useSpotifyStore = create((setState, get) => {
+  const set = setState
+  const guard = () => {
+    const generation = spotifyGeneration
+    const userId = useAuthStore.getState().user?.id
+    const isCurrent = () => generation === spotifyGeneration && useAuthStore.getState().user?.id === userId
+    return { isCurrent, set: (...args) => { if (isCurrent()) setState(...args) } }
+  }
+  return ({
   config: null,
   currentTrack: null,
   isPlaying: false,
@@ -21,6 +31,7 @@ const useSpotifyStore = create((set, get) => ({
   _sdkAction: null,
 
   initializeSpotify: async (pairId) => {
+    const { set, isCurrent } = guard()
     const { user } = useAuthStore.getState()
     if (!user || !pairId) return
 
@@ -41,6 +52,7 @@ const useSpotifyStore = create((set, get) => ({
         throw error
       }
 
+      if (!isCurrent()) return
       if (config) {
         set({
           config: {
@@ -55,17 +67,19 @@ const useSpotifyStore = create((set, get) => ({
         const savedToken = sessionStorage.getItem('spotify_access_token')
         const savedExpiresAt = sessionStorage.getItem('spotify_token_expires_at')
 
-        if (savedToken && savedExpiresAt) {
+        if (savedToken && savedExpiresAt && sessionStorage.getItem('spotify_token_user_id') === user.id) {
           const expiresAt = Number(savedExpiresAt)
           if (expiresAt > Date.now() + 5 * 60 * 1000) {
             set({ accessToken: savedToken, tokenExpiresAt: expiresAt, isLoading: false })
           } else {
             set({ isLoading: false })
             await get().refreshTokenIfNeeded()
+            if (!isCurrent()) return
           }
         } else {
           set({ isLoading: false })
           await get().refreshTokenIfNeeded()
+          if (!isCurrent()) return
         }
       } else {
         set({ isConnected: false, isLoading: false })
@@ -76,38 +90,41 @@ const useSpotifyStore = create((set, get) => ({
     }
   },
 
+  resetLocalSession: ({ preserveOAuth = false } = {}) => {
+    spotifyGeneration++
+    get().stopAutoRotate()
+    get().cleanupVisibilityHandler()
+    for (const key of ['spotify_access_token', 'spotify_token_expires_at', 'spotify_token_user_id']) {
+      sessionStorage.removeItem(key)
+    }
+    if (!preserveOAuth) {
+      for (const key of ['spotify_auth_state', 'spotify_oauth_state', 'spotify_code_verifier', 'spotify_pair_id']) {
+        sessionStorage.removeItem(key)
+        localStorage.removeItem(key)
+      }
+    }
+    set({ config: null, currentTrack: null, isPlaying: false, progress: 0,
+      searchResults: [], playlistTracks: [], isConnected: false, isLoading: false,
+      error: null, deviceId: null, accessToken: null, tokenExpiresAt: null, pairId: null,
+      _refreshPromise: null, _autoResume: false, _sdkAction: null })
+  },
+
   connect: () => {
     set({ isLoading: true })
   },
 
   disconnect: async () => {
+    const { isCurrent } = guard()
     const { pairId } = get()
     if (pairId) {
-      await supabase
-        .from('spotify_config')
-        .delete()
-        .eq('pair_id', pairId)
+      const { error } = await supabase.from('spotify_config').delete().eq('pair_id', pairId)
+      if (error) throw error
     }
-    get().stopAutoRotate()
-    sessionStorage.removeItem('spotify_access_token')
-    sessionStorage.removeItem('spotify_token_expires_at')
-    set({
-      config: null,
-      currentTrack: null,
-      isPlaying: false,
-      progress: 0,
-      searchResults: [],
-      playlistTracks: [],
-      isConnected: false,
-      isLoading: false,
-      error: null,
-      accessToken: null,
-      tokenExpiresAt: null,
-      _refreshPromise: null,
-    })
+    if (isCurrent()) get().resetLocalSession()
   },
 
   fetchConfig: async () => {
+    const { set } = guard()
     const { pairId } = get()
     if (!pairId) return
 
@@ -146,6 +163,7 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   setPlaylist: async (playlistId, name) => {
+    const { set } = guard()
     const { pairId } = get()
     if (!pairId) return
 
@@ -174,10 +192,12 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   fetchPlaylist: async () => {
+    const { set, isCurrent } = guard()
     const { pairId, config } = get()
     if (!pairId || !config?.playlist_id) return
 
     await get().refreshTokenIfNeeded()
+    if (!isCurrent()) return
     set({ isLoading: true })
     try {
       const { data, error } = await supabase.functions.invoke('spotify-playlist', {
@@ -198,11 +218,13 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   searchTracks: async (query) => {
+    const { set, isCurrent } = guard()
     if (!query.trim()) {
       set({ searchResults: [] })
       return
     }
     await get().refreshTokenIfNeeded()
+    if (!isCurrent()) return
     const { accessToken } = get()
     if (!accessToken) {
       set({ searchResults: [] })
@@ -230,15 +252,18 @@ const useSpotifyStore = create((set, get) => ({
 
       set({ searchResults: tracks })
     } catch (err) {
-      set({ error: err.message })
+      set({ error: err.message, searchResults: [] })
+      return []
     }
   },
 
   addTrack: async (uri) => {
+    const { set, isCurrent } = guard()
     const { pairId, config } = get()
     if (!pairId || !config?.playlist_id) return
 
     await get().refreshTokenIfNeeded()
+    if (!isCurrent()) return
     try {
       const { error } = await supabase.functions.invoke('spotify-playlist', {
         body: {
@@ -251,6 +276,7 @@ const useSpotifyStore = create((set, get) => ({
 
       if (error) throw error
 
+      if (!isCurrent()) return
       await get().fetchPlaylist()
     } catch (err) {
       set({ error: err.message })
@@ -258,10 +284,12 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   removeTrack: async (uri) => {
+    const { set, isCurrent } = guard()
     const { pairId, config, playlistTracks } = get()
     if (!pairId || !config?.playlist_id) return
 
     await get().refreshTokenIfNeeded()
+    if (!isCurrent()) return
     set({ playlistTracks: playlistTracks.filter((t) => t.uri !== uri) })
 
     try {
@@ -281,6 +309,7 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   playRandom: async () => {
+    const { set, isCurrent } = guard()
     const { playlistTracks, pairId, deviceId } = get()
     if (!playlistTracks.length || !pairId) return
 
@@ -292,6 +321,7 @@ const useSpotifyStore = create((set, get) => ({
         .order('played_at', { ascending: false })
         .limit(50)
 
+      if (!isCurrent()) return
       const recentUris = new Set((history || []).map((h) => h.track_uri))
       const candidates = playlistTracks.filter((t) => !recentUris.has(t.uri))
       const pool = candidates.length > 0 ? candidates : playlistTracks
@@ -300,6 +330,7 @@ const useSpotifyStore = create((set, get) => ({
       if (!randomTrack) return
 
       await get().refreshTokenIfNeeded()
+      if (!isCurrent()) return
       const { accessToken } = get()
       if (accessToken) {
         const headers = {
@@ -327,6 +358,7 @@ const useSpotifyStore = create((set, get) => ({
         }
       }
 
+      if (!isCurrent()) return
       await supabase.from('spotify_play_history').insert({
         pair_id: pairId,
         track_uri: randomTrack.uri,
@@ -334,6 +366,7 @@ const useSpotifyStore = create((set, get) => ({
         track_artist: randomTrack.artist,
       })
 
+      if (!isCurrent()) return
       const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
       await supabase
         .from('spotify_play_history')
@@ -348,10 +381,12 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   playUri: async (uri) => {
+    const { set, isCurrent } = guard()
     const { accessToken, deviceId } = get()
     if (!accessToken) return
 
     await get().refreshTokenIfNeeded()
+    if (!isCurrent()) return
     const { accessToken: freshToken } = get()
 
     const headers = {
@@ -388,10 +423,12 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   togglePlay: async () => {
+    const { set, isCurrent } = guard()
     const { accessToken, deviceId } = get()
     if (!accessToken) return
 
     await get().refreshTokenIfNeeded()
+    if (!isCurrent()) return
     const { accessToken: freshToken } = get()
 
     try {
@@ -425,6 +462,7 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   nextTrack: async () => {
+    const { set } = guard()
     const { accessToken, deviceId } = get()
     if (!accessToken) return
 
@@ -443,6 +481,7 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   setShuffle: async (on) => {
+    const { set } = guard()
     const { accessToken } = get()
     if (!accessToken) return
 
@@ -457,22 +496,26 @@ const useSpotifyStore = create((set, get) => ({
   },
 
   setAutoRotateInterval: async (minutes) => {
+    const { set, isCurrent } = guard()
     const { pairId } = get()
     if (!pairId) return
 
     try {
-      await supabase
+      const { error } = await supabase
         .from('spotify_config')
         .update({
           auto_rotate_interval: minutes,
           updated_at: new Date().toISOString(),
         })
         .eq('pair_id', pairId)
+      if (error) throw error
 
+      if (!isCurrent()) return
       set({
         config: { ...get().config, interval: minutes },
       })
 
+      if (!isCurrent()) return
       get().stopAutoRotate()
       get().startAutoRotate()
     } catch (err) {
@@ -539,12 +582,14 @@ const useSpotifyStore = create((set, get) => ({
 
   setAccessToken: (token, expiresIn) => {
     const expiresAt = Date.now() + expiresIn * 1000
+    sessionStorage.setItem('spotify_token_user_id', useAuthStore.getState().user?.id || '')
     sessionStorage.setItem('spotify_access_token', token)
     sessionStorage.setItem('spotify_token_expires_at', String(expiresAt))
     set({ accessToken: token, tokenExpiresAt: expiresAt })
   },
 
   refreshTokenIfNeeded: async () => {
+    const { set, isCurrent } = guard()
     const { tokenExpiresAt, pairId, _refreshPromise } = get()
     if (!pairId) return
     if (_refreshPromise) return _refreshPromise
@@ -557,9 +602,10 @@ const useSpotifyStore = create((set, get) => ({
 
           if (error) throw error
 
+          if (!isCurrent()) return
           if (data.error === 'reconnect_required') {
-            get().disconnect()
-            set({ error: 'Spotify token expired. Please reconnect.', _refreshPromise: null })
+            get().resetLocalSession()
+            setState({ error: 'A sessão do Spotify expirou. Conecte novamente.' })
             return
           }
 
@@ -586,10 +632,12 @@ const useSpotifyStore = create((set, get) => ({
   setError: (err) => set({ error: err }),
 
   fetchUserPlaylists: async () => {
+    const { set, isCurrent } = guard()
     const { accessToken } = get()
 
     if (!accessToken) {
       await get().refreshTokenIfNeeded()
+      if (!isCurrent()) return
       const retryToken = get().accessToken
       if (!retryToken) return []
       return get().fetchUserPlaylists()
@@ -605,6 +653,7 @@ const useSpotifyStore = create((set, get) => ({
 
       if (response.status === 401) {
         await get().refreshTokenIfNeeded()
+        if (!isCurrent()) return
         const retryToken = get().accessToken
         if (!retryToken) return []
         const retryResponse = await fetch(
@@ -613,6 +662,7 @@ const useSpotifyStore = create((set, get) => ({
         )
         if (!retryResponse.ok) throw new Error('Failed to fetch playlists')
         const retryData = await retryResponse.json()
+        if (!isCurrent()) return []
         return (retryData.items || [])
           .filter((pl) => pl && pl.id)
           .map((pl) => ({
@@ -626,6 +676,7 @@ const useSpotifyStore = create((set, get) => ({
       if (!response.ok) throw new Error('Failed to fetch playlists')
 
       const data = await response.json()
+      if (!isCurrent()) return []
       return (data.items || [])
         .filter((pl) => pl && pl.id)
         .map((pl) => ({
@@ -641,29 +692,8 @@ const useSpotifyStore = create((set, get) => ({
     }
   },
 
-  cleanup: () => {
-    get().stopAutoRotate()
-    get().cleanupVisibilityHandler()
-    sessionStorage.removeItem('spotify_access_token')
-    sessionStorage.removeItem('spotify_token_expires_at')
-    set({
-      config: null,
-      currentTrack: null,
-      isPlaying: false,
-      progress: 0,
-      searchResults: [],
-      playlistTracks: [],
-      isConnected: false,
-      isLoading: false,
-      error: null,
-      deviceId: null,
-      accessToken: null,
-      tokenExpiresAt: null,
-      pairId: null,
-      _refreshPromise: null,
-      visibilityHandler: null,
-    })
-  },
-}))
+  cleanup: () => get().resetLocalSession(),
+  })
+})
 
 export default useSpotifyStore

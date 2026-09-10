@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useDialogFocus } from '../../hooks/useDialogFocus'
 import { useAuth } from '../auth/useAuth'
 import { usePairing } from '../pairing/usePairing'
 import useAuthStore from '../../stores/authStore'
@@ -9,12 +9,15 @@ import './settings.css'
 
 export default function SettingsPage() {
   const { user, profile } = useAuth()
-  const { unpair } = usePairing()
+  const { unpair, pair } = usePairing()
   const signOut = useAuthStore((s) => s.signOut)
-  const navigate = useNavigate()
   const [showConfirm, setShowConfirm] = useState(false)
   const [unpairing, setUnpairing] = useState(false)
   const [showBugReport, setShowBugReport] = useState(false)
+  const [actionError, setActionError] = useState(null)
+  const [signingOut, setSigningOut] = useState(false)
+  const closeConfirm = () => { if (!unpairing) setShowConfirm(false) }
+  const confirmRef = useDialogFocus(showConfirm, closeConfirm)
 
   // Push notification state
   const [pushSupported] = useState(() => isPushSupported())
@@ -33,12 +36,13 @@ export default function SettingsPage() {
         setPermissionStatus(Notification.permission)
       }
     }
-    checkPushState()
+    checkPushState().catch(() => setActionError('Não foi possível consultar as notificações.'))
   }, [pushSupported])
 
   const handleTogglePush = useCallback(async () => {
     if (togglingPush) return
     setTogglingPush(true)
+    setActionError(null)
     try {
       if (pushEnabled) {
         // Turn off — unsubscribe
@@ -52,13 +56,14 @@ export default function SettingsPage() {
           if (result !== 'granted') return
         }
         const subscription = await subscribeToPush()
+        if (!subscription) throw new Error('Inscrição indisponível')
         setPushEnabled(!!subscription)
         if ('Notification' in window) {
           setPermissionStatus(Notification.permission)
         }
       }
     } catch {
-      // Silently handle — UI reflects actual state
+      setActionError('Não foi possível alterar as notificações. Verifique sua conexão e tente novamente.')
     } finally {
       setTogglingPush(false)
     }
@@ -66,27 +71,36 @@ export default function SettingsPage() {
 
   const handleUnpair = async () => {
     setUnpairing(true)
-    await unpair()
-    setUnpairing(false)
-    setShowConfirm(false)
+    setActionError(null)
+    try {
+      await unpair()
+      setShowConfirm(false)
+    } catch {
+      setActionError('Não foi possível desvincular. Tente novamente.')
+    } finally { setUnpairing(false) }
   }
 
   const handleSignOut = async () => {
-    await signOut()
+    setSigningOut(true)
+    setActionError(null)
+    try { await signOut() }
+    catch { setActionError('Não foi possível sair. Tente novamente.') }
+    finally { setSigningOut(false) }
   }
 
   return (
     <div className="settings-page">
-      <h2>Settings</h2>
+      <h2>Configurações</h2>
+      {actionError && !showConfirm && <p className="settings-error" role="alert">{actionError}</p>}
 
       <div className="settings-section">
-        <p className="settings-section-title">Account</p>
+        <p className="settings-section-title">Conta</p>
         <div className="settings-info-row">
           <span className="settings-info-label">Email</span>
           <span className="settings-info-value">{user?.email || '—'}</span>
         </div>
         <div className="settings-info-row">
-          <span className="settings-info-label">Display Name</span>
+          <span className="settings-info-label">Nome</span>
           <span className="settings-info-value">{profile?.display_name || '—'}</span>
         </div>
       </div>
@@ -106,7 +120,9 @@ export default function SettingsPage() {
                 className={`settings-toggle-switch ${pushEnabled ? 'active' : ''}`}
                 onClick={handleTogglePush}
                 disabled={togglingPush || permissionStatus === 'denied'}
-                aria-label="Toggle push notifications"
+                aria-label="Notificações push"
+                role="switch"
+                aria-checked={pushEnabled}
               >
                 <span className="settings-toggle-knob" />
               </button>
@@ -124,22 +140,22 @@ export default function SettingsPage() {
             )}
             {!pushEnabled && permissionStatus !== 'denied' && (
               <p className="settings-toggle-hint">
-                Para desativar, altere nas configurações do navegador
+                Ative para receber avisos neste dispositivo.
               </p>
             )}
           </>
         )}
       </div>
 
-      <div className="settings-section">
-        <p className="settings-section-title">Relationship</p>
+      {pair && <div className="settings-section">
+        <p className="settings-section-title">Relacionamento</p>
         <button
           className="btn-danger"
-          onClick={() => setShowConfirm(true)}
+          onClick={() => { setActionError(null); setShowConfirm(true) }}
         >
-          Unpair from Partner
+          Desvincular parceiro
         </button>
-      </div>
+      </div>}
 
       <div className="settings-section">
         <p className="settings-section-title">Suporte</p>
@@ -149,33 +165,34 @@ export default function SettingsPage() {
       </div>
 
       <div className="settings-section">
-        <p className="settings-section-title">Session</p>
-        <button className="btn-secondary" onClick={handleSignOut}>
-          Sign Out
+        <p className="settings-section-title">Sessão</p>
+        <button className="btn-secondary" onClick={handleSignOut} disabled={signingOut}>
+          {signingOut ? 'Saindo…' : 'Sair da conta'}
         </button>
       </div>
 
       {showConfirm && (
-        <div className="settings-confirm-overlay" onClick={() => setShowConfirm(false)}>
-          <div className="settings-confirm-dialog" onClick={(e) => e.stopPropagation()}>
-            <h3>Unpair from Partner?</h3>
+        <div className="settings-confirm-overlay" onClick={closeConfirm}>
+          <div className="settings-confirm-dialog" ref={confirmRef} role="dialog" aria-modal="true" aria-labelledby="unpair-title" tabIndex={-1} onClick={(e) => e.stopPropagation()}>
+            <h3 id="unpair-title">Desvincular parceiro?</h3>
             <p>
-              This will remove your pairing connection. You will need a new invite code to pair again.
+              Isso encerra o vínculo e remove os dados compartilhados associados a ele. Para se conectar novamente, será necessário um novo convite.
             </p>
+            {actionError && <p className="settings-error" role="alert">{actionError}</p>}
             <div className="settings-confirm-actions">
               <button
                 className="btn-confirm-cancel"
                 onClick={() => setShowConfirm(false)}
                 disabled={unpairing}
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 className="btn-confirm-danger"
                 onClick={handleUnpair}
                 disabled={unpairing}
               >
-                {unpairing ? 'Unpairing...' : 'Unpair'}
+                {unpairing ? 'Desvinculando…' : 'Desvincular'}
               </button>
             </div>
           </div>

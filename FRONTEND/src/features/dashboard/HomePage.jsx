@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast'
 import { useEffect } from 'react'
 import { usePairing } from '../pairing/usePairing'
 import useDashboardStore from '../../stores/dashboardStore'
@@ -12,28 +13,25 @@ import MiniAlbum from '../album/MiniAlbum'
 import SpotifyPlayer from '../spotify/SpotifyPlayer'
 
 export default function HomePage() {
-  const { checkPairStatus } = usePairing()
+  const { pair } = usePairing()
+  const activePairId = pair?.id
   const initializeDashboard = useDashboardStore((s) => s.initializeDashboard)
   const cleanup = useDashboardStore((s) => s.cleanup)
 
   const initializeSpotify = useSpotifyStore((s) => s.initializeSpotify)
 
   useEffect(() => {
-    let cancelled = false
-    checkPairStatus().then((pair) => {
-      if (!cancelled && pair) {
-        initializeDashboard(pair.id)
-        initializeSpotify(pair.id)
-      }
-    })
+    if (activePairId) {
+        void Promise.resolve(initializeDashboard(activePairId)).catch(error => toast.error(error.message || 'Não foi possível carregar os dados.'))
+        void Promise.resolve(initializeSpotify(activePairId)).catch(error => toast.error(error.message || 'Não foi possível carregar os dados.'))
+    }
     return () => {
-      cancelled = true
       cleanup()
       // cleanupSpotify() removido — não deve apagar sessão só por desmontar a tela
       useSpotifyStore.getState().stopAutoRotate()
       useSpotifyStore.getState().cleanupVisibilityHandler()
     }
-  }, [checkPairStatus, initializeDashboard, cleanup, initializeSpotify])
+  }, [activePairId, initializeDashboard, cleanup, initializeSpotify])
 
   return (
     <div className="dashboard">

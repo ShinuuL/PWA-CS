@@ -4,24 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { usePairing } from '../pairing/usePairing'
 import { supabase } from '../../shared/lib/supabase'
 import { format } from 'date-fns'
+import { usePrivateMedia } from '../../shared/lib/privateMedia'
 import './memory-hero.css'
-
-function buildResizedImageUrl(originalUrl, width) {
-  try {
-    const url = new URL(originalUrl)
-    url.searchParams.set('width', width)
-    url.searchParams.set('auto', 'format')
-    return url.toString()
-  } catch {
-    return originalUrl
-  }
-}
-
-function getMemoryHeroSrcSet(url) {
-  return [480, 720, 1024]
-    .map((width) => `${buildResizedImageUrl(url, width)} ${width}w`)
-    .join(', ')
-}
 
 export default function MemoryHero() {
   const [photo, setPhoto] = useState(null)
@@ -29,10 +13,13 @@ export default function MemoryHero() {
   const [imgLoaded, setImgLoaded] = useState(false)
   const [imgError, setImgError] = useState(false)
   const { checkPairStatus } = usePairing()
+  const media = usePrivateMedia('album-photos', photo?.url, photo?.storage_path)
 
   useEffect(() => {
+    let cancelled = false
     const loadRandomPhoto = async () => {
       const pair = await checkPairStatus()
+      if (cancelled) return
       if (!pair) {
         setLoading(false)
         return
@@ -41,6 +28,8 @@ export default function MemoryHero() {
       const { data, error } = await supabase.rpc('get_random_album_photo', {
         p_pair_id: pair.id
       })
+      if (cancelled) return
+      if (error) throw error
 
       if (!error && data?.length) {
         setPhoto(data[0])
@@ -48,7 +37,8 @@ export default function MemoryHero() {
       setLoading(false)
     }
 
-    loadRandomPhoto()
+    loadRandomPhoto().catch(() => { if (!cancelled) { setImgError(true); setLoading(false) } })
+    return () => { cancelled = true }
   }, [checkPairStatus])
 
   if (loading) {
@@ -68,7 +58,7 @@ export default function MemoryHero() {
     ? format(new Date(photo.created_at), 'MMMM d, yyyy')
     : null
 
-  if (imgError || !photo.url) {
+  if (imgError || media.error || !photo.url) {
     return (
       <div className="memory-hero memory-hero--empty">
         <Camera size={48} />
@@ -96,12 +86,10 @@ export default function MemoryHero() {
         {!imgLoaded && <div className="memory-hero__image-placeholder" />}
         <motion.img
           className="memory-hero__image"
-          src={photo.url}
+          src={media.url || undefined}
           alt={photo.caption || 'Memory photo'}
           loading="lazy"
           decoding="async"
-          srcSet={getMemoryHeroSrcSet(photo.url)}
-          sizes="(max-width:480px) 100vw, (max-width:768px) 100vw, 720px"
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgError(true)}
           initial={{ scale: 1.05 }}

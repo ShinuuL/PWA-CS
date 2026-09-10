@@ -23,6 +23,10 @@ function WheelColumn({ items, selected, onSelect, label }) {
     const container = containerRef.current
     if (!container) return
     const offset = index * ITEM_HEIGHT
+    if (typeof container.scrollTo !== 'function') {
+      container.scrollTop = offset
+      return
+    }
     container.scrollTo({
       top: offset,
       behavior: smooth ? 'smooth' : 'instant'
@@ -105,6 +109,18 @@ function WheelColumn({ items, selected, onSelect, label }) {
               scrollToIndex(idx, true)
               setTimeout(() => { isScrolling.current = false }, 300)
             }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                isScrolling.current = true
+                onSelect(item.value)
+                scrollToIndex(items.findIndex(i => i.value === item.value), true)
+                setTimeout(() => { isScrolling.current = false }, 300)
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`${label} ${item.label}`}
             whileTap={{ scale: 0.95 }}
           >
             {item.label}
@@ -138,7 +154,7 @@ export default function TimePicker({ value = { hour: '09', minute: '00' }, onCha
         items={MINUTES}
         selected={value.minute}
         onSelect={handleMinuteChange}
-        label="Min"
+        label="Minutos"
       />
     </div>
   )

@@ -55,6 +55,7 @@ export function useVoiceRecorder() {
   const timerRef = useRef(null)
   const animFrameRef = useRef(null)
   const stopResolveRef = useRef(null)
+  const stopRecordingRef = useRef(null)
   const mimeTypeRef = useRef(null)
 
   // Waveform update loop
@@ -149,7 +150,7 @@ export function useVoiceRecorder() {
         setDuration(elapsed)
         if (elapsed >= MAX_DURATION) {
           // Auto-stop at max duration (D-07)
-          stopRecording()
+          stopRecordingRef.current?.()
         }
       }, 1000)
 
@@ -185,6 +186,8 @@ export function useVoiceRecorder() {
       }
     })
   }, [cleanup])
+
+  stopRecordingRef.current = stopRecording
 
   const cancelRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {

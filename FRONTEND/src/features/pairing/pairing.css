@@ -3,8 +3,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  padding: 2rem;
+  flex: 1;
+  min-height: 100%;
+  min-height: 0;
+  padding: 2rem 1rem max(2rem, env(safe-area-inset-bottom));
+  box-sizing: border-box;
   text-align: center;
 }
 
@@ -127,11 +130,6 @@
 }
 
 .generate-button:disabled,
-.connect-button {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .connect-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;

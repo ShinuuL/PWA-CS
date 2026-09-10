@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import useNotesStore from '../../stores/notesStore'
+import { usePairing } from '../pairing/usePairing'
 import NoteCard from './NoteCard'
 import NoteEditor from './NoteEditor'
 
 export default function NotesTab() {
-  const { notes, loading, error, createNote, updateNote, deleteNote } = useNotesStore()
+  const { notes, loading, error, createNote, updateNote, deleteNote, initializeNotes } = useNotesStore()
+  const { pair } = usePairing()
   const [showEditor, setShowEditor] = useState(false)
   const [editingNote, setEditingNote] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(null)
@@ -60,7 +62,7 @@ export default function NotesTab() {
     return (
       <div className="notes-tab notes-tab--error">
         <p>Algo deu errado — Tente novamente</p>
-        <button className="notes-tab__retry" onClick={() => window.location.reload()}>
+        <button className="notes-tab__retry" onClick={() => { if (pair?.id) void initializeNotes(pair.id) }}>
           Tentar novamente
         </button>
       </div>
@@ -89,13 +91,13 @@ export default function NotesTab() {
           ))}
         </div>
       )}
-      <button className="notes-tab__fab" onClick={() => setShowEditor(true)} type="button">
+      <button className="notes-tab__fab" onClick={() => setShowEditor(true)} type="button" aria-label="Criar nota">
         <Plus size={24} />
       </button>
       {showEditor && (
         <div className="notes-tab__modal-overlay" onClick={() => { setShowEditor(false); setEditingNote(null); }}>
-          <div className="notes-tab__modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="notes-tab__modal-title">{editingNote ? 'Editar nota' : 'Criar nota'}</h3>
+          <div className="notes-tab__modal" role="dialog" aria-modal="true" aria-labelledby="note-editor-title" onClick={(e) => e.stopPropagation()}>
+            <h3 className="notes-tab__modal-title" id="note-editor-title">{editingNote ? 'Editar nota' : 'Criar nota'}</h3>
             <NoteEditor
               onSubmit={editingNote ? handleEdit : handleCreate}
               initialNote={editingNote}
@@ -106,8 +108,8 @@ export default function NotesTab() {
       )}
       {confirmDelete && (
         <div className="notes-tab__modal-overlay" onClick={() => setConfirmDelete(null)}>
-          <div className="notes-tab__modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="notes-tab__modal-title">Excluir nota</h3>
+          <div className="notes-tab__modal" role="dialog" aria-modal="true" aria-labelledby="delete-note-title" onClick={(e) => e.stopPropagation()}>
+            <h3 className="notes-tab__modal-title" id="delete-note-title">Excluir nota</h3>
             <p className="notes-tab__confirm-text">
               Essa ação não pode ser desfeita.
             </p>

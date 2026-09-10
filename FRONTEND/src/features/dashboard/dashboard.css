@@ -207,6 +207,17 @@
   color: var(--color-primary);
 }
 
+.mood-card:disabled {
+  cursor: wait;
+}
+
+.mood-section__error {
+  margin-top: 0.75rem;
+  color: #ffb4b4;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
 /* ===== Partner Mood ===== */
 .partner-mood {
   background: rgba(18, 20, 32, 0.85);

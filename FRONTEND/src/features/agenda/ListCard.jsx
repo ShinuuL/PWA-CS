@@ -63,7 +63,12 @@ export default function ListCard({ list, itemCount, completedCount, onClick, onR
       onTouchCancel={handleTouchEnd}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter') onClick(list) }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick(list)
+        }
+      }}
     >
       <div
         className="list-card__accent"

@@ -1,16 +1,76 @@
-# React + Vite
+# CoupleSpace (PWA CS)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+PWA mobile-first para casais: um espaço compartilhado com chat, memórias, agenda e música.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** + **Vite 8** (JavaScript, sem TypeScript)
+- **Zustand 5** — gerenciamento de estado
+- **React Router v7** — rotas
+- **vite-plugin-pwa 1.3** — service worker via Workbox (`autoUpdate`)
+- **@supabase/supabase-js 2.x** — Postgres, Auth, Storage e Edge Functions (Deno)
+- **Spotify Web Playback SDK** (carregado em runtime) + **Web API OAuth** via Edge Functions `spotify-auth` / `spotify-playlist`
+- **date-fns** — utilitários de data
+- **react-hot-toast** — notificações na UI
 
-## React Compiler
+## Funcionalidades
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Dashboard** — visão geral do casal
+- **Chat** — mensagens entre o casal com notificações push (Web Push/VAPID)
+- **Álbum** — memórias em fotos (upload via Supabase Storage)
+- **Agenda** — eventos e datas importantes
+- **Spotify** — player integrado (Web Playback SDK), busca de faixas e gerenciamento de playlist compartilhada
+- **Pairing** — vinculação entre os dois membros do casal
+- **Perfil** e **Configurações**
 
-## Expanding the Oxlint configuration
+## Instalação
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+cd FRONTEND
+npm install
+```
+
+Crie um arquivo `.env.local` na raiz de `FRONTEND/` com as variáveis:
+
+```env
+VITE_SUPABASE_URL=your-project-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_VAPID_PUBLIC_KEY=your-vapid-public-key
+VITE_SPOTIFY_CLIENT_ID=your_spotify_client_id
+VITE_SPOTIFY_REDIRECT_URI=http://127.0.0.1:5173/spotify/callback
+```
+
+Os segredos das Edge Functions (`SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_TOKEN_ENCRYPTION_KEY`) são configurados no Supabase via `npx supabase secrets set`.
+
+## Scripts
+
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Servidor de desenvolvimento Vite |
+| `npm run build` | Build de produção |
+| `npm run preview` | Preview do build de produção |
+| `npm test` | Testes com vitest (watch) |
+| `npm run test:run` | Testes com vitest (execução única) |
+| `npm run test:coverage` | Cobertura de testes |
+| `npm run lint` | Lint com oxlint |
+
+## Estrutura
+
+```
+src/
+├── features/        # Módulos por domínio (agenda, album, auth, chat,
+│                    # dashboard, pairing, profile, settings, spotify)
+├── shared/          # Libs compartilhadas (supabase, push)
+├── stores/          # Stores Zustand
+├── hooks/           # Hooks reutilizáveis
+└── assets/
+
+supabase/
+├── migrations/      # 21 migrações SQL
+└── functions/       # Edge Functions Deno (send-chat-push,
+                     # send-push-notification, spotify-auth, spotify-playlist)
+```
+
+## Deploy
+
+O service worker é configurado com `registerType: 'autoUpdate'`: quando uma nova versão é publicada, o PWA atualiza sozinho na próxima visita/carregamento — não é necessário o usuário limpar cache ou reinstalar.

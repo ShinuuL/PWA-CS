@@ -5,6 +5,8 @@ import useAuthStore from './authStore'
 
 const useAgendaStore = create((set, get) => ({
   events: [],
+  generation: 0,
+  sessionUserId: null,
   loading: false,
   error: null,
   pairId: null,
@@ -14,9 +16,13 @@ const useAgendaStore = create((set, get) => ({
     const { user } = useAuthStore.getState()
     const current = get()
     if (!user || !pairId) return
-    if (current.pairId === pairId && current.subscription) return
+    if (current.pairId === pairId && current.sessionUserId === user.id && current.subscription) return
 
-    set({ loading: true, pairId, error: null })
+    get().cleanup()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user.id
+
+    set({ loading: true, sessionUserId: user.id, pairId, error: null })
 
     try {
       const { data: events, error } = await supabase
@@ -25,6 +31,7 @@ const useAgendaStore = create((set, get) => ({
         .eq('pair_id', pairId)
         .order('event_date', { ascending: true })
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       set({ events: events || [], loading: false })
 
@@ -43,6 +50,7 @@ const useAgendaStore = create((set, get) => ({
           table: 'agenda_events',
           filter: `pair_id=eq.${pairId}`
         }, (payload) => {
+          if (!isCurrent()) return
           const state = get()
           if (payload.eventType === 'INSERT') {
             const alreadyPresent = state.events.some(e => e.id === payload.new.id)
@@ -63,12 +71,15 @@ const useAgendaStore = create((set, get) => ({
 
       set({ subscription: channel })
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       set({ error: err.message, loading: false })
     }
   },
 
   createEvent: async ({ title, description = '', event_date, category = 'Outro', reminder = null }) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { pairId } = get()
     if (!user || !pairId || !title.trim() || !event_date) return { error: 'Title and date are required' }
 
@@ -106,12 +117,14 @@ const useAgendaStore = create((set, get) => ({
         .select()
         .single()
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
 
       // Replace optimistic with real data
       set({ events: get().events.map(e => e.id === tempId ? newEvent : e) })
       return { success: true, event: newEvent }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback optimistic update
       set({ events: get().events.filter(e => e.id !== tempId) })
       return { error: err.message }
@@ -120,6 +133,8 @@ const useAgendaStore = create((set, get) => ({
 
   updateEvent: async (eventId, updates) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const previousEvents = get().events
@@ -137,9 +152,11 @@ const useAgendaStore = create((set, get) => ({
         .update({ ...updates, updated_at: new Date().toISOString() })
         .eq('id', eventId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ events: previousEvents })
       return { error: err.message }
@@ -148,6 +165,8 @@ const useAgendaStore = create((set, get) => ({
 
   deleteEvent: async (eventId) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const previousEvents = get().events
@@ -161,9 +180,11 @@ const useAgendaStore = create((set, get) => ({
         .delete()
         .eq('id', eventId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ events: previousEvents })
       return { error: err.message }
@@ -177,6 +198,7 @@ const useAgendaStore = create((set, get) => ({
 
   cleanup: () => {
     const { subscription } = get()
+    set({ generation: get().generation + 1, sessionUserId: null, error: null })
     if (subscription) {
       supabase.removeChannel(subscription)
     }

@@ -1,33 +1,46 @@
-import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom'
 import useAuthStore from './stores/authStore'
 import ProtectedRoute from './shared/components/ProtectedRoute'
 import PairingGate from './features/pairing/PairingGate'
 import AppShell from './shared/components/AppShell'
+import { clearPrivateState } from './shared/lib/privateState'
+import { usePairingStore } from './stores/pairingStore'
 
 import LoginPage from './features/auth/LoginPage'
 import AuthCallback from './features/auth/AuthCallback'
-import ProfilePage from './features/profile/ProfilePage'
-import PartnerProfile from './features/profile/PartnerProfile'
-import SettingsPage from './features/settings/SettingsPage'
-import ChatView from './features/chat/ChatView'
-import ChatSettings from './features/chat/ChatSettings'
-import AlbumPage from './features/album/AlbumPage'
-import HomePage from './features/dashboard/HomePage'
-import AgendaPage from './features/agenda/AgendaPage'
-import SpotifyCallback from './features/spotify/SpotifyCallback'
+const ProfilePage = lazy(() => import('./features/profile/ProfilePage'))
+const PartnerProfile = lazy(() => import('./features/profile/PartnerProfile'))
+const SettingsPage = lazy(() => import('./features/settings/SettingsPage'))
+const ChatView = lazy(() => import('./features/chat/ChatView'))
+const ChatSettings = lazy(() => import('./features/chat/ChatSettings'))
+const AlbumPage = lazy(() => import('./features/album/AlbumPage'))
+const HomePage = lazy(() => import('./features/dashboard/HomePage'))
+const AgendaPage = lazy(() => import('./features/agenda/AgendaPage'))
+const SpotifyCallback = lazy(() => import('./features/spotify/SpotifyCallback'))
 
 function App() {
-  const { initialize, loading } = useAuthStore()
+  const { initialize, loading, user } = useAuthStore()
 
   useEffect(() => {
-    initialize()
+    let disposed = false
+    let cleanup
+    const unsubscribeAuth = useAuthStore.subscribe((state, previous) => {
+      if (state.user?.id !== previous.user?.id) clearPrivateState()
+    })
+    const unsubscribePair = usePairingStore.subscribe((state, previous) => {
+      if (previous.pair?.id && state.pair?.id !== previous.pair.id) clearPrivateState()
+    })
+    clearPrivateState()
+    initialize().then(stop => { if (disposed) stop?.(); else cleanup = stop })
+    return () => { disposed = true; cleanup?.(); unsubscribeAuth(); unsubscribePair() }
   }, [initialize])
 
-  if (loading) return <div className="loading">Loading...</div>
+  if (loading) return <div className="loading" role="status">Carregando…</div>
 
   return (
-    <BrowserRouter>
+    <BrowserRouter key={user?.id || 'guest'}>
+      <Suspense fallback={<div className="loading" role="status">Carregando…</div>}>
       <Routes>
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/spotify/callback" element={<SpotifyCallback />} />
@@ -126,7 +139,9 @@ function App() {
         />
 
         <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="*" element={<div className="login-page"><h1>Página não encontrada</h1><p>Este endereço não está disponível.</p><Link className="login-button" to="/home">Voltar ao início</Link></div>} />
       </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }

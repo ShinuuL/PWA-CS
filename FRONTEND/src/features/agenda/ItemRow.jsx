@@ -36,7 +36,12 @@ export default function ItemRow({ item, profiles, currentUser, partnerId, onTogg
       onClick={handleClick}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter') handleClick() }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick()
+        }
+      }}
     >
       {editMode ? (
         <input

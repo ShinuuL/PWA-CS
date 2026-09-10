@@ -28,8 +28,8 @@ function formatDate(date) {
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
 
-  if (d.toDateString() === today.toDateString()) return 'Today'
-  if (d.toDateString() === yesterday.toDateString()) return 'Yesterday'
+  if (d.toDateString() === today.toDateString()) return 'Hoje'
+  if (d.toDateString() === yesterday.toDateString()) return 'Ontem'
   return d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' })
 }
 
@@ -288,7 +288,7 @@ function MessageBubble({ message, isOwn, showAvatar, onContextMenu, onSwipeReply
     return (
       <div className={`chat-message-row ${isOwn ? 'own' : 'other'}`}>
         <div className="chat-bubble deleted">
-          <span className="chat-deleted-text">This message was deleted</span>
+      <span className="chat-deleted-text">Esta mensagem foi excluída</span>
         </div>
       </div>
     )
@@ -392,18 +392,19 @@ function EmptyState() {
   return (
     <div className="chat-empty">
       <div className="chat-empty-icon">💬</div>
-      <h3>No messages yet</h3>
-      <p>Start a conversation with your partner!</p>
+      <h3>Ainda não há mensagens</h3>
+      <p>Comece uma conversa com seu par.</p>
     </div>
   )
 }
 
 export default function ChatView() {
   const navigate = useNavigate()
-  const { checkPairStatus } = usePairing()
+  const { pair } = usePairing()
+  const activePairId = pair?.id
   const { user } = useAuthStore()
-  const [pairId, setPairId] = useState(null)
-  const [partnerId, setPartnerId] = useState(null)
+  const pairId = activePairId
+  const partnerId = pair ? (pair.user_one === user?.id ? pair.user_two : pair.user_one) : null
   const [partnerProfile, setPartnerProfile] = useState(null)
   const {
     messages, loading, sending, error,
@@ -430,17 +431,13 @@ export default function ChatView() {
   const { isOnline, lastSeen } = usePresence(pairId, partnerId, user?.id)
 
   useEffect(() => {
-    checkPairStatus().then(pair => {
-      if (pair) {
-        setPairId(pair.id)
-        setPartnerId(pair.user_one === user?.id ? pair.user_two : pair.user_one)
-        initializeChat(pair.id)
-      }
-    })
+    if (activePairId) void Promise.resolve(initializeChat(activePairId)).catch(error => useChatStore.setState({ error: error.message }))
     return () => cleanup()
-  }, [checkPairStatus, initializeChat, cleanup, user?.id])
+  }, [activePairId, initializeChat, cleanup, user?.id])
 
   useEffect(() => {
+    let cancelled = false
+    setPartnerProfile(null)
     if (!partnerId) return
     const fetchPartnerProfile = async () => {
       const { data } = await supabase
@@ -448,9 +445,10 @@ export default function ChatView() {
         .select('display_name, avatar_url')
         .eq('id', partnerId)
         .maybeSingle()
-      setPartnerProfile(data)
+      if (!cancelled) setPartnerProfile(data)
     }
-    fetchPartnerProfile()
+    void fetchPartnerProfile().catch(() => { if (!cancelled) setPartnerProfile(null) })
+    return () => { cancelled = true }
   }, [partnerId])
 
   useEffect(() => {
@@ -575,8 +573,8 @@ export default function ChatView() {
                 <>
                   <StatusDot isOnline={isOnline} size={6} />
                   {isOnline ? ' Online' : (
-                    lastSeen && (Date.now() - new Date(lastSeen).getTime()) > 3600000
-                      ? ` last seen ${formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}`
+                lastSeen && (Date.now() - new Date(lastSeen).getTime()) > 3600000
+                      ? ` visto ${formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}`
                       : ' Offline'
                   )}
                 </>
@@ -683,7 +681,7 @@ export default function ChatView() {
                 value={inputValue}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
-                placeholder="Type a message..."
+                placeholder="Digite uma mensagem…"
                 className="chat-input"
                 disabled={sending}
               />

@@ -17,16 +17,20 @@ export default function MoodModal({ onClose }) {
 
   return (
     <div className="mood-modal-overlay" onClick={onClose}>
-      <div className="mood-modal" onClick={(e) => e.stopPropagation()}>
-        <h3 className="mood-modal__title">Como você está se sentindo?</h3>
+      <div className="mood-modal" role="dialog" aria-modal="true" aria-labelledby="mood-modal-title" onClick={(e) => e.stopPropagation()}>
+        <h3 className="mood-modal__title" id="mood-modal-title">Como você está se sentindo?</h3>
+        <label className="sr-only" htmlFor="mood-emoji">Emoji</label>
         <input
+          id="mood-emoji"
           className="mood-modal__emoji-input"
           placeholder="Escreva um emoji"
           value={emoji}
           onChange={(e) => setEmoji(e.target.value)}
           maxLength={4}
         />
+        <label className="sr-only" htmlFor="mood-text">Como você está se sentindo</label>
         <textarea
+          id="mood-text"
           className="mood-modal__input"
           placeholder="Conte ao seu parceiro como você se sente"
           value={text}

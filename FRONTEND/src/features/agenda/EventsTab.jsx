@@ -4,12 +4,14 @@ import { ptBR } from 'date-fns/locale'
 import { Plus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import useAgendaStore from '../../stores/agendaStore'
+import { usePairing } from '../pairing/usePairing'
 import CalendarGrid from './CalendarGrid'
 import EventRow from './EventRow'
 import EventForm from './EventForm'
 
 export default function EventsTab() {
-  const { events, loading, error, createEvent } = useAgendaStore()
+  const { events, loading, error, createEvent, initializeAgenda } = useAgendaStore()
+  const { pair } = usePairing()
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [showForm, setShowForm] = useState(false)
 
@@ -49,7 +51,7 @@ export default function EventsTab() {
     return (
       <div className="events-tab events-tab--error">
         <p>Algo deu errado — Tente novamente</p>
-        <button className="events-tab__retry" onClick={() => window.location.reload()}>
+        <button className="events-tab__retry" onClick={() => { if (pair?.id) void initializeAgenda(pair.id) }}>
           Tentar novamente
         </button>
       </div>
@@ -82,13 +84,13 @@ export default function EventsTab() {
           ))}
         </div>
       )}
-      <button className="events-tab__fab" onClick={() => setShowForm(true)} type="button">
+      <button className="events-tab__fab" onClick={() => setShowForm(true)} type="button" aria-label="Criar evento">
         <Plus size={24} />
       </button>
       {showForm && (
         <div className="events-tab__modal-overlay" onClick={() => setShowForm(false)}>
-          <div className="events-tab__modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="events-tab__modal-title">Criar evento</h3>
+          <div className="events-tab__modal" role="dialog" aria-modal="true" aria-labelledby="create-event-title" onClick={(e) => e.stopPropagation()}>
+            <h3 className="events-tab__modal-title" id="create-event-title">Criar evento</h3>
             <EventForm
               onSubmit={handleCreateEvent}
               onCancel={() => setShowForm(false)}

@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react'
-import { useAuth } from '../../features/auth/useAuth'
+import { useState } from 'react'
 import { usePairing } from '../../features/pairing/usePairing'
 import Header from './Header'
 import Drawer from './Drawer'
@@ -7,16 +6,8 @@ import './appshell.css'
 
 export default function AppShell({ children }) {
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [isPaired, setIsPaired] = useState(null)
-  const { user } = useAuth()
-  const { checkPairStatus } = usePairing()
-
-  useEffect(() => {
-    if (!user) return
-    checkPairStatus().then((pair) => {
-      setIsPaired(!!pair)
-    })
-  }, [user])
+  const { pair, statusLoading } = usePairing()
+  const isPaired = statusLoading ? null : !!pair
 
   return (
     <div className="appshell">

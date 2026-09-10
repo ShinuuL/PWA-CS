@@ -21,14 +21,18 @@ export default function NoteEditor({ onSubmit, initialNote, onCancel }) {
 
   return (
     <form className="note-editor" onSubmit={handleSubmit}>
+      <label className="sr-only" htmlFor="note-title">Título da nota</label>
       <input
+        id="note-title"
         className="note-editor__input"
         type="text"
         placeholder="Título da nota"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+      <label className="sr-only" htmlFor="note-body">Conteúdo da nota</label>
       <textarea
+        id="note-body"
         className="note-editor__textarea"
         placeholder="Escreva aqui... (opcional)"
         value={body}

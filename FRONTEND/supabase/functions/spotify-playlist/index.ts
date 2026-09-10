@@ -1,3 +1,6 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.110.8";
+import { authorizePair, readBody, HttpError, errorResponse } from "../_shared/security.js";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -18,6 +21,7 @@ async function supabaseRpc(fn: string, params: Record<string, string>) {
     },
     body: JSON.stringify(params),
   });
+  if (!res.ok) throw new Error("database_rpc_failed");
   const result = await res.json();
   return Array.isArray(result) ? result[0] : result;
 }
@@ -44,8 +48,12 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const body = await req.json();
+    const body = await readBody(req);
     const { action, playlist_id, track_uri, pair_id } = body;
+    await authorizePair(req, pair_id, createClient, (key) => Deno.env.get(key));
+    if (!["get_tracks", "add_track", "remove_track"].includes(action)) throw new HttpError(400, "invalid_action");
+    if (playlist_id !== undefined && (typeof playlist_id !== "string" || !/^[A-Za-z0-9]{22}$/.test(playlist_id))) throw new HttpError(400, "invalid_playlist");
+    if (action !== "get_tracks" && (typeof track_uri !== "string" || !/^spotify:track:[A-Za-z0-9]{22}$/.test(track_uri))) throw new HttpError(400, "invalid_track");
 
     const config = await supabaseQuery(
       "spotify_config",
@@ -86,6 +94,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const targetPlaylistId = playlist_id || config.spotify_playlist_id;
+    if (targetPlaylistId && !/^[A-Za-z0-9]{22}$/.test(targetPlaylistId)) throw new HttpError(400, "invalid_playlist");
 
     if (!targetPlaylistId) {
       return new Response(
@@ -123,6 +132,7 @@ Deno.serve(async (req: Request) => {
 
         allTracks = allTracks.concat(tracks);
         url = data.next || null;
+        if (url && (!url.startsWith("https://api.spotify.com/v1/playlists/") || new URL(url).origin !== "https://api.spotify.com")) throw new Error("invalid_spotify_page");
       }
 
       return new Response(
@@ -146,7 +156,7 @@ Deno.serve(async (req: Request) => {
       const respBody = await response.text();
       return new Response(
         JSON.stringify({ success: response.ok, status: response.status, detail: respBody }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: response.ok ? 200 : response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -165,7 +175,7 @@ Deno.serve(async (req: Request) => {
       const respBody = await response.text();
       return new Response(
         JSON.stringify({ success: response.ok, status: response.status, detail: respBody }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: response.ok ? 200 : response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -175,9 +185,6 @@ Deno.serve(async (req: Request) => {
     );
   } catch (error) {
     console.error("[spotify-playlist] error", error.message);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return errorResponse(error, corsHeaders);
   }
 });

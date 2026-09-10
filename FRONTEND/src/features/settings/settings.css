@@ -4,6 +4,13 @@
   margin: 0 auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.settings-page::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .settings-page h2 {
@@ -28,6 +35,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   padding: 0.875rem 1rem;
   background: var(--color-bg-input);
   border-radius: var(--radius-md);
@@ -42,6 +50,9 @@
 .settings-info-value {
   font-size: 0.95rem;
   color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+  min-width: 0;
+  text-align: right;
 }
 
 .btn-danger {
@@ -137,9 +148,10 @@
 }
 
 .settings-toggle-switch {
-  width: 44px;
-  height: 24px;
-  border-radius: 12px;
+  width: 64px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 24px;
   border: none;
   background: #3a3e50;
   position: relative;
@@ -159,8 +171,8 @@
 
 .settings-toggle-knob {
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 12px;
+  left: 12px;
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -203,3 +215,6 @@
   padding: 0.875rem 1rem;
   line-height: 1.5;
 }
+
+.settings-error { color: #ffb4b4; line-height: 1.5; margin-bottom: 1rem; }
+.settings-page button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }

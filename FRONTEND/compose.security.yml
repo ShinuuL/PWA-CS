@@ -1,0 +1,13 @@
+services:
+  security-db:
+    image: postgres:17
+    environment:
+      POSTGRES_PASSWORD: local-test-only
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    # No published ports and no host/database volumes. SQL is piped over exec.

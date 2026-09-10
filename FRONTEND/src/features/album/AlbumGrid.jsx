@@ -1,4 +1,5 @@
 import { Trash2 } from 'lucide-react'
+import PrivateImage from '../../shared/components/PrivateImage'
 import './album.css'
 
 function formatDate(dateStr) {
@@ -14,10 +15,10 @@ export default function AlbumGrid({ photos, onPhotoTap, onDeletePhoto, currentUs
         <div className="album-grid__empty">
           <div className="album-grid__empty-icon">📷</div>
           <div className="album-grid__empty-text">
-            No photos yet — start building your album together!
+            Ainda não há fotos — comecem a montar o álbum de vocês.
           </div>
           <div className="album-grid__empty-sub">
-            Tap the + button to add your first photo
+            Toque no botão + para adicionar a primeira foto
           </div>
         </div>
       </div>
@@ -33,10 +34,20 @@ export default function AlbumGrid({ photos, onPhotoTap, onDeletePhoto, currentUs
             key={photo.id}
             className="album-grid__cell"
             onClick={() => onPhotoTap?.(photo)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                onPhotoTap?.(photo)
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={photo.caption || 'Abrir foto'}
           >
-            <img
+            <PrivateImage
               className="album-grid__img"
               src={photo.url}
+              storagePath={photo.storage_path}
               alt={photo.caption || 'Album photo'}
               loading="lazy"
             />
@@ -53,7 +64,8 @@ export default function AlbumGrid({ photos, onPhotoTap, onDeletePhoto, currentUs
                   e.stopPropagation()
                   onDeletePhoto?.(photo)
                 }}
-                title="Delete photo"
+                title="Excluir foto"
+                aria-label="Excluir foto"
               >
                 <Trash2 size={14} />
               </button>

@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { ApplicationServer, importVapidKeys } from "jsr:@negrel/webpush";
-import { normalizeVapidKeyPair } from "../_shared/vapid.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.110.8";
+import { ApplicationServer, importVapidKeys } from "jsr:@negrel/webpush@0.5.0";
+import { requireInternal, requireUuid, readBody, HttpError, errorResponse } from "../_shared/security.js";
+import { vapidKeysToJwk } from "../_shared/vapid.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,17 +13,13 @@ const corsHeaders = {
 const vapidSubject = Deno.env.get("VAPID_SUBJECT") || "mailto:notifications@couplespace.app";
 
 async function createApplicationServer() {
-  const normalizedVapidKeys = normalizeVapidKeyPair(
+  const exportedVapidKeys = vapidKeysToJwk(
     Deno.env.get("VAPID_PUBLIC_KEY"),
     Deno.env.get("VAPID_PRIVATE_KEY")
   )
 
-  const vapidKeys = await importVapidKeys({
-    publicKey: normalizedVapidKeys.publicKey,
-    privateKey: normalizedVapidKeys.privateKey,
-  })
+  const vapidKeys = await importVapidKeys(exportedVapidKeys)
   return ApplicationServer.new({
-    crypto,
     contactInformation: vapidSubject,
     vapidKeys,
   })
@@ -34,12 +31,25 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { reminder_id, pair_id, title, created_by } = await req.json();
+    requireInternal(req, Deno.env.get("PUSH_INTERNAL_SECRET"));
+    const { reminder_id } = await readBody(req);
+    requireUuid(reminder_id);
 
     // Create Supabase client with service role key (bypasses RLS)
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const { data: reminder, error: reminderError } = await supabase.from("shared_reminders")
+      .select("pair_id,title,created_by,status,reminder_at,completed_at").eq("id", reminder_id).maybeSingle();
+    if (reminderError) throw reminderError;
+    if (!reminder) throw new HttpError(404, "reminder_not_found");
+    if (reminder.status !== "pending" || reminder.completed_at || new Date(reminder.reminder_at).getTime() > Date.now()) throw new HttpError(409, "reminder_not_due");
+    const { pair_id, title, created_by } = reminder;
+    const { data: pair, error: pairError } = await supabase.from("pairs")
+      .select("user_one,user_two").eq("id", pair_id).maybeSingle();
+    if (pairError) throw pairError;
+    if (!pair?.user_two || ![pair.user_one, pair.user_two].includes(created_by)) throw new HttpError(403, "forbidden");
 
     // Fetch creator's display name
     const { data: creatorProfile } = await supabase
@@ -54,7 +64,8 @@ serve(async (req: Request) => {
     const { data: subscriptions, error: subError } = await supabase
       .from("push_subscriptions")
       .select("*")
-      .eq("pair_id", pair_id);
+      .eq("pair_id", pair_id)
+      .in("user_id", [pair.user_one, pair.user_two]);
 
     if (subError) {
       console.error("Error fetching subscriptions:", subError);
@@ -146,29 +157,6 @@ serve(async (req: Request) => {
   } catch (error) {
     console.error("send-push-notification error:", error);
 
-    // Mark reminder as pending_send on error (D-07 client fallback)
-    try {
-      const { reminder_id } = await req.clone().json();
-      if (reminder_id) {
-        const supabase = createClient(
-          Deno.env.get("SUPABASE_URL")!,
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-        );
-        await supabase
-          .from("shared_reminders")
-          .update({ status: "pending_send" })
-          .eq("id", reminder_id);
-      }
-    } catch {
-      // Best effort — don't fail on error handling
-    }
-
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return errorResponse(error, corsHeaders);
   }
 });

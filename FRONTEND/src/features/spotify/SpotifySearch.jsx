@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Search, X, Plus, Check, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import useSpotifyStore from '../../stores/spotifyStore'
+import { useDialogFocus } from '../../hooks/useDialogFocus'
 import './SpotifySearch.css'
 
 export default function SpotifySearch({ onClose }) {
@@ -11,6 +12,7 @@ export default function SpotifySearch({ onClose }) {
   const [addedTrackId, setAddedTrackId] = useState(null)
   const inputRef = useRef(null)
   const timerRef = useRef(null)
+  const dialogRef = useDialogFocus(true, onClose)
 
   const searchTracks = useSpotifyStore((s) => s.searchTracks)
   const addTrack = useSpotifyStore((s) => s.addTrack)
@@ -30,7 +32,9 @@ export default function SpotifySearch({ onClose }) {
 
     setIsLoading(true)
     timerRef.current = setTimeout(() => {
-      searchTracks(query)
+      Promise.resolve(searchTracks(query))
+        .catch(() => {})
+        .finally(() => setIsLoading(false))
     }, 300)
 
     return () => {
@@ -50,17 +54,6 @@ export default function SpotifySearch({ onClose }) {
   useEffect(() => {
     inputRef.current?.focus()
   }, [])
-
-  // Escape key handler
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        onClose()
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onClose])
 
   const handleAdd = useCallback(
     async (track) => {
@@ -82,15 +75,20 @@ export default function SpotifySearch({ onClose }) {
       onClick={onClose}
     >
       <motion.div
+        ref={dialogRef}
         className="spotify-search__modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="spotify-search-title"
+        tabIndex={-1}
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="spotify-search__header">
-          <h3 className="spotify-search__title">Buscar Música</h3>
-          <button className="spotify-search__close" onClick={onClose}>
+          <h3 id="spotify-search-title" className="spotify-search__title">Buscar música</h3>
+          <button className="spotify-search__close" onClick={onClose} aria-label="Fechar busca">
             <X size={20} />
           </button>
         </div>
@@ -100,7 +98,8 @@ export default function SpotifySearch({ onClose }) {
             ref={inputRef}
             type="text"
             className="spotify-search__input"
-            placeholder="Buscar música..."
+            aria-label="Buscar música"
+            placeholder="Buscar música…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -109,7 +108,7 @@ export default function SpotifySearch({ onClose }) {
           {isLoading && (
             <div className="spotify-search__loading">
               <Loader2 size={24} className="spinner" />
-              <span>Carregando...</span>
+              <span>Carregando…</span>
             </div>
           )}
           {!isLoading && results.length === 0 && query.length >= 2 && (

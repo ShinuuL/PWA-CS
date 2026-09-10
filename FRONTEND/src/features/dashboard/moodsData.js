@@ -1,8 +1,8 @@
 export const MOODS = [
-  { type: 'happy', emoji: '😊', label: 'Happy' },
-  { type: 'tired', emoji: '😴', label: 'Tired' },
-  { type: 'sad', emoji: '😢', label: 'Sad' },
-  { type: 'missing', emoji: '💕', label: 'Missing' },
-  { type: 'needy', emoji: '🥺', label: 'Needy' },
-  { type: 'custom', emoji: '✏️', label: 'Custom' }
+  { type: 'happy', emoji: '😊', label: 'Feliz' },
+  { type: 'tired', emoji: '😴', label: 'Cansado' },
+  { type: 'sad', emoji: '😢', label: 'Triste' },
+  { type: 'missing', emoji: '💕', label: 'Saudades' },
+  { type: 'needy', emoji: '🥺', label: 'Carente' },
+  { type: 'custom', emoji: '✏️', label: 'Personalizado' }
 ]

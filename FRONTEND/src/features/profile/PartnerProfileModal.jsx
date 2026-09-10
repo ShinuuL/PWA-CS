@@ -5,6 +5,7 @@ import { useAuth } from '../auth/useAuth'
 import { supabase } from '../../shared/lib/supabase'
 import { usePresence } from '../../hooks/usePresence'
 import StatusDot from '../../shared/components/StatusDot'
+import { useDialogFocus } from '../../hooks/useDialogFocus'
 import './profile.css'
 
 export default function PartnerProfileModal({ isOpen, onClose }) {
@@ -14,6 +15,8 @@ export default function PartnerProfileModal({ isOpen, onClose }) {
   const [pairId, setPairId] = useState(null)
   const [partnerId, setPartnerId] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const dialogRef = useDialogFocus(isOpen, onClose)
 
   const { isOnline } = usePresence(pairId, partnerId, user?.id)
 
@@ -22,12 +25,15 @@ export default function PartnerProfileModal({ isOpen, onClose }) {
 
     const fetchPartner = async () => {
       setLoading(true)
-      const { data: pair } = await supabase
+      setError(null)
+      const { data: pair, error: pairError } = await supabase
         .from('pairs')
         .select('*')
         .or(`user_one.eq.${user.id},user_two.eq.${user.id}`)
         .not('code_used', 'eq', false)
         .maybeSingle()
+
+      if (pairError) throw pairError
 
       if (!pair) {
         setLoading(false)
@@ -36,11 +42,13 @@ export default function PartnerProfileModal({ isOpen, onClose }) {
 
       const pid = pair.user_one === user.id ? pair.user_two : pair.user_one
 
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', pid)
         .maybeSingle()
+
+      if (profileError) throw profileError
 
       setPartner(profile)
       setPairId(pair.id)
@@ -48,7 +56,10 @@ export default function PartnerProfileModal({ isOpen, onClose }) {
       setLoading(false)
     }
 
-    fetchPartner()
+    fetchPartner().catch(() => {
+      setError('Não foi possível carregar o perfil agora.')
+      setLoading(false)
+    })
   }, [user, isOpen])
 
   const handleOverlayClick = (e) => {
@@ -78,7 +89,12 @@ export default function PartnerProfileModal({ isOpen, onClose }) {
           onClick={handleOverlayClick}
         >
           <motion.div
+            ref={dialogRef}
             className="partner-modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Perfil do seu par"
+            tabIndex={-1}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
@@ -86,11 +102,11 @@ export default function PartnerProfileModal({ isOpen, onClose }) {
             onClick={(e) => e.stopPropagation()}
           >
             {loading ? (
-              <div className="partner-modal-loading">Loading...</div>
+              <div className="partner-modal-loading">{error || 'Carregando…'}</div>
             ) : !partner ? (
               <div className="partner-modal-empty">
-                <h3>No partner paired yet</h3>
-                <p>Pair with your partner to see their profile</p>
+                <h3>Vocês ainda não estão conectados</h3>
+                <p>Conecte seu par para ver o perfil dele.</p>
               </div>
             ) : (
               <div className="partner-modal-body">
@@ -107,14 +123,14 @@ export default function PartnerProfileModal({ isOpen, onClose }) {
                   </div>
                 </div>
 
-                <h3 className="partner-modal-name">{partner.display_name || 'No name set'}</h3>
+                <h3 id="partner-modal-title" className="partner-modal-name">{partner.display_name || 'Nome não informado'}</h3>
 
                 <span className="partner-modal-status-text">
                   {isOnline ? 'Online' : 'Offline'}
                 </span>
 
-                <button className="partner-modal-message-btn" onClick={handleMessage}>
-                  Message
+                <button className="partner-modal-message-btn" onClick={handleMessage} type="button">
+                  Enviar mensagem
                 </button>
               </div>
             )}

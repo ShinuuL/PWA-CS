@@ -16,18 +16,20 @@ export default function ItemForm({ onSubmit, onCancel, initialItem }) {
 
   return (
     <form className="item-form" onSubmit={handleSubmit}>
+      <label className="sr-only" htmlFor="item-title">Título do item</label>
       <input
+        id="item-title"
         type="text"
         className="item-form__input"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Titulo do item"
+        placeholder="Título do item"
         autoFocus
       />
 
       <div className="item-form__section">
-        <span className="item-form__label">Atribuir a</span>
-        <div className="item-form__assignee-group">
+        <span className="item-form__label" id="item-assignee-label">Atribuir a</span>
+        <div className="item-form__assignee-group" role="group" aria-labelledby="item-assignee-label">
           <button
             type="button"
             className={`item-form__assignee-btn ${assignedTo === 'me' ? 'item-form__assignee-btn--active' : ''}`}

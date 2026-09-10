@@ -4,6 +4,8 @@ import useAuthStore from './authStore'
 
 const useReminderStore = create((set, get) => ({
   reminders: [],
+  generation: 0,
+  sessionUserId: null,
   loading: false,
   error: null,
   pairId: null,
@@ -13,9 +15,13 @@ const useReminderStore = create((set, get) => ({
     const { user } = useAuthStore.getState()
     const current = get()
     if (!user || !pairId) return
-    if (current.pairId === pairId && current.subscription) return
+    if (current.pairId === pairId && current.sessionUserId === user.id && current.subscription) return
 
-    set({ loading: true, pairId, error: null })
+    get().cleanup()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user.id
+
+    set({ loading: true, sessionUserId: user.id, pairId, error: null })
 
     try {
       const { data: reminders, error } = await supabase
@@ -24,6 +30,7 @@ const useReminderStore = create((set, get) => ({
         .eq('pair_id', pairId)
         .order('reminder_at', { ascending: true })
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       set({ reminders: reminders || [], loading: false })
 
@@ -56,6 +63,7 @@ const useReminderStore = create((set, get) => ({
           table: 'shared_reminders',
           filter: `pair_id=eq.${pairId}`
         }, (payload) => {
+          if (!isCurrent()) return
           const state = get()
           if (payload.eventType === 'INSERT') {
             const alreadyPresent = state.reminders.some(r => r.id === payload.new.id)
@@ -76,12 +84,15 @@ const useReminderStore = create((set, get) => ({
 
       set({ subscription: channel })
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       set({ error: err.message, loading: false })
     }
   },
 
   createReminder: async ({ title, reminder_at, notes = '', priority = 'normal', category = '' }) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { pairId } = get()
     if (!user || !pairId || !title.trim() || !reminder_at) return { error: 'Title and reminder time are required' }
 
@@ -120,12 +131,14 @@ const useReminderStore = create((set, get) => ({
         .select()
         .single()
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
 
       // Replace optimistic with real data
       set({ reminders: get().reminders.map(r => r.id === tempId ? newReminder : r) })
       return { success: true, reminder: newReminder }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback optimistic update
       set({ reminders: get().reminders.filter(r => r.id !== tempId) })
       return { error: err.message }
@@ -134,6 +147,8 @@ const useReminderStore = create((set, get) => ({
 
   updateReminder: async (reminderId, updates) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const previousReminders = get().reminders
@@ -149,9 +164,11 @@ const useReminderStore = create((set, get) => ({
         .update(updates)
         .eq('id', reminderId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ reminders: previousReminders })
       return { error: err.message }
@@ -160,6 +177,8 @@ const useReminderStore = create((set, get) => ({
 
   completeReminder: async (reminderId) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const previousReminders = get().reminders
@@ -177,9 +196,11 @@ const useReminderStore = create((set, get) => ({
         .update({ completed_at: new Date().toISOString(), status: 'sent' })
         .eq('id', reminderId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ reminders: previousReminders })
       return { error: err.message }
@@ -188,6 +209,8 @@ const useReminderStore = create((set, get) => ({
 
   deleteReminder: async (reminderId) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const previousReminders = get().reminders
@@ -201,9 +224,11 @@ const useReminderStore = create((set, get) => ({
         .delete()
         .eq('id', reminderId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ reminders: previousReminders })
       return { error: err.message }
@@ -212,6 +237,7 @@ const useReminderStore = create((set, get) => ({
 
   cleanup: () => {
     const { subscription } = get()
+    set({ generation: get().generation + 1, sessionUserId: null, error: null })
     if (subscription) {
       supabase.removeChannel(subscription)
     }

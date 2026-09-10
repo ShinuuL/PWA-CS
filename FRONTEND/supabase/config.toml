@@ -1,0 +1,13 @@
+# Internal DB callers authenticate using x-internal-secret in the handler.
+[functions.send-chat-push]
+verify_jwt = false
+
+[functions.send-push-notification]
+verify_jwt = false
+
+# These handlers also verify the live user and pair membership themselves.
+[functions.spotify-auth]
+verify_jwt = true
+
+[functions.spotify-playlist]
+verify_jwt = true

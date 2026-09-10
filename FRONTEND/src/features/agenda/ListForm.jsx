@@ -14,7 +14,9 @@ export default function ListForm({ onSubmit, onCancel, initialList }) {
 
   return (
     <form className="list-form" onSubmit={handleSubmit}>
+      <label className="sr-only" htmlFor="list-name">Nome da lista</label>
       <input
+        id="list-name"
         type="text"
         className="list-form__input"
         value={name}
@@ -22,7 +24,10 @@ export default function ListForm({ onSubmit, onCancel, initialList }) {
         placeholder="Nome da lista"
         autoFocus
       />
-      <ColorPicker value={color} onChange={setColor} />
+      <span className="sr-only" id="list-color-label">Cor da lista</span>
+      <div aria-labelledby="list-color-label">
+        <ColorPicker value={color} onChange={setColor} />
+      </div>
       <div className="list-form__actions">
         <button className="list-form__cancel" onClick={onCancel} type="button">
           Cancelar

@@ -19,6 +19,8 @@ export default function SpotifyPlayer() {
   const playlistTracks = useSpotifyStore((s) => s.playlistTracks)
   const isConnected = useSpotifyStore((s) => s.isConnected)
   const isLoading = useSpotifyStore((s) => s.isLoading)
+  const error = useSpotifyStore((s) => s.error)
+  const setError = useSpotifyStore((s) => s.setError)
 
   const togglePlay = useSpotifyStore((s) => s.togglePlay)
 
@@ -32,6 +34,19 @@ export default function SpotifyPlayer() {
   const { next, previous, hasPremium } = useSpotifyPlayer()
 
   const [userPlaylists, setUserPlaylists] = useState([])
+  const [disconnecting, setDisconnecting] = useState(false)
+
+  const handleDisconnect = async () => {
+    setDisconnecting(true)
+    setError(null)
+    try {
+      await disconnect()
+    } catch (disconnectError) {
+      setError(disconnectError.message || 'Não foi possível desconectar o Spotify.')
+    } finally {
+      setDisconnecting(false)
+    }
+  }
 
   // Determine current state
   const getState = () => {
@@ -218,12 +233,13 @@ export default function SpotifyPlayer() {
             <button className="spotify-player__header-btn" onClick={() => setShowPlaylistManager(true)}>
               <List size={16} />
             </button>
-            <button className="spotify-player__header-btn spotify-player__header-btn--disconnect" onClick={disconnect}>
+            <button className="spotify-player__header-btn spotify-player__header-btn--disconnect" onClick={handleDisconnect} disabled={disconnecting} aria-label="Desconectar Spotify">
               <Unlink size={16} />
             </button>
           </div>
         )}
       </div>
+      {error && <p className="spotify-player__error" role="alert">{error}</p>}
       {renderContent()}
       <AnimatePresence>
         {showSearch && (

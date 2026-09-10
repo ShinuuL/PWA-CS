@@ -5,7 +5,7 @@ export default function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth()
   const location = useLocation()
 
-  if (loading) return <div className="loading">Loading...</div>
+  if (loading) return <div className="loading" role="status">Carregando…</div>
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />

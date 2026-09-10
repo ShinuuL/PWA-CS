@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.110.8";
+import { authorizePair, readBody, HttpError, errorResponse } from "../_shared/security.js";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,7 +14,14 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { action, code, redirect_uri, pair_id, code_verifier } = await req.json();
+    const { action, code, redirect_uri, pair_id, code_verifier } = await readBody(req);
+    await authorizePair(req, pair_id, createClient, (key) => Deno.env.get(key));
+    if (!["exchange", "refresh"].includes(action)) throw new HttpError(400, "invalid_action");
+    if (action === "exchange" && (typeof code !== "string" || !code || code.length > 4096 ||
+        typeof redirect_uri !== "string" || !/^https?:\/\//.test(redirect_uri) ||
+        (code_verifier !== undefined && (typeof code_verifier !== "string" || !/^[A-Za-z0-9._~-]{43,128}$/.test(code_verifier))))) {
+      throw new HttpError(400, "invalid_exchange");
+    }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -58,14 +66,17 @@ serve(async (req: Request) => {
       const { access_token, refresh_token, expires_in } = tokenData;
       const token_expires_at = new Date(Date.now() + expires_in * 1000).toISOString();
 
-      const { data: encAccess } = await supabase.rpc("encrypt_token", {
+      if (!tokenResponse.ok || typeof access_token !== "string" || typeof refresh_token !== "string" || !Number.isFinite(expires_in)) throw new Error("invalid_token_response");
+      const { data: encAccess, error: accessError } = await supabase.rpc("encrypt_token", {
         p_token: access_token,
         p_key: encryptionKey,
       });
-      const { data: encRefresh } = await supabase.rpc("encrypt_token", {
+      const { data: encRefresh, error: refreshError } = await supabase.rpc("encrypt_token", {
         p_token: refresh_token,
         p_key: encryptionKey,
       });
+
+      if (accessError || refreshError || !encAccess || !encRefresh) throw new Error("token_encryption_failed");
 
       const { error: upsertError } = await supabase
         .from("spotify_config")
@@ -102,10 +113,11 @@ serve(async (req: Request) => {
         );
       }
 
-      const { data: decryptedRefresh } = await supabase.rpc("decrypt_token", {
+      const { data: decryptedRefresh, error: decryptError } = await supabase.rpc("decrypt_token", {
         p_encrypted: config.refresh_token,
         p_key: encryptionKey,
       });
+      if (decryptError || typeof decryptedRefresh !== "string" || !decryptedRefresh) throw new Error("token_decryption_failed");
 
       const tokenResponse = await fetch(
         "https://accounts.spotify.com/api/token",
@@ -125,10 +137,11 @@ serve(async (req: Request) => {
       const tokenData = await tokenResponse.json();
 
       if (tokenData.error === "invalid_grant") {
-        await supabase
+        const { error: deleteError } = await supabase
           .from("spotify_config")
           .delete()
           .eq("pair_id", pair_id);
+        if (deleteError) throw deleteError;
 
         return new Response(
           JSON.stringify({ error: "reconnect_required" }),
@@ -144,19 +157,21 @@ serve(async (req: Request) => {
       }
 
       const { access_token, refresh_token, expires_in } = tokenData;
+      if (!tokenResponse.ok || typeof access_token !== "string" || !Number.isFinite(expires_in) || (refresh_token !== undefined && typeof refresh_token !== "string")) throw new Error("invalid_token_response");
       const newRefreshToken = refresh_token || decryptedRefresh;
       const token_expires_at = new Date(Date.now() + expires_in * 1000).toISOString();
 
-      const { data: encAccess } = await supabase.rpc("encrypt_token", {
+      const { data: encAccess, error: accessError } = await supabase.rpc("encrypt_token", {
         p_token: access_token,
         p_key: encryptionKey,
       });
-      const { data: encRefresh } = await supabase.rpc("encrypt_token", {
+      const { data: encRefresh, error: refreshError } = await supabase.rpc("encrypt_token", {
         p_token: newRefreshToken,
         p_key: encryptionKey,
       });
 
-      await supabase
+      if (accessError || refreshError || !encAccess || !encRefresh) throw new Error("token_encryption_failed");
+      const { error: updateError } = await supabase
         .from("spotify_config")
         .update({
           access_token: encAccess,
@@ -165,6 +180,7 @@ serve(async (req: Request) => {
           updated_at: new Date().toISOString(),
         })
         .eq("pair_id", pair_id);
+      if (updateError) throw updateError;
 
       return new Response(
         JSON.stringify({ access_token, expires_in }),
@@ -178,12 +194,6 @@ serve(async (req: Request) => {
     );
   } catch (error) {
     console.error("spotify-auth error:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return errorResponse(error, corsHeaders);
   }
 });
