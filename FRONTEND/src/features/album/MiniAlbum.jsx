@@ -1,24 +1,23 @@
+import toast from 'react-hot-toast'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Camera, X } from 'lucide-react'
 import { usePairing } from '../pairing/usePairing'
 import useAlbumStore from '../../stores/albumStore'
+import PrivateImage from '../../shared/components/PrivateImage'
 import './album.css'
 
 export default function MiniAlbum() {
   const navigate = useNavigate()
-  const { checkPairStatus } = usePairing()
+  const { pair } = usePairing()
+  const activePairId = pair?.id
   const { photos, loading, initializeAlbum, cleanup } = useAlbumStore()
   const [viewerPhoto, setViewerPhoto] = useState(null)
 
   useEffect(() => {
-    checkPairStatus().then(pair => {
-      if (pair) {
-        initializeAlbum(pair.id)
-      }
-    })
+    if (activePairId) void Promise.resolve(initializeAlbum(activePairId)).catch(error => toast.error(error.message || 'Não foi possível carregar o álbum.'))
     return () => cleanup()
-  }, [checkPairStatus, initializeAlbum, cleanup])
+  }, [activePairId, initializeAlbum, cleanup])
 
   const recentPhotos = photos.slice(0, 10)
 
@@ -46,6 +45,15 @@ export default function MiniAlbum() {
         <div
           className="mini-album__empty"
           onClick={() => navigate('/album')}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              navigate('/album')
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Abrir álbum"
           style={{ cursor: 'pointer' }}
         >
           <div className="mini-album__empty-icon">
@@ -77,9 +85,19 @@ export default function MiniAlbum() {
               key={photo.id}
               className="mini-album__thumb"
               onClick={() => setViewerPhoto(photo)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  setViewerPhoto(photo)
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={photo.caption || 'Abrir foto'}
             >
-              <img
+              <PrivateImage
                 src={photo.url}
+                storagePath={photo.storage_path}
                 alt={photo.caption || 'Album photo'}
                 loading="lazy"
               />
@@ -104,9 +122,10 @@ export default function MiniAlbum() {
               <X size={20} />
             </button>
           </div>
-          <img
+          <PrivateImage
             className="album-lightbox-img"
             src={viewerPhoto.url}
+            storagePath={viewerPhoto.storage_path}
             alt={viewerPhoto.caption || 'Album photo'}
             onClick={(e) => e.stopPropagation()}
           />

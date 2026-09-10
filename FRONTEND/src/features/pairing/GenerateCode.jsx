@@ -12,17 +12,17 @@ export default function GenerateCode() {
 
   return (
     <div className="pairing-page">
-      <h2>Invite Your Partner</h2>
-      <p>Share this code with your partner to connect</p>
+      <h2>Convide seu par</h2>
+      <p>Compartilhe este código para conectar vocês</p>
 
       {code ? (
         <div className="invite-code">
           <span className="code">{code}</span>
-          <p className="code-hint">This code expires in 24 hours</p>
+          <p className="code-hint">Use este código uma única vez para conectar</p>
         </div>
       ) : (
         <button onClick={handleGenerate} disabled={loading} className="generate-button">
-          {loading ? 'Generating...' : 'Generate Invite Code'}
+          {loading ? 'Gerando…' : 'Gerar código de convite'}
         </button>
       )}
 

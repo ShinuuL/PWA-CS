@@ -5,7 +5,11 @@ import useAuthStore from './authStore'
 const useDashboardStore = create((set, get) => ({
   myMood: null,
   partnerMood: null,
+  generation: 0,
+  sessionUserId: null,
   loading: false,
+  moodSaving: false,
+  moodError: null,
   pairId: null,
   subscription: null,
   realtimeConnected: false,
@@ -14,14 +18,19 @@ const useDashboardStore = create((set, get) => ({
     const { user } = useAuthStore.getState()
     const current = get()
     if (!user || !pairId) return
-    if (current.pairId === pairId && current.subscription) return
+    if (current.pairId === pairId && current.sessionUserId === user.id && current.subscription) return
 
-    set({ loading: true, pairId })
+    get().cleanup()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user.id
+
+    set({ loading: true, sessionUserId: user.id, pairId })
 
     try {
       const oldChannel = get().subscription
       if (oldChannel) {
         await supabase.removeChannel(oldChannel)
+        if (!isCurrent()) return
       }
 
       const channel = supabase
@@ -32,6 +41,7 @@ const useDashboardStore = create((set, get) => ({
           table: 'moods',
           filter: `pair_id=eq.${pairId}`
         }, (payload) => {
+          if (!isCurrent()) return
           const { new: newMood } = payload
           if (!newMood) return
           if (newMood.user_id === user.id) {
@@ -41,6 +51,7 @@ const useDashboardStore = create((set, get) => ({
           }
         })
         .subscribe((status) => {
+          if (!isCurrent()) return
           if (status === 'SUBSCRIBED') {
             set({ realtimeConnected: true })
           } else if (status === 'CHANNEL_ERROR') {
@@ -60,6 +71,7 @@ const useDashboardStore = create((set, get) => ({
         .limit(1)
         .maybeSingle()
 
+      if (!isCurrent()) return
       const { data: partnerMood } = await supabase
         .from('moods')
         .select('*')
@@ -69,16 +81,20 @@ const useDashboardStore = create((set, get) => ({
         .limit(1)
         .maybeSingle()
 
+      if (!isCurrent()) return
       set({ myMood, partnerMood, loading: false })
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       set({ error: err.message, loading: false })
     }
   },
 
   setMood: async (moodType, customText = null, customEmoji = null) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { myMood, pairId } = get()
-    if (!user || !pairId) return
+    if (!user || !pairId) return { error: 'Aguarde o vínculo terminar de carregar.' }
 
     const previousMood = myMood
 
@@ -91,28 +107,36 @@ const useDashboardStore = create((set, get) => ({
       custom_emoji: customEmoji,
       created_at: new Date().toISOString()
     }
-    set({ myMood: optimisticMood })
+    set({ myMood: optimisticMood, moodSaving: true, moodError: null })
 
-    const { error } = await supabase
-      .from('moods')
-      .upsert({
-        pair_id: pairId,
-        user_id: user.id,
-        mood_type: moodType,
-        custom_text: customText,
-        custom_emoji: customEmoji,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'pair_id,user_id' })
+    let error = null
+    try {
+      ({ error } = await supabase
+        .from('moods')
+        .upsert({
+          pair_id: pairId,
+          user_id: user.id,
+          mood_type: moodType,
+          custom_text: customText,
+          custom_emoji: customEmoji,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'pair_id,user_id' }))
+    } catch (requestError) {
+      error = requestError
+    }
 
+    if (!isCurrent()) return { error: 'Sessão alterada' }
     if (error) {
-      set({ myMood: previousMood })
+      set({ myMood: previousMood, moodSaving: false, moodError: error.message || 'Não foi possível atualizar seu humor.' })
       return { error: error.message }
     }
+    set({ moodSaving: false, moodError: null })
     return { success: true }
   },
 
   cleanup: () => {
     const { subscription } = get()
+    set({ generation: get().generation + 1, sessionUserId: null, error: null, moodError: null, moodSaving: false })
     if (subscription) {
       supabase.removeChannel(subscription)
     }

@@ -4,13 +4,15 @@ import { ptBR } from 'date-fns/locale'
 import { Plus, Bell, ChevronDown, ChevronRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 import useReminderStore from '../../stores/reminderStore'
+import { usePairing } from '../pairing/usePairing'
 import { supabase } from '../../shared/lib/supabase'
 import ReminderCard from './ReminderCard'
 import ReminderForm from './ReminderForm'
 import './RemindersTab.css'
 
 export default function RemindersTab() {
-  const { reminders, loading, error, createReminder, updateReminder, completeReminder } = useReminderStore()
+  const { reminders, loading, error, createReminder, updateReminder, completeReminder, initializeReminders } = useReminderStore()
+  const { pair } = usePairing()
   const [showForm, setShowForm] = useState(false)
   const [editReminder, setEditReminder] = useState(null)
   const [completedExpanded, setCompletedExpanded] = useState(false)
@@ -145,7 +147,7 @@ export default function RemindersTab() {
     return (
       <div className="reminders-tab reminders-tab--error">
         <p>Algo deu errado — Tente novamente</p>
-        <button className="reminders-tab__retry" onClick={() => window.location.reload()}>
+        <button className="reminders-tab__retry" onClick={() => { if (pair?.id) void initializeReminders(pair.id) }}>
           Tentar novamente
         </button>
       </div>
@@ -211,14 +213,14 @@ export default function RemindersTab() {
         </div>
       )}
 
-      <button className="reminders-tab__fab" onClick={() => setShowForm(true)} type="button">
+      <button className="reminders-tab__fab" onClick={() => setShowForm(true)} type="button" aria-label="Criar lembrete">
         <Plus size={24} />
       </button>
 
       {showForm && (
         <div className="reminders-tab__modal-overlay" onClick={closeForm}>
-          <div className="reminders-tab__modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="reminders-tab__modal-title">
+          <div className="reminders-tab__modal" role="dialog" aria-modal="true" aria-labelledby="reminder-editor-title" onClick={(e) => e.stopPropagation()}>
+            <h3 className="reminders-tab__modal-title" id="reminder-editor-title">
               {editReminder ? 'Editar lembrete' : 'Criar lembrete'}
             </h3>
             <ReminderForm

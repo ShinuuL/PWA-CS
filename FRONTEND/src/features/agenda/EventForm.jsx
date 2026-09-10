@@ -45,20 +45,26 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
 
   return (
     <form className="event-form" onSubmit={handleSubmit}>
+      <label className="sr-only" htmlFor="event-title">Nome do evento</label>
       <input
+        id="event-title"
         className="event-form__input"
         type="text"
         placeholder="Nome do evento"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+      <label className="sr-only" htmlFor="event-date">Data do evento</label>
       <input
+        id="event-date"
         className="event-form__input"
         type="date"
         value={eventDate}
         onChange={(e) => setEventDate(e.target.value)}
       />
+      <label className="sr-only" htmlFor="event-description">Descrição do evento</label>
       <textarea
+        id="event-description"
         className="event-form__textarea"
         placeholder="Descrição (opcional)"
         value={description}
@@ -66,7 +72,9 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
         rows={3}
       />
       <div className="event-form__row">
+        <label className="sr-only" htmlFor="event-category">Categoria</label>
         <select
+          id="event-category"
           className="event-form__select"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
@@ -75,7 +83,9 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
             <option key={c.value} value={c.value}>{c.label}</option>
           ))}
         </select>
+        <label className="sr-only" htmlFor="event-reminder">Lembrete</label>
         <select
+          id="event-reminder"
           className="event-form__select"
           value={reminder || ''}
           onChange={(e) => setReminder(e.target.value || null)}

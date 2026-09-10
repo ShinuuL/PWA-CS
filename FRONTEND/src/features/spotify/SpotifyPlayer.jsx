@@ -19,6 +19,8 @@ export default function SpotifyPlayer() {
   const playlistTracks = useSpotifyStore((s) => s.playlistTracks)
   const isConnected = useSpotifyStore((s) => s.isConnected)
   const isLoading = useSpotifyStore((s) => s.isLoading)
+  const error = useSpotifyStore((s) => s.error)
+  const setError = useSpotifyStore((s) => s.setError)
 
   const togglePlay = useSpotifyStore((s) => s.togglePlay)
 
@@ -29,9 +31,22 @@ export default function SpotifyPlayer() {
   const disconnect = useSpotifyStore((s) => s.disconnect)
 
   const { startAuth } = useSpotifyAuth()
-  const { next, previous, hasPremium } = useSpotifyPlayer()
+  const { next, previous, hasPremium, connectionStatus, connectionMessage } = useSpotifyPlayer()
 
   const [userPlaylists, setUserPlaylists] = useState([])
+  const [disconnecting, setDisconnecting] = useState(false)
+
+  const handleDisconnect = async () => {
+    setDisconnecting(true)
+    setError(null)
+    try {
+      await disconnect()
+    } catch (disconnectError) {
+      setError(disconnectError.message || 'Não foi possível desconectar o Spotify.')
+    } finally {
+      setDisconnecting(false)
+    }
+  }
 
   // Determine current state
   const getState = () => {
@@ -43,6 +58,17 @@ export default function SpotifyPlayer() {
   }
 
   const state = getState()
+  const queueTracks = playlistTracks.slice(0, 3)
+  const statusLabel = {
+    idle: 'Preparando sessão',
+    loading: 'Conectando player',
+    ready: 'Pronto para tocar',
+    offline: 'Reconectando',
+    blocked: 'Aguardando toque',
+    error: 'Verifique a conexão',
+  }[connectionStatus]
+  const playerMessage = connectionMessage || error
+  const isConnectionNotice = connectionStatus === 'offline' || connectionStatus === 'blocked'
 
   // Fetch user playlists when connected but no playlist selected
   useEffect(() => {
@@ -156,7 +182,7 @@ export default function SpotifyPlayer() {
 
       case 'playing':
         return (
-          <div className="spotify-player__playing">
+          <div className={`spotify-player__playing${currentTrack?.albumArt ? '' : ' spotify-player__playing--idle'}`}>
             {currentTrack?.albumArt && (
               <img src={currentTrack.albumArt} alt={currentTrack.name} className="spotify-player__album-art" />
             )}
@@ -189,6 +215,24 @@ export default function SpotifyPlayer() {
                 {formatTime(progress)} / {formatTime(currentTrack?.duration_ms)}
               </span>
             </div>
+            {queueTracks.length > 0 && (
+              <section className="spotify-player__queue" aria-label="Prévia da playlist">
+                <p className="spotify-player__queue-title">Na playlist</p>
+                <ul className="spotify-player__queue-list">
+                  {queueTracks.map((track) => (
+                    <li key={track.uri} className="spotify-player__queue-track">
+                      {track.albumArt && (
+                        <img src={track.albumArt} alt="" className="spotify-player__queue-art" />
+                      )}
+                      <span className="spotify-player__queue-track-info">
+                        <span className="spotify-player__queue-track-name">{track.name}</span>
+                        <span className="spotify-player__queue-track-artist">{track.artist}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
             <button className="spotify-player__btn spotify-player__btn--secondary" onClick={() => setShowPlaylistManager(true)}>
               <List size={14} />
               Nossa Playlist ({playlistTracks.length})
@@ -213,17 +257,24 @@ export default function SpotifyPlayer() {
     <div className="spotify-player">
       <div className="spotify-player__header">
         <h3 className="spotify-player__title">Nossa Playlist</h3>
+        {isConnected && (
+          <span className={`spotify-player__status spotify-player__status--${connectionStatus}`}>
+            <span aria-hidden="true" />
+            {statusLabel || 'Spotify conectado'}
+          </span>
+        )}
         {isConnected && config?.playlist_id && (
           <div className="spotify-player__header-actions">
             <button className="spotify-player__header-btn" onClick={() => setShowPlaylistManager(true)}>
               <List size={16} />
             </button>
-            <button className="spotify-player__header-btn spotify-player__header-btn--disconnect" onClick={disconnect}>
+            <button className="spotify-player__header-btn spotify-player__header-btn--disconnect" onClick={handleDisconnect} disabled={disconnecting} aria-label="Desconectar Spotify">
               <Unlink size={16} />
             </button>
           </div>
         )}
       </div>
+      {playerMessage && <p className={`spotify-player__error${isConnectionNotice ? ' spotify-player__error--notice' : ''}`} role="alert">{playerMessage}</p>}
       {renderContent()}
       <AnimatePresence>
         {showSearch && (

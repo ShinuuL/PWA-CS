@@ -47,183 +47,98 @@ export function urlBase64ToUint8Array(base64String) {
  * Stores subscription in the push_subscriptions table.
  * Returns the subscription object or null on failure.
  */
-export async function subscribeToPush() {
-  console.log('[Push] subscribeToPush called')
-  if (!isPushSupported()) {
-    console.warn('[Push] isPushSupported() returned false')
-    return null
-  }
-  if (!VAPID_PUBLIC_KEY) {
-    console.warn('[Push] VITE_VAPID_PUBLIC_KEY not configured')
-    return null
-  }
+let pushGeneration = 0
+let pendingSubscription = null
+let pendingGeneration = null
 
-  // Explicitly request notification permission
-  console.log('[Push] Current permission:', Notification.permission)
-  if (Notification.permission === 'default') {
-    console.log('[Push] Requesting notification permission...')
-    const permission = await Notification.requestPermission()
-    console.log('[Push] Permission result:', permission)
-    if (permission !== 'granted') {
-      console.warn('[Push] Notification permission not granted:', permission)
-      return null
-    }
-  } else if (Notification.permission === 'denied') {
-    console.warn('[Push] Notification permission denied by user')
-    return null
-  }
-
-  try {
-    const registration = await navigator.serviceWorker.ready
-    console.log('[Push] Service worker ready, scope:', registration.scope)
-
-    let subscription = await registration.pushManager.getSubscription()
-    console.log('[Push] Existing subscription:', subscription ? 'yes' : 'no')
-
-    if (subscription) {
-      const existingKey = subscription.options.applicationServerKey
-        ? btoa(String.fromCharCode(...new Uint8Array(subscription.options.applicationServerKey))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-        : null
-      console.log('[Push] Existing sub key matches:', existingKey === VAPID_PUBLIC_KEY)
-
-      if (existingKey !== VAPID_PUBLIC_KEY) {
-        console.log('[Push] VAPID key changed, unsubscribing old subscription...')
-        await subscription.unsubscribe()
-        subscription = null
-      }
-    }
-
-    if (!subscription) {
-      const applicationServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-      console.log('[Push] Subscribing to push...')
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey
-      })
-      console.log('[Push] Push subscription created successfully')
-    }
-
-    // Ensure subscription is saved in Supabase (idempotent)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) {
-      const endpoint = subscription.endpoint
-
-      // Check if this endpoint is already stored
-      const { data: existing } = await supabase
-        .from('push_subscriptions')
-        .select('id')
-        .eq('endpoint', endpoint)
-        .maybeSingle()
-
-      if (existing) {
-        console.log('[Push] Subscription already in database')
-        return subscription
-      }
-
-      // New endpoint — remove stale rows for this user (mobile browsers
-      // can rotate endpoints on page refresh, leaving orphans)
-      await supabase
-        .from('push_subscriptions')
-        .delete()
-        .eq('user_id', user.id)
-
-      // Get user's active pair_id (code_used = true)
-      let pairId = null
-
-      const { data: pairOne } = await supabase
-        .from('pairs')
-        .select('id')
-        .eq('user_one', user.id)
-        .eq('code_used', true)
-        .maybeSingle()
-
-      if (pairOne?.id) {
-        pairId = pairOne.id
-      } else {
-        const { data: pairTwo } = await supabase
-          .from('pairs')
-          .select('id')
-          .eq('user_two', user.id)
-          .eq('code_used', true)
-          .maybeSingle()
-        if (pairTwo?.id) pairId = pairTwo.id
-      }
-
-      console.log('[Push] Found pair_id:', pairId)
-
-      if (!pairId) {
-        console.error('[Push] No active pair found for push subscription')
-        return subscription
-      }
-
-      const subscriptionJson = subscription.toJSON()
-      const { data: insertData, error } = await supabase.from('push_subscriptions').insert({
-        user_id: user.id,
-        pair_id: pairId,
-        endpoint: subscriptionJson.endpoint,
-        p256dh: subscriptionJson.keys?.p256dh,
-        auth: subscriptionJson.keys?.auth
-      }).select()
-      if (error) {
-        console.error('[Push] Failed to store push subscription:', error.message, error.details)
-      } else {
-        console.log('[Push] Subscription saved to database:', insertData)
-      }
-    }
-
-    return subscription
-  } catch (err) {
-    console.error('[Push] Push subscription failed:', err)
-    return null
-  }
+export function cancelPushSubscription() {
+  pushGeneration++
 }
 
-/**
- * Unsubscribe from push notifications.
- * Removes subscription from the push_subscriptions table.
- */
-export async function unsubscribeFromPush() {
-  if (!isPushSupported()) return false
+export async function subscribeToPush(expectedUserId) {
+  const generation = pushGeneration
+  if (pendingSubscription) {
+    if (pendingGeneration === generation) return pendingSubscription
+    await pendingSubscription
+    if (generation !== pushGeneration) return null
+    return subscribeToPush(expectedUserId)
+  }
+  const current = () => generation === pushGeneration
+  const task = (async () => {
+    if (!isPushSupported() || !VAPID_PUBLIC_KEY) return null
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user || !current() || (expectedUserId && user.id !== expectedUserId)) return null
+      if (Notification.permission === 'default') await Notification.requestPermission()
+      if (!current() || Notification.permission !== 'granted') return null
+      const registration = await navigator.serviceWorker.getRegistration()
+      if (!current() || !registration) return null
+      let subscription = await registration.pushManager.getSubscription()
+      if (!current()) return null
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+        })
+      }
+      if (!current()) { await subscription.unsubscribe(); return null }
+      const { data: pair, error: pairError } = await supabase.from('pairs')
+        .select('id').or(`user_one.eq.${user.id},user_two.eq.${user.id}`)
+        .eq('code_used', true).maybeSingle()
+      if (pairError) throw pairError
+      if (!current() || !pair) return null
+      const json = subscription.toJSON()
+      if (!current()) return null
+      const values = { user_id: user.id, pair_id: pair.id, endpoint: json.endpoint,
+        p256dh: json.keys?.p256dh, auth: json.keys?.auth }
+      // The schema allows one active subscription per user. Upsert avoids a
+      // duplicate-key race when auth and pairing observers register together.
+      const result = await supabase.from('push_subscriptions').upsert(values, { onConflict: 'user_id' })
+      if (result.error) throw result.error
+      if (!current()) {
+        await subscription.unsubscribe()
+        await supabase.from('push_subscriptions').delete().eq('endpoint', subscription.endpoint).eq('user_id', user.id)
+        return null
+      }
+      return subscription
+    } catch (error) {
+      console.error('Push subscription failed:', error)
+      return null
+    }
+  })()
+  pendingSubscription = task
+  pendingGeneration = generation
+  try { return await task } finally { if (pendingSubscription === task) pendingSubscription = null }
+}
 
+export async function unsubscribeFromPush(userId) {
+  cancelPushSubscription()
+  if (!isPushSupported()) return false
   try {
-    const registration = await navigator.serviceWorker.ready
+    // Do not block logout on a notification permission prompt left open by the user.
+    const registration = await navigator.serviceWorker.getRegistration()
+    if (!registration) return false
     const subscription = await registration.pushManager.getSubscription()
     if (!subscription) return false
-
-    const endpoint = subscription.endpoint
-
-    // Unsubscribe from browser
     await subscription.unsubscribe()
-
-    // Remove from Supabase
-    const { error } = await supabase
-      .from('push_subscriptions')
-      .delete()
-      .eq('endpoint', endpoint)
-
-    if (error) {
-      console.error('Failed to remove push subscription:', error)
+    if (userId) {
+      const { error } = await supabase.from('push_subscriptions').delete()
+        .eq('endpoint', subscription.endpoint).eq('user_id', userId)
+      if (error) console.error('Failed to remove push subscription:', error)
     }
-
     return true
-  } catch (err) {
-    console.error('Push unsubscribe failed:', err)
+  } catch (error) {
+    console.error('Push unsubscribe failed:', error)
     return false
   }
 }
 
-/**
- * Get the current push subscription, if one exists.
- */
 export async function getPushSubscription() {
   if (!isPushSupported()) return null
-
   try {
-    const registration = await navigator.serviceWorker.ready
-    return await registration.pushManager.getSubscription()
-  } catch {
-    return null
-  }
+    const registration = await navigator.serviceWorker.getRegistration()
+    return registration ? await registration.pushManager.getSubscription() : null
+  } catch { return null }
 }
 
 

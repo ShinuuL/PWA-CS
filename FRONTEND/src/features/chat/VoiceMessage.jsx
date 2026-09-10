@@ -7,6 +7,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { Play, Pause } from 'lucide-react'
 import { PlaybackWaveform } from '../../shared/components/Waveform'
+import { usePrivateMedia } from '../../shared/lib/privateMedia'
 
 /**
  * Format seconds into MM:SS display.
@@ -29,6 +30,7 @@ function formatTime(seconds) {
  * @param {boolean} props.isOwn - Whether this is the sender's own message
  */
 export default function VoiceMessage({ mediaUrl, duration, isOwn }) {
+  const media = usePrivateMedia('chat-media', mediaUrl)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const audioRef = useRef(null)
@@ -92,12 +94,13 @@ export default function VoiceMessage({ mediaUrl, duration, isOwn }) {
   return (
     <div className={`chat-voice-bubble ${isOwn ? 'own' : 'other'}`}>
       {/* Hidden audio element */}
-      <audio ref={audioRef} src={mediaUrl} preload="metadata" />
+      <audio ref={audioRef} src={media.url || undefined} preload="metadata" />
 
       {/* Play/pause button */}
       <button
         className="chat-voice-bubble__play"
         onClick={togglePlayback}
+        disabled={!media.url}
         aria-label={isPlaying ? 'Pause voice message' : 'Play voice message'}
       >
         {isPlaying ? <Pause size={18} /> : <Play size={18} />}
@@ -119,7 +122,7 @@ export default function VoiceMessage({ mediaUrl, duration, isOwn }) {
 
       {/* Duration display */}
       <span className="chat-voice-bubble__duration">
-        {isPlaying ? formatTime(currentTime) : formatTime(displayDuration)}
+        {media.error || (isPlaying ? formatTime(currentTime) : formatTime(displayDuration))}
       </span>
     </div>
   )

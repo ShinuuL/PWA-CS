@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Menu } from 'lucide-react'
+import { usePairing } from '../../features/pairing/usePairing'
 import { useAuth } from '../../features/auth/useAuth'
 import { supabase } from '../lib/supabase'
 import { usePresence } from '../../hooks/usePresence'
@@ -9,41 +10,29 @@ import './header.css'
 
 export default function Header({ onMenuClick }) {
   const { user } = useAuth()
-  const [partner, setPartner] = useState(null)
-  const [partnerId, setPartnerId] = useState(null)
-  const [pairId, setPairId] = useState(null)
+  const { pair } = usePairing()
+  const pairId = pair?.id
+  const partnerId = pair ? (pair.user_one === user?.id ? pair.user_two : pair.user_one) : null
+  const [partnerResult, setPartnerResult] = useState(null)
+  const partner = partnerResult?.id && partnerResult.id === partnerId ? partnerResult.profile : null
   const [showPartnerProfile, setShowPartnerProfile] = useState(false)
 
   const { isOnline } = usePresence(pairId, partnerId, user?.id)
 
   useEffect(() => {
-    if (!user) return
-
+    let cancelled = false
+    if (!partnerId) return
     const fetchPartner = async () => {
-      const { data: pair } = await supabase
-        .from('pairs')
-        .select('*')
-        .or(`user_one.eq.${user.id},user_two.eq.${user.id}`)
-        .not('code_used', 'eq', false)
-        .maybeSingle()
-
-      if (!pair) return
-
-      const pid = pair.user_one === user.id ? pair.user_two : pair.user_one
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('display_name, avatar_url')
-        .eq('id', pid)
-        .maybeSingle()
-
-      setPartner(profile)
-      setPartnerId(pid)
-      setPairId(pair.id)
+      const { data: profile, error } = await supabase.from('profiles')
+        .select('display_name, avatar_url').eq('id', partnerId).maybeSingle()
+      if (error) throw error
+      if (!cancelled) setPartnerResult({ id: partnerId, profile })
     }
-
-    fetchPartner()
-  }, [user])
+    void fetchPartner().catch(() => {
+      if (!cancelled) setPartnerResult(null)
+    })
+    return () => { cancelled = true }
+  }, [partnerId])
 
   const getInitials = (name) => {
     if (!name) return '?'
@@ -52,7 +41,7 @@ export default function Header({ onMenuClick }) {
 
   return (
     <header className="header">
-      <button className="header-menu" onClick={onMenuClick}>
+      <button className="header-menu" onClick={onMenuClick} aria-label="Abrir menu">
         <Menu size={22} />
       </button>
 
@@ -63,6 +52,15 @@ export default function Header({ onMenuClick }) {
               className="header-avatar-wrapper"
               style={{ cursor: 'pointer' }}
               onClick={() => setShowPartnerProfile(true)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  setShowPartnerProfile(true)
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`Abrir perfil de ${partner.display_name || 'seu par'}`}
             >
               <div className="header-avatar">
                 {partner.avatar_url ? (

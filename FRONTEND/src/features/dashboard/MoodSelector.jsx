@@ -1,6 +1,5 @@
 import React, { Suspense, lazy } from 'react'
 import { AnimatePresence } from 'framer-motion'
-import useDashboardStore from '../../stores/dashboardStore'
 import MoodModal from './MoodModal'
 import useBreakpoint from '../../hooks/useBreakpoint'
 
@@ -11,8 +10,6 @@ const MoodSelectorDesktop = lazy(() => import('./MoodSelectorDesktop'))
 
 export default function MoodSelector() {
   const bp = useBreakpoint()
-  const myMood = useDashboardStore((s) => s.myMood)
-  const setMood = useDashboardStore((s) => s.setMood)
   const [showCustomModal, setShowCustomModal] = React.useState(false)
 
   const openCustom = () => setShowCustomModal(true)

@@ -5,6 +5,8 @@ import useAuthStore from './authStore'
 
 const useAlbumStore = create((set, get) => ({
   photos: [],
+  generation: 0,
+  sessionUserId: null,
   loading: false,
   uploading: false,
   error: null,
@@ -15,9 +17,13 @@ const useAlbumStore = create((set, get) => ({
     const { user } = useAuthStore.getState()
     const current = get()
     if (!user || !pairId) return
-    if (current.pairId === pairId && current.subscription) return
+    if (current.pairId === pairId && current.sessionUserId === user.id && current.subscription) return
 
-    set({ loading: true, pairId, error: null })
+    get().cleanup()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user.id
+
+    set({ loading: true, sessionUserId: user.id, pairId, error: null })
 
     try {
       const { data: photos, error } = await supabase
@@ -26,10 +32,12 @@ const useAlbumStore = create((set, get) => ({
         .eq('pair_id', pairId)
         .order('created_at', { ascending: false })
 
+      if (!isCurrent()) return
       if (error) throw error
 
       set({ photos: photos || [], loading: false })
 
+      if (!isCurrent()) return
       // Clean up any existing subscription first
       const oldChannel = get().subscription
       if (oldChannel) {
@@ -45,6 +53,7 @@ const useAlbumStore = create((set, get) => ({
           table: 'album_photos',
           filter: `pair_id=eq.${pairId}`
         }, (payload) => {
+          if (!isCurrent()) return
           const { new: newPhoto } = payload
           const state = get()
 
@@ -60,6 +69,7 @@ const useAlbumStore = create((set, get) => ({
           table: 'album_photos',
           filter: `pair_id=eq.${pairId}`
         }, (payload) => {
+          if (!isCurrent()) return
           const { old: deletedPhoto } = payload
           const state = get()
           set({ photos: state.photos.filter(p => p.id !== deletedPhoto.id) })
@@ -68,14 +78,17 @@ const useAlbumStore = create((set, get) => ({
 
       set({ subscription: channel })
     } catch (err) {
+      if (!isCurrent()) return
       set({ error: err.message, loading: false })
     }
   },
 
   uploadAlbumPhoto: async (file, caption = '') => {
     const { user } = useAuthStore.getState()
-    const { pairId, photos } = get()
-    if (!user || !pairId || !file) return
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
+    const { pairId } = get()
+    if (!user || !pairId || !file) return false
 
     set({ uploading: true, error: null })
 
@@ -84,10 +97,12 @@ const useAlbumStore = create((set, get) => ({
     try {
       compressed = await compressImage(file)
     } catch (err) {
-      set({ error: `Compression failed: ${err.message}`, uploading: false })
-      return
+      if (!isCurrent()) return false
+      set({ error: `Não foi possível preparar a imagem: ${err.message}`, uploading: false })
+      return false
     }
 
+    if (!isCurrent()) return false
     const { blob, width, height } = compressed
 
     // Optimistic update with local blob URL
@@ -108,13 +123,14 @@ const useAlbumStore = create((set, get) => ({
       _isOptimistic: true
     }
 
-    set({ photos: [optimisticPhoto, ...photos] })
+    set({ photos: [optimisticPhoto, ...get().photos] })
 
     if (!navigator.onLine) {
-      set({ error: 'Cannot upload photos offline. Please try again when online.', uploading: false })
+      set({ error: 'Não é possível enviar fotos offline. Tente novamente quando estiver online.', uploading: false })
       // Remove optimistic update
       set({ photos: get().photos.filter(p => p.id !== tempId) })
-      return
+      URL.revokeObjectURL(tempBlobUrl)
+      return false
     }
 
     try {
@@ -127,15 +143,8 @@ const useAlbumStore = create((set, get) => ({
         .from('album-photos')
         .upload(filePath, blob, { contentType: 'image/jpeg' })
 
+      if (!isCurrent()) return false
       if (uploadError) throw uploadError
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('album-photos')
-        .getPublicUrl(filePath)
-
-      const publicUrl = urlData?.publicUrl
-      if (!publicUrl) throw new Error('Failed to get public URL')
 
       // Insert record into album_photos table
       const { data: insertedPhoto, error: insertError } = await supabase
@@ -143,7 +152,7 @@ const useAlbumStore = create((set, get) => ({
         .insert({
           pair_id: pairId,
           user_id: user.id,
-          url: publicUrl,
+          url: filePath,
           storage_path: filePath,
           caption,
           width,
@@ -153,6 +162,7 @@ const useAlbumStore = create((set, get) => ({
         .select()
         .single()
 
+      if (!isCurrent()) return false
       if (insertError) throw insertError
 
       // Revoke blob URL and replace optimistic with real data
@@ -162,20 +172,25 @@ const useAlbumStore = create((set, get) => ({
           p.id === tempId ? { ...insertedPhoto, _isOptimistic: false } : p
         )
       })
+      return true
     } catch (err) {
+      if (!isCurrent()) return false
       // Remove optimistic update on failure
       URL.revokeObjectURL(tempBlobUrl)
       set({
         photos: get().photos.filter(p => p.id !== tempId),
         error: err.message
       })
+      return false
     } finally {
-      set({ uploading: false })
+      if (isCurrent()) set({ uploading: false })
     }
   },
 
   deletePhoto: async (photoId, storagePath) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { photos } = get()
     if (!user) return
 
@@ -190,6 +205,7 @@ const useAlbumStore = create((set, get) => ({
         .eq('id', photoId)
         .eq('user_id', user.id)
 
+      if (!isCurrent()) return
       if (dbError) throw dbError
 
       // Delete from storage
@@ -201,6 +217,7 @@ const useAlbumStore = create((set, get) => ({
         if (storageError) console.error('Storage delete error:', storageError)
       }
     } catch (err) {
+      if (!isCurrent()) return
       // Re-fetch on error to restore state
       const { pairId } = get()
       if (pairId) {
@@ -211,6 +228,10 @@ const useAlbumStore = create((set, get) => ({
   },
 
   cleanup: () => {
+    set({ generation: get().generation + 1, sessionUserId: null })
+    get().photos.forEach(photo => {
+      if (photo.url?.startsWith('blob:')) URL.revokeObjectURL(photo.url)
+    })
     const { subscription } = get()
     if (subscription) {
       supabase.removeChannel(subscription)

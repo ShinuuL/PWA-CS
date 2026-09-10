@@ -1,11 +1,13 @@
+import toast from 'react-hot-toast'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, X, Trash2, Loader2 } from 'lucide-react'
+import { ArrowLeft, X, Trash2 } from 'lucide-react'
 import { usePairing } from '../pairing/usePairing'
 import useAuthStore from '../../stores/authStore'
 import useAlbumStore from '../../stores/albumStore'
 import AlbumGrid from './AlbumGrid'
 import AlbumUpload from './AlbumUpload'
+import PrivateImage from '../../shared/components/PrivateImage'
 import './album.css'
 
 function formatDate(dateStr) {
@@ -19,7 +21,8 @@ function formatDate(dateStr) {
 
 export default function AlbumPage() {
   const navigate = useNavigate()
-  const { checkPairStatus } = usePairing()
+  const { pair } = usePairing()
+  const activePairId = pair?.id
   const { user } = useAuthStore()
   const {
     photos, loading, error,
@@ -30,13 +33,9 @@ export default function AlbumPage() {
   const [confirmDelete, setConfirmDelete] = useState(null)
 
   useEffect(() => {
-    checkPairStatus().then(pair => {
-      if (pair) {
-        initializeAlbum(pair.id)
-      }
-    })
+    if (activePairId) void Promise.resolve(initializeAlbum(activePairId)).catch(error => toast.error(error.message || 'Não foi possível carregar o álbum.'))
     return () => cleanup()
-  }, [checkPairStatus, initializeAlbum, cleanup])
+  }, [activePairId, initializeAlbum, cleanup])
 
   const handlePhotoTap = (photo) => {
     setViewerPhoto(photo)
@@ -57,13 +56,13 @@ export default function AlbumPage() {
     <div className="album-page">
       {/* Header */}
       <div className="album-header">
-        <button className="album-header-back" onClick={() => navigate(-1)}>
+        <button className="album-header-back" onClick={() => navigate(-1)} aria-label="Voltar">
           <ArrowLeft size={20} />
         </button>
         <div className="album-header-info">
           <h1 className="album-header-title">Shared Album</h1>
           <div className="album-header-count">
-            {loading ? 'Loading...' : `${photos.length} photo${photos.length !== 1 ? 's' : ''}`}
+            {loading ? 'Carregando…' : `${photos.length} ${photos.length !== 1 ? 'fotos' : 'foto'}`}
           </div>
         </div>
       </div>
@@ -96,7 +95,7 @@ export default function AlbumPage() {
 
       {/* Lightbox viewer */}
       {viewerPhoto && (
-        <div className="album-lightbox" onClick={() => setViewerPhoto(null)}>
+        <div className="album-lightbox" role="dialog" aria-modal="true" aria-label="Visualização da foto" onClick={() => setViewerPhoto(null)}>
           <div className="album-lightbox-header">
             <div className="album-lightbox-meta">
               {viewerPhoto.caption && (
@@ -107,15 +106,17 @@ export default function AlbumPage() {
             <button
               className="album-lightbox-close"
               onClick={() => setViewerPhoto(null)}
+              aria-label="Fechar foto"
             >
               <X size={20} />
             </button>
           </div>
 
-          <img
+          <PrivateImage
             className="album-lightbox-img"
             src={viewerPhoto.url}
-            alt={viewerPhoto.caption || 'Album photo'}
+            storagePath={viewerPhoto.storage_path}
+            alt={viewerPhoto.caption || 'Foto do álbum'}
             onClick={(e) => e.stopPropagation()}
           />
 
@@ -129,7 +130,7 @@ export default function AlbumPage() {
                 }}
               >
                 <Trash2 size={16} />
-                Delete
+                Excluir
               </button>
             </div>
           )}
@@ -139,26 +140,26 @@ export default function AlbumPage() {
       {/* Delete confirmation */}
       {confirmDelete && (
         <div className="album-upload-preview" onClick={() => setConfirmDelete(null)}>
-          <div className="album-upload-preview-card" onClick={(e) => e.stopPropagation()}>
-            <p style={{ color: 'var(--color-text-primary)', fontSize: '0.9375rem', fontWeight: 600 }}>
-              Delete this photo?
+          <div className="album-upload-preview-card" role="dialog" aria-modal="true" aria-labelledby="delete-photo-title" onClick={(e) => e.stopPropagation()}>
+            <p id="delete-photo-title" style={{ color: 'var(--color-text-primary)', fontSize: '0.9375rem', fontWeight: 600 }}>
+              Excluir esta foto?
             </p>
             <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.8125rem' }}>
-              This action cannot be undone.
+              Esta ação não pode ser desfeita.
             </p>
             <div className="album-upload-preview-actions">
               <button
                 className="album-upload-preview-cancel"
                 onClick={() => setConfirmDelete(null)}
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 className="album-upload-preview-confirm"
                 style={{ background: '#FF6B6B' }}
                 onClick={handleConfirmDelete}
               >
-                Delete
+                Excluir
               </button>
             </div>
           </div>

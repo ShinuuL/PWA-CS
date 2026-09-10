@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Plus, List, ChevronDown, ChevronRight, Trash2, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import useTodoStore from '../../stores/todoStore'
+import { usePairing } from '../pairing/usePairing'
 import useAuthStore from '../../stores/authStore'
 import { supabase } from '../../shared/lib/supabase'
 import ListCard from './ListCard'
@@ -11,7 +12,8 @@ import ItemRow from './ItemRow'
 import './ListsTab.css'
 
 export default function ListsTab() {
-  const { lists, items, loading, error, createList, updateList, deleteList, createItem, updateItem, toggleItem, deleteItem, getItemsForList } = useTodoStore()
+  const { lists, items, loading, error, createList, updateList, deleteList, createItem, updateItem, toggleItem, deleteItem, getItemsForList, initializeTodos } = useTodoStore()
+  const { pair } = usePairing()
   const user = useAuthStore((s) => s.user)
 
   const [activeListId, setActiveListId] = useState(null)
@@ -26,12 +28,8 @@ export default function ListsTab() {
   const [deleteConfirm, setDeleteConfirm] = useState(null)
   const [deleteItemConfirm, setDeleteItemConfirm] = useState(null)
 
-  // Resolve partner ID from items
-  const partnerId = useMemo(() => {
-    if (!user) return null
-    const otherCreator = items.find(i => i.created_by && i.created_by !== user.id)
-    return otherCreator?.created_by || null
-  }, [items, user])
+  // Resolve the partner from the authoritative pair record. todo_items has no creator column.
+  const partnerId = pair ? (pair.user_one === user?.id ? pair.user_two : pair.user_one) : null
 
   // Fetch profiles for assignee badges
   useEffect(() => {
@@ -192,7 +190,7 @@ export default function ListsTab() {
     return (
       <div className="lists-tab lists-tab--error">
         <p>Algo deu errado — Tente novamente</p>
-        <button className="lists-tab__retry" onClick={() => window.location.reload()} type="button">
+        <button className="lists-tab__retry" onClick={() => { if (pair?.id) void initializeTodos(pair.id) }} type="button">
           Tentar novamente
         </button>
       </div>
@@ -232,14 +230,14 @@ export default function ListsTab() {
           </div>
         )}
 
-        <button className="lists-tab__fab" onClick={() => setShowListForm(true)} type="button">
+        <button className="lists-tab__fab" onClick={() => setShowListForm(true)} type="button" aria-label="Criar lista">
           <Plus size={24} />
         </button>
 
         {showListForm && (
           <div className="lists-tab__modal-overlay" onClick={closeListForm}>
-            <div className="lists-tab__modal" onClick={(e) => e.stopPropagation()}>
-              <h3 className="lists-tab__modal-title">
+            <div className="lists-tab__modal" role="dialog" aria-modal="true" aria-labelledby="list-editor-title" onClick={(e) => e.stopPropagation()}>
+              <h3 className="lists-tab__modal-title" id="list-editor-title">
                 {editList ? 'Renomear lista' : 'Criar lista'}
               </h3>
               <ListForm
@@ -253,8 +251,8 @@ export default function ListsTab() {
 
         {deleteConfirm && (
           <div className="lists-tab__modal-overlay" onClick={() => setDeleteConfirm(null)}>
-            <div className="lists-tab__modal lists-tab__modal--confirm" onClick={(e) => e.stopPropagation()}>
-              <p>Excluir <strong>{deleteConfirm.name}</strong>? Todos os itens serao removidos.</p>
+            <div className="lists-tab__modal lists-tab__modal--confirm" role="dialog" aria-modal="true" aria-label="Confirmar exclusão da lista" onClick={(e) => e.stopPropagation()}>
+              <p>Excluir <strong>{deleteConfirm.name}</strong>? Todos os itens serão removidos.</p>
               <div className="lists-tab__confirm-actions">
                 <button className="lists-tab__confirm-cancel" onClick={() => setDeleteConfirm(null)} type="button">
                   Cancelar
@@ -274,7 +272,7 @@ export default function ListsTab() {
   return (
     <div className="lists-tab lists-tab--item-view">
       <div className="lists-tab__chips">
-        <button className="lists-tab__back" onClick={() => { setActiveListId(null); setEditMode(false) }} type="button">
+        <button className="lists-tab__back" onClick={() => { setActiveListId(null); setEditMode(false) }} type="button" aria-label="Voltar para listas">
           <ArrowLeft size={20} />
         </button>
         <div className="lists-tab__chips-scroll">
@@ -289,7 +287,7 @@ export default function ListsTab() {
               {list.name}
             </button>
           ))}
-          <button className="lists-tab__chip lists-tab__chip--add" onClick={() => setShowListForm(true)} type="button">
+          <button className="lists-tab__chip lists-tab__chip--add" onClick={() => setShowListForm(true)} type="button" aria-label="Criar lista">
             <Plus size={14} />
           </button>
         </div>
@@ -351,7 +349,7 @@ export default function ListsTab() {
                   onClick={() => setCompletedExpanded(!completedExpanded)}
                   type="button"
                 >
-                  <span className="lists-tab__completed-label">Concluidos</span>
+                  <span className="lists-tab__completed-label">Concluídos</span>
                   <span className="lists-tab__completed-badge">{completedItems.length}</span>
                   {completedExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                 </button>
@@ -385,14 +383,14 @@ export default function ListsTab() {
         )}
       </div>
 
-      <button className="lists-tab__fab" onClick={() => setShowItemForm(true)} type="button">
+      <button className="lists-tab__fab" onClick={() => setShowItemForm(true)} type="button" aria-label="Criar item">
         <Plus size={24} />
       </button>
 
       {showListForm && (
         <div className="lists-tab__modal-overlay" onClick={closeListForm}>
-          <div className="lists-tab__modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="lists-tab__modal-title">
+          <div className="lists-tab__modal" role="dialog" aria-modal="true" aria-labelledby="list-editor-title" onClick={(e) => e.stopPropagation()}>
+            <h3 className="lists-tab__modal-title" id="list-editor-title">
               {editList ? 'Renomear lista' : 'Criar lista'}
             </h3>
             <ListForm
@@ -406,8 +404,8 @@ export default function ListsTab() {
 
       {showItemForm && (
         <div className="lists-tab__modal-overlay" onClick={closeItemForm}>
-          <div className="lists-tab__modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="lists-tab__modal-title">
+          <div className="lists-tab__modal" role="dialog" aria-modal="true" aria-labelledby="item-editor-title" onClick={(e) => e.stopPropagation()}>
+            <h3 className="lists-tab__modal-title" id="item-editor-title">
               {editItem ? 'Editar item' : 'Criar item'}
             </h3>
             <ItemForm
@@ -421,8 +419,8 @@ export default function ListsTab() {
 
       {deleteConfirm && (
         <div className="lists-tab__modal-overlay" onClick={() => setDeleteConfirm(null)}>
-          <div className="lists-tab__modal lists-tab__modal--confirm" onClick={(e) => e.stopPropagation()}>
-            <p>Excluir <strong>{deleteConfirm.name}</strong>? Todos os itens serao removidos.</p>
+          <div className="lists-tab__modal lists-tab__modal--confirm" role="dialog" aria-modal="true" aria-label="Confirmar exclusão da lista" onClick={(e) => e.stopPropagation()}>
+            <p>Excluir <strong>{deleteConfirm.name}</strong>? Todos os itens serão removidos.</p>
             <div className="lists-tab__confirm-actions">
               <button className="lists-tab__confirm-cancel" onClick={() => setDeleteConfirm(null)} type="button">
                 Cancelar
@@ -437,7 +435,7 @@ export default function ListsTab() {
 
       {deleteItemConfirm && (
         <div className="lists-tab__modal-overlay" onClick={() => setDeleteItemConfirm(null)}>
-          <div className="lists-tab__modal lists-tab__modal--confirm" onClick={(e) => e.stopPropagation()}>
+          <div className="lists-tab__modal lists-tab__modal--confirm" role="dialog" aria-modal="true" aria-label="Confirmar exclusão do item" onClick={(e) => e.stopPropagation()}>
             <p>Excluir este item?</p>
             <div className="lists-tab__confirm-actions">
               <button className="lists-tab__confirm-cancel" onClick={() => setDeleteItemConfirm(null)} type="button">

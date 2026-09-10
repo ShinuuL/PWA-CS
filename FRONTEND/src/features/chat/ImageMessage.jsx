@@ -5,6 +5,7 @@
 
 import { useState, useCallback } from 'react'
 import { ImageIcon } from 'lucide-react'
+import { usePrivateMedia } from '../../shared/lib/privateMedia'
 
 /**
  * ImageMessage — renders an image inside a chat bubble.
@@ -16,14 +17,15 @@ import { ImageIcon } from 'lucide-react'
  * @param {function} [props.onClick] - Called when image is clicked (opens viewer)
  */
 export default function ImageMessage({ src, alt, dimensions, onClick }) {
+  const media = usePrivateMedia('chat-media', src)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isError, setIsError] = useState(false)
 
   const handleClick = useCallback(() => {
-    onClick?.(src)
-  }, [onClick, src])
+    if (media.url) onClick?.(media.url)
+  }, [onClick, media.url])
 
-  if (isError) {
+  if (isError || media.error) {
     return (
       <div className="chat-image-msg chat-image-msg--error">
         <ImageIcon size={20} />
@@ -44,7 +46,7 @@ export default function ImageMessage({ src, alt, dimensions, onClick }) {
         </div>
       )}
       <img
-        src={src}
+        src={media.url || undefined}
         alt={alt || 'Shared image'}
         className="chat-image-msg__img"
         style={{

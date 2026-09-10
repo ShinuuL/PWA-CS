@@ -244,22 +244,24 @@ export default function AvatarCropModal({ isOpen, onClose, onAvatarUpdated }) {
                   </button>
                   <button
                     className="avatar-crop-upload-btn"
+                    type="button"
                     onClick={handleUpload}
                     disabled={uploading || !completedCrop}
                   >
                     {uploading ? (
                       <span className="avatar-crop-spinner" />
                     ) : (
-                      'Upload'
+                      'Enviar'
                     )}
                   </button>
                 </>
               ) : (
                 <button
                   className="avatar-crop-cancel-btn"
+                  type="button"
                   onClick={handleClose}
                 >
-                  Cancel
+                  Cancelar
                 </button>
               )}
             </div>

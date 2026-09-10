@@ -4,6 +4,13 @@
   margin: 0 auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.settings-page::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .settings-page h2 {
@@ -28,6 +35,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   padding: 0.875rem 1rem;
   background: var(--color-bg-input);
   border-radius: var(--radius-md);
@@ -42,6 +50,9 @@
 .settings-info-value {
   font-size: 0.95rem;
   color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+  min-width: 0;
+  text-align: right;
 }
 
 .btn-danger {
@@ -137,9 +148,10 @@
 }
 
 .settings-toggle-switch {
-  width: 44px;
-  height: 24px;
-  border-radius: 12px;
+  width: 64px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 24px;
   border: none;
   background: #3a3e50;
   position: relative;
@@ -159,8 +171,8 @@
 
 .settings-toggle-knob {
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 12px;
+  left: 12px;
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -202,4 +214,83 @@
   color: var(--color-text-secondary);
   padding: 0.875rem 1rem;
   line-height: 1.5;
+}
+
+.settings-error { color: #ffb4b4; line-height: 1.5; margin-bottom: 1rem; }
+.settings-page button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+
+.settings-page {
+  padding-top: max(1.5rem, env(safe-area-inset-top));
+}
+
+.settings-section {
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  background: rgba(24, 31, 51, 0.72);
+  border: 1px solid rgba(184, 124, 255, 0.18);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 14px 32px rgba(2, 5, 15, 0.16);
+  backdrop-filter: blur(18px);
+}
+
+.settings-section-title {
+  color: #c7a5ff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.settings-info-row,
+.settings-section-toggle,
+.settings-push-message {
+  background: rgba(13, 18, 33, 0.68);
+  border: 1px solid rgba(184, 124, 255, 0.13);
+}
+
+.settings-info-value {
+  color: #f1ecff;
+}
+
+.btn-secondary {
+  min-height: 44px;
+  background: rgba(24, 31, 51, 0.64);
+  border-color: rgba(184, 124, 255, 0.28);
+}
+
+.btn-danger {
+  min-height: 44px;
+  border-color: rgba(255, 107, 107, 0.74);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.settings-toggle-switch.active {
+  background: linear-gradient(135deg, #c28dff, #9560ec);
+  box-shadow: 0 0 0 1px rgba(218, 190, 255, 0.35), 0 6px 15px rgba(112, 65, 203, 0.22);
+}
+
+.settings-confirm-overlay {
+  background: rgba(3, 6, 15, 0.82);
+  z-index: 300;
+}
+
+.settings-confirm-dialog {
+  background: rgba(19, 26, 45, 0.98);
+  border-color: rgba(184, 124, 255, 0.32);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(20px);
+}
+
+.settings-confirm-actions button {
+  min-height: 44px;
+}
+
+.settings-page button:focus-visible {
+  outline-color: #d7b8ff;
+}
+
+@media (max-width: 600px) {
+  .settings-section {
+    padding: 0.875rem;
+    backdrop-filter: blur(12px);
+  }
 }

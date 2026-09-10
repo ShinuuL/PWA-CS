@@ -221,3 +221,42 @@
     padding: 8px 0;
   }
 }
+
+/* Settings inherit the same restrained glass panels used by the chat composer. */
+.chat-settings-page {
+  background: transparent;
+}
+
+.chat-settings-header {
+  background: rgba(15, 20, 37, 0.86);
+  border-bottom: 1px solid rgba(184, 124, 255, 0.2);
+  backdrop-filter: blur(18px);
+}
+
+.chat-settings-card,
+.chat-settings-btn-group {
+  background: rgba(24, 31, 51, 0.76);
+  border: 1px solid rgba(184, 124, 255, 0.18);
+  box-shadow: 0 12px 28px rgba(2, 5, 15, 0.16);
+}
+
+.chat-settings-section-title,
+.chat-settings-input-label {
+  color: #c7a5ff;
+  letter-spacing: 0.11em;
+}
+
+.chat-settings-group-btn {
+  min-height: 40px;
+}
+
+.chat-settings-group-btn.active,
+.chat-settings-toggle.on {
+  background: linear-gradient(135deg, #c28dff, #9560ec);
+  box-shadow: 0 0 0 1px rgba(218, 190, 255, 0.45), 0 7px 18px rgba(112, 65, 203, 0.2);
+}
+
+.chat-settings-page button:focus-visible {
+  outline: 2px solid #d7b8ff;
+  outline-offset: 3px;
+}

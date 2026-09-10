@@ -1,37 +1,37 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { usePairing } from './usePairing'
 import GenerateCode from './GenerateCode'
 import EnterCode from './EnterCode'
 import './pairing.css'
 
 export default function PairingGate({ children }) {
-  const [isPaired, setIsPaired] = useState(null)
   const [showGenerate, setShowGenerate] = useState(false)
-  const { checkPairStatus } = usePairing()
+  const { pair, statusLoading, statusError, checkPairStatus } = usePairing()
 
-  useEffect(() => {
-    checkPairStatus().then((pair) => {
-      setIsPaired(!!pair)
-    })
-  }, [])
+  if (statusLoading) return <div className="loading">Verificando vínculo...</div>
 
-  if (isPaired === null) return <div className="loading">Checking pairing status...</div>
+  if (statusError && !pair) return (
+    <div className="pairing-gate" role="alert">
+      <p>Não foi possível verificar seu vínculo: {statusError}</p>
+      <button className="toggle-button" onClick={() => { void checkPairStatus().catch(() => {}) }}>Tentar novamente</button>
+    </div>
+  )
 
-  if (!isPaired) {
+  if (!pair) {
     return (
       <div className="pairing-gate">
         {showGenerate ? (
           <>
             <GenerateCode />
             <button className="toggle-button" onClick={() => setShowGenerate(false)}>
-              Have a code? Enter it
+              Já tem um código? Digite-o
             </button>
           </>
         ) : (
           <>
             <EnterCode />
             <button className="toggle-button" onClick={() => setShowGenerate(true)}>
-              Don't have a code? Generate one
+              Ainda não tem um código? Gere um
             </button>
           </>
         )}

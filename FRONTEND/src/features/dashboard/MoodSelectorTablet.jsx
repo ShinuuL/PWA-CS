@@ -4,6 +4,9 @@ import { MOODS } from './moodsData'
 
 export default function MoodSelectorTablet({ onOpenCustom }) {
   const myMood = useDashboardStore((s) => s.myMood)
+  const pairId = useDashboardStore((s) => s.pairId)
+  const moodSaving = useDashboardStore((s) => s.moodSaving)
+  const moodError = useDashboardStore((s) => s.moodError)
   const setMood = useDashboardStore((s) => s.setMood)
 
   const handleMoodSelect = (moodType) => {
@@ -23,6 +26,9 @@ export default function MoodSelectorTablet({ onOpenCustom }) {
             key={mood.type}
             className={`mood-card ${myMood?.mood_type === mood.type ? 'mood-card--selected' : ''}`}
             onClick={() => handleMoodSelect(mood.type)}
+            type="button"
+            disabled={!pairId || moodSaving}
+            aria-pressed={myMood?.mood_type === mood.type}
             whileTap={{ scale: 0.95 }}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -33,6 +39,7 @@ export default function MoodSelectorTablet({ onOpenCustom }) {
           </motion.button>
         ))}
       </div>
+      {moodError && <p className="mood-section__error" role="alert">{moodError}</p>}
     </div>
   )
 }

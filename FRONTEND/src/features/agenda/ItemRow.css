@@ -114,3 +114,39 @@
 .item-row__delete:hover {
   color: #FF6B6B;
 }
+
+.item-row {
+  min-height: 48px;
+  background: rgba(24, 31, 51, 0.72);
+  border: 1px solid rgba(184, 124, 255, 0.16);
+  box-shadow: 0 8px 20px rgba(2, 5, 15, 0.12);
+}
+
+.item-row:hover {
+  background: rgba(35, 44, 70, 0.8);
+  border-color: rgba(184, 124, 255, 0.3);
+}
+
+.item-row--selected {
+  background: rgba(184, 124, 255, 0.16);
+  border-color: rgba(202, 162, 255, 0.58);
+}
+
+.item-row__checkbox {
+  width: 20px;
+  height: 20px;
+}
+
+.item-row__delete {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+
+.item-row__delete:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.item-row:focus-within {
+  border-color: rgba(202, 162, 255, 0.58);
+}

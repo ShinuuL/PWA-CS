@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast'
 import { useState, useEffect } from 'react'
 import { usePairing } from '../pairing/usePairing'
 import useNotesStore from '../../stores/notesStore'
@@ -12,7 +13,8 @@ import ListsTab from './ListsTab'
 import './agenda.css'
 
 export default function AgendaPage() {
-  const { checkPairStatus } = usePairing()
+  const { pair } = usePairing()
+  const activePairId = pair?.id
   const initializeAgenda = useAgendaStore((s) => s.initializeAgenda)
   const cleanupAgenda = useAgendaStore((s) => s.cleanup)
   const initializeNotes = useNotesStore((s) => s.initializeNotes)
@@ -25,23 +27,19 @@ export default function AgendaPage() {
   const [activeTab, setActiveTab] = useState('events')
 
   useEffect(() => {
-    let cancelled = false
-    checkPairStatus().then((pair) => {
-      if (!cancelled && pair) {
-        initializeAgenda(pair.id)
-        initializeReminders(pair.id)
-        initializeNotes(pair.id)
-        initializeTodos(pair.id)
-      }
-    })
+    if (activePairId) {
+        void Promise.resolve(initializeAgenda(activePairId)).catch(error => toast.error(error.message || 'Não foi possível carregar os dados.'))
+        void Promise.resolve(initializeReminders(activePairId)).catch(error => toast.error(error.message || 'Não foi possível carregar os dados.'))
+        void Promise.resolve(initializeNotes(activePairId)).catch(error => toast.error(error.message || 'Não foi possível carregar os dados.'))
+        void Promise.resolve(initializeTodos(activePairId)).catch(error => toast.error(error.message || 'Não foi possível carregar os dados.'))
+    }
     return () => {
-      cancelled = true
       cleanupAgenda()
       cleanupReminders()
       cleanupNotes()
       cleanupTodos()
     }
-  }, [checkPairStatus, initializeAgenda, cleanupAgenda, initializeReminders, cleanupReminders, initializeNotes, cleanupNotes, initializeTodos, cleanupTodos])
+  }, [activePairId, initializeAgenda, cleanupAgenda, initializeReminders, cleanupReminders, initializeNotes, cleanupNotes, initializeTodos, cleanupTodos])
 
   const tabs = [
     { id: 'events', label: 'Eventos' },

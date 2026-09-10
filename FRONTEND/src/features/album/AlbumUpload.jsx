@@ -1,13 +1,11 @@
 import { useState, useRef } from 'react'
-import { Plus, Camera, Loader2 } from 'lucide-react'
-import { compressImage } from '../../shared/lib/imageCompress'
+import { Plus, Loader2 } from 'lucide-react'
 import useAlbumStore from '../../stores/albumStore'
 import './album.css'
 
 export default function AlbumUpload() {
   const [preview, setPreview] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
-  const [savings, setSavings] = useState(null)
   const [caption, setCaption] = useState('')
   const fileInputRef = useRef(null)
   const uploading = useAlbumStore((s) => s.uploading)
@@ -20,34 +18,21 @@ export default function AlbumUpload() {
     // Reset input so same file can be re-selected
     e.target.value = ''
 
-    // Show preview with compression info
-    try {
-      const result = await compressImage(file)
-      setPreview(file)
-      setPreviewUrl(URL.createObjectURL(result.blob))
-      const pct = result.originalSize > 0
-        ? Math.round((1 - result.compressedSize / result.originalSize) * 100)
-        : 0
-      setSavings(pct > 0 ? `Compressed ${pct}%` : null)
-    } catch {
-      // Fallback: show original
-      setPreview(file)
-      setPreviewUrl(URL.createObjectURL(file))
-      setSavings(null)
-    }
+    // Keep the original for preview; the store compresses exactly once on upload.
+    setPreview(file)
+    setPreviewUrl(URL.createObjectURL(file))
   }
 
   const handleUpload = async () => {
     if (!preview) return
-    await uploadAlbumPhoto(preview, caption)
-    handleClose()
+    const uploaded = await uploadAlbumPhoto(preview, caption)
+    if (uploaded) handleClose()
   }
 
   const handleClose = () => {
     if (previewUrl) URL.revokeObjectURL(previewUrl)
     setPreview(null)
     setPreviewUrl(null)
-    setSavings(null)
     setCaption('')
   }
 
@@ -57,7 +42,8 @@ export default function AlbumUpload() {
         className="album-upload-btn"
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
-        title="Add photo"
+        title="Adicionar foto"
+        aria-label="Adicionar foto"
       >
         {uploading ? <Loader2 size={24} className="spin" /> : <Plus size={24} />}
       </button>
@@ -72,19 +58,19 @@ export default function AlbumUpload() {
 
       {preview && (
         <div className="album-upload-preview" onClick={handleClose}>
-          <div className="album-upload-preview-card" onClick={(e) => e.stopPropagation()}>
+          <div className="album-upload-preview-card" role="dialog" aria-modal="true" aria-labelledby="album-upload-title" onClick={(e) => e.stopPropagation()}>
+            <h2 className="sr-only" id="album-upload-title">Enviar foto para o álbum</h2>
             <img
               className="album-upload-preview-img"
               src={previewUrl}
               alt="Preview"
             />
-            {savings && (
-              <div className="album-upload-preview-savings">{savings}</div>
-            )}
+            <label className="sr-only" htmlFor="album-caption">Legenda (opcional)</label>
             <input
+              id="album-caption"
               className="album-upload-preview-caption"
               type="text"
-              placeholder="Add a caption (optional)"
+              placeholder="Adicione uma legenda (opcional)"
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               maxLength={200}
@@ -94,14 +80,14 @@ export default function AlbumUpload() {
                 className="album-upload-preview-cancel"
                 onClick={handleClose}
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 className="album-upload-preview-confirm"
                 onClick={handleUpload}
                 disabled={uploading}
               >
-                {uploading ? 'Uploading...' : 'Upload'}
+                {uploading ? 'Enviando…' : 'Enviar'}
               </button>
             </div>
           </div>

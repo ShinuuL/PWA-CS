@@ -40,6 +40,8 @@ function applyThemeToDOM(theme) {
 
 const useChatStore = create((set, get) => ({
   messages: [],
+  generation: 0,
+  sessionUserId: null,
   loading: false,
   sending: false,
   error: null,
@@ -65,9 +67,13 @@ const useChatStore = create((set, get) => ({
     const { user } = useAuthStore.getState()
     const current = get()
     if (!user || !pairId) return
-    if (current.pairId === pairId && current.subscription) return
+    if (current.pairId === pairId && current.sessionUserId === user.id && current.subscription) return
 
-    set({ loading: true, pairId, error: null })
+    get().cleanup()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user.id
+
+    set({ loading: true, sessionUserId: user.id, pairId, error: null })
 
     const { settings } = get()
     applyThemeToDOM(settings.theme)
@@ -79,6 +85,7 @@ const useChatStore = create((set, get) => ({
         .eq('pair_id', pairId)
         .order('created_at', { ascending: true })
 
+      if (!isCurrent()) return
       if (error) throw error
 
       set({ messages: messages || [], loading: false })
@@ -88,10 +95,12 @@ const useChatStore = create((set, get) => ({
         p_user_id: user.id
       })
 
+      if (!isCurrent()) return
       // Clean up any existing subscription first
       const oldChannel = get().subscription
       if (oldChannel) {
         await supabase.removeChannel(oldChannel)
+        if (!isCurrent()) return
       }
 
       const channel = supabase
@@ -102,6 +111,7 @@ const useChatStore = create((set, get) => ({
           table: 'messages',
           filter: `pair_id=eq.${pairId}`
         }, (payload) => {
+          if (!isCurrent()) return
           const { eventType, new: newMsg, old: oldMsg } = payload
           const state = get()
 
@@ -111,7 +121,9 @@ const useChatStore = create((set, get) => ({
               const matchIdx = state.messages.findIndex(m => m.temp_id && pendingIds[m.temp_id])
               if (matchIdx >= 0) {
                 const newMessages = [...state.messages]
-                const { temp_id, ...realMsg } = newMsg
+                const oldMediaUrl = newMessages[matchIdx].media_url
+                if (oldMediaUrl?.startsWith('blob:')) URL.revokeObjectURL(oldMediaUrl)
+                const { temp_id: _tempId, ...realMsg } = newMsg
                 newMessages[matchIdx] = { ...realMsg }
                 const newPending = { ...pendingIds }
                 delete newPending[state.messages[matchIdx].temp_id]
@@ -156,6 +168,7 @@ const useChatStore = create((set, get) => ({
           schema: 'public',
           table: 'reactions'
         }, (payload) => {
+          if (!isCurrent()) return
           const { eventType, new: newReaction, old: oldReaction } = payload
           const state = get()
 
@@ -183,6 +196,7 @@ const useChatStore = create((set, get) => ({
           table: 'typing_status',
           filter: `pair_id=eq.${pairId}`
         }, (payload) => {
+          if (!isCurrent()) return
           const { new: status } = payload
           if (status.user_id !== user.id) {
             set({ partnerTyping: status.is_typing })
@@ -192,12 +206,15 @@ const useChatStore = create((set, get) => ({
 
       set({ subscription: channel })
     } catch (err) {
+      if (!isCurrent()) return
       set({ error: err.message, loading: false })
     }
   },
 
   sendMessage: async (content, replyToId = null) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { pairId, messages, offlineQueue, replyTo } = get()
     if (!user || !pairId || !content.trim()) return
 
@@ -241,16 +258,29 @@ const useChatStore = create((set, get) => ({
         content: content.trim(),
         reply_to: replyId
       })
+      if (!isCurrent()) return
       if (error) throw error
     } catch (err) {
-      set({ error: err.message, sending: false })
+      if (!isCurrent()) return
+      const failed = get().messages.find(message => message.id === tempId)
+      if (failed?.media_url?.startsWith('blob:')) URL.revokeObjectURL(failed.media_url)
+      const pending = { ...get().pendingTempIds }
+      delete pending[tempId]
+      set({
+        messages: get().messages.filter(message => message.id !== tempId),
+        pendingTempIds: pending,
+        error: err.message,
+        sending: false
+      })
     } finally {
-      set({ sending: false })
+      if (isCurrent()) set({ sending: false })
     }
   },
 
   sendVoiceMessage: async (voiceBlob, durationSeconds = 0) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { pairId, messages } = get()
     if (!user || !pairId || !voiceBlob) return
 
@@ -301,15 +331,8 @@ const useChatStore = create((set, get) => ({
         .from('chat-media')
         .upload(filePath, voiceBlob, { contentType: voiceBlob.type || 'audio/webm' })
 
+      if (!isCurrent()) return
       if (uploadError) throw uploadError
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('chat-media')
-        .getPublicUrl(filePath)
-
-      const publicUrl = urlData?.publicUrl
-      if (!publicUrl) throw new Error('Failed to get public URL')
 
       // Insert message into database
       const { error: insertError } = await supabase.from('messages').insert({
@@ -317,21 +340,33 @@ const useChatStore = create((set, get) => ({
         sender_id: user.id,
         content: '',
         message_type: 'voice',
-        media_url: publicUrl,
+        media_url: filePath,
         media_duration: durationSeconds
       })
+      if (!isCurrent()) return
       if (insertError) throw insertError
 
       // Blob URL will be cleaned up when component unmounts or realtime replaces it
     } catch (err) {
-      set({ error: err.message, sending: false })
+      if (!isCurrent()) return
+      if (tempBlobUrl.startsWith('blob:')) URL.revokeObjectURL(tempBlobUrl)
+      const pending = { ...get().pendingTempIds }
+      delete pending[tempId]
+      set({
+        messages: get().messages.filter(message => message.id !== tempId),
+        pendingTempIds: pending,
+        error: err.message,
+        sending: false
+      })
     } finally {
-      set({ sending: false })
+      if (isCurrent()) set({ sending: false })
     }
   },
 
   sendImageMessage: async (imageBlob, dimensions = {}) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { pairId, messages } = get()
     if (!user || !pairId || !imageBlob) return
 
@@ -384,15 +419,8 @@ const useChatStore = create((set, get) => ({
         .from('chat-media')
         .upload(filePath, imageBlob, { contentType: imageBlob.type || 'image/jpeg' })
 
+      if (!isCurrent()) return
       if (uploadError) throw uploadError
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('chat-media')
-        .getPublicUrl(filePath)
-
-      const publicUrl = urlData?.publicUrl
-      if (!publicUrl) throw new Error('Failed to get public URL')
 
       // Insert message into database
       const { error: insertError } = await supabase.from('messages').insert({
@@ -400,30 +428,52 @@ const useChatStore = create((set, get) => ({
         sender_id: user.id,
         content: '',
         message_type: 'image',
-        media_url: publicUrl,
+        media_url: filePath,
         media_width: dimensions.width || null,
         media_height: dimensions.height || null
       })
+      if (!isCurrent()) return
       if (insertError) throw insertError
 
       // Blob URL will be cleaned up when component unmounts or realtime replaces it
     } catch (err) {
-      set({ error: err.message, sending: false })
+      if (!isCurrent()) return
+      if (tempBlobUrl.startsWith('blob:')) URL.revokeObjectURL(tempBlobUrl)
+      const pending = { ...get().pendingTempIds }
+      delete pending[tempId]
+      set({
+        messages: get().messages.filter(message => message.id !== tempId),
+        pendingTempIds: pending,
+        error: err.message,
+        sending: false
+      })
     } finally {
-      set({ sending: false })
+      if (isCurrent()) set({ sending: false })
     }
   },
 
   syncOfflineQueue: async () => {
+    const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { offlineQueue } = get()
     if (offlineQueue.length === 0) return
 
     set({ sending: true })
 
     for (const msg of offlineQueue) {
+      if (!isCurrent()) return
+      if (msg.sender_id !== user?.id || msg.pair_id !== get().pairId) continue
       // Skip voice/image messages that can't be synced (blob no longer available)
       if (msg.message_type === 'voice' || msg.message_type === 'image') {
-        set({ error: 'Media messages cannot be synced offline. Please resend when online.' })
+        if (msg.media_url?.startsWith('blob:')) URL.revokeObjectURL(msg.media_url)
+        const pending = { ...get().pendingTempIds }
+        delete pending[msg.temp_id]
+        set({
+          messages: get().messages.filter(message => message.id !== msg.id),
+          pendingTempIds: pending,
+          error: 'A mídia não pôde ser enviada offline. Envie novamente quando estiver online.'
+        })
         continue
       }
       try {
@@ -433,17 +483,21 @@ const useChatStore = create((set, get) => ({
           content: msg.content,
           reply_to: msg.reply_to
         })
+        if (!isCurrent()) return
         if (error) throw error
       } catch (err) {
+        if (!isCurrent()) return
         set({ error: `Failed to sync: ${err.message}` })
       }
     }
 
-    set({ offlineQueue: [], sending: false })
+    if (isCurrent()) set({ offlineQueue: [], sending: false })
   },
 
   deleteMessage: async (messageId, forEveryone = false) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { messages } = get()
     if (!user) return
 
@@ -461,8 +515,10 @@ const useChatStore = create((set, get) => ({
         .update({ deleted: true, deleted_for_everyone: forEveryone })
         .eq('id', messageId)
         .eq('sender_id', user.id)
+      if (!isCurrent()) return
       if (error) throw error
     } catch (err) {
+      if (!isCurrent()) return
       set({ error: err.message })
     }
   },
@@ -481,33 +537,47 @@ const useChatStore = create((set, get) => ({
     deleteForEveryone: false
   }),
   confirmDelete: async () => {
+    const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { deleteTarget, deleteForEveryone } = get()
     if (deleteTarget) {
       await get().deleteMessage(deleteTarget.id, deleteForEveryone)
     }
-    get().closeDeleteConfirm()
+    if (isCurrent()) get().closeDeleteConfirm()
   },
 
   setShowReactionPicker: (messageId) => set({ showReactionPicker: messageId }),
 
   addReaction: async (messageId, emoji) => {
     const { user } = useAuthStore.getState()
-    const { messages } = get()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return
 
-    const existing = messages
+    const existing = get().messages
       .find(m => m.id === messageId)
       ?.reactions?.find(r => r.user_id === user.id && r.emoji === emoji)
 
     if (existing) {
       set({
-        messages: messages.map(m =>
+        messages: get().messages.map(m =>
           m.id === messageId
             ? { ...m, reactions: (m.reactions || []).filter(r => r.id !== existing.id) }
             : m
         )
       })
-      await supabase.from('reactions').delete().eq('id', existing.id)
+      const { error } = await supabase.from('reactions').delete().eq('id', existing.id)
+      if (error && isCurrent()) {
+        set({
+          messages: get().messages.map(m =>
+            m.id === messageId
+              ? { ...m, reactions: [...(m.reactions || []), existing] }
+              : m
+          ),
+          error: error.message
+        })
+      }
     } else {
       try {
         const { data, error } = await supabase
@@ -515,15 +585,20 @@ const useChatStore = create((set, get) => ({
           .insert({ message_id: messageId, user_id: user.id, emoji })
           .select()
           .single()
+        if (!isCurrent()) return
         if (error) throw error
         set({
-          messages: messages.map(m =>
-            m.id === messageId
-              ? { ...m, reactions: [...(m.reactions || []), data] }
-              : m
-          )
+          messages: get().messages.map(m => {
+            if (m.id !== messageId || !data) return m
+            const reactions = m.reactions || []
+            if (reactions.some(r => r.id === data.id || (r.user_id === data.user_id && r.emoji === data.emoji))) {
+              return m
+            }
+            return { ...m, reactions: [...reactions, data] }
+          })
         })
       } catch (err) {
+        if (!isCurrent()) return
         set({ error: err.message })
       }
     }
@@ -542,6 +617,8 @@ const useChatStore = create((set, get) => ({
 
   setTyping: async (isTyping) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { pairId, typingTimeout } = get()
     if (!user || !pairId) return
 
@@ -554,9 +631,10 @@ const useChatStore = create((set, get) => ({
       updated_at: new Date().toISOString()
     }, { onConflict: 'pair_id,user_id' })
 
+    if (!isCurrent()) return
     if (isTyping) {
       const timeout = setTimeout(() => {
-        get().setTyping(false)
+        if (isCurrent()) get().setTyping(false)
       }, 3000)
       set({ typingTimeout: timeout })
     }
@@ -609,6 +687,9 @@ const useChatStore = create((set, get) => ({
   },
 
   cleanup: () => {
+    set({ generation: get().generation + 1, sessionUserId: null })
+    const blobUrls = new Set([...get().messages, ...get().offlineQueue].map(message => message.media_url).filter(url => url?.startsWith('blob:')))
+    blobUrls.forEach(url => URL.revokeObjectURL(url))
     const { subscription, typingTimeout } = get()
     if (subscription) {
       supabase.removeChannel(subscription)
@@ -617,7 +698,9 @@ const useChatStore = create((set, get) => ({
     set({
       subscription: null, typingTimeout: null, messages: [], pairId: null,
       replyTo: null, showDeleteConfirm: false, deleteTarget: null, showReactionPicker: null,
-      isInChat: false
+      isInChat: false, offlineQueue: [], pendingTempIds: {}, partnerTyping: false,
+      loading: false, sending: false, error: null,
+      deleteForEveryone: false, isAtBottom: true
     })
   }
 }))

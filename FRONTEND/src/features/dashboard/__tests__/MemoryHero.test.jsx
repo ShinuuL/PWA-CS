@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 
 const { mockCheckPairStatus, mockRpc } = vi.hoisted(() => ({
   mockCheckPairStatus: vi.fn(),
@@ -14,11 +14,31 @@ vi.mock('../../../shared/lib/supabase', () => ({
   supabase: { rpc: mockRpc }
 }))
 
+vi.mock('../../../shared/lib/privateMedia', () => ({
+  usePrivateMedia: (_bucket, source) => ({ url: source, loading: false, error: null }),
+}))
+
 import MemoryHero from '../MemoryHero'
 
 describe('MemoryHero', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+  })
+
+  it('does not request a private photo after unmount while pairing is pending', async () => {
+    let resolve
+    mockCheckPairStatus.mockReturnValue(new Promise(r => { resolve = r }))
+    const view = render(<MemoryHero />)
+    view.unmount()
+    await act(async () => { resolve({ id: 'old-pair' }) })
+    expect(mockRpc).not.toHaveBeenCalled()
+  })
+
+  it('handles a pairing query failure without an unhandled rejection', async () => {
+    mockCheckPairStatus.mockRejectedValue(new Error('offline'))
+    render(<MemoryHero />)
+    await waitFor(() => expect(screen.getByText('Adicione sua primeira foto juntos')).toBeTruthy())
+    expect(mockRpc).not.toHaveBeenCalled()
   })
 
   it('shows loading skeleton initially', () => {

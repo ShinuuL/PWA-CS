@@ -5,6 +5,8 @@ import useAuthStore from './authStore'
 const useTodoStore = create((set, get) => ({
   lists: [],
   items: [],
+  generation: 0,
+  sessionUserId: null,
   loading: false,
   error: null,
   pairId: null,
@@ -14,9 +16,13 @@ const useTodoStore = create((set, get) => ({
     const { user } = useAuthStore.getState()
     const current = get()
     if (!user || !pairId) return
-    if (current.pairId === pairId && current.subscription) return
+    if (current.pairId === pairId && current.sessionUserId === user.id && current.subscription) return
 
-    set({ loading: true, pairId, error: null })
+    get().cleanup()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user.id
+
+    set({ loading: true, sessionUserId: user.id, pairId, error: null })
 
     try {
       // Fetch lists
@@ -26,6 +32,7 @@ const useTodoStore = create((set, get) => ({
         .eq('pair_id', pairId)
         .order('created_at', { ascending: true })
 
+      if (!isCurrent()) return
       if (listsError) throw listsError
       set({ lists: lists || [] })
 
@@ -40,6 +47,7 @@ const useTodoStore = create((set, get) => ({
           .order('due_at', { ascending: true, nullsFirst: false })
           .order('created_at', { ascending: true })
 
+        if (!isCurrent()) return
         if (itemsError) throw itemsError
         items = itemsData || []
       }
@@ -60,6 +68,7 @@ const useTodoStore = create((set, get) => ({
           table: 'todo_lists',
           filter: `pair_id=eq.${pairId}`
         }, (payload) => {
+          if (!isCurrent()) return
           const state = get()
           if (payload.eventType === 'INSERT') {
             const alreadyPresent = state.lists.some(l => l.id === payload.new.id)
@@ -82,6 +91,7 @@ const useTodoStore = create((set, get) => ({
           table: 'todo_items',
           filter: `list_id=in.(${listIds.join(',')})`
         }, (payload) => {
+          if (!isCurrent()) return
           const state = get()
           if (payload.eventType === 'INSERT') {
             const alreadyPresent = state.items.some(i => i.id === payload.new.id)
@@ -100,12 +110,15 @@ const useTodoStore = create((set, get) => ({
 
       set({ subscription: channel })
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       set({ error: err.message, loading: false })
     }
   },
 
   createList: async ({ name, color = '#B87CFF' }) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { pairId } = get()
     if (!user || !pairId || !name.trim()) return { error: 'Name is required' }
 
@@ -136,12 +149,14 @@ const useTodoStore = create((set, get) => ({
         .select()
         .single()
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
 
       // Replace optimistic with real data
       set({ lists: get().lists.map(l => l.id === tempId ? newList : l) })
       return { success: true, list: newList }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback optimistic update
       set({ lists: get().lists.filter(l => l.id !== tempId) })
       return { error: err.message }
@@ -150,6 +165,8 @@ const useTodoStore = create((set, get) => ({
 
   updateList: async (listId, updates) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const previousLists = get().lists
@@ -165,9 +182,11 @@ const useTodoStore = create((set, get) => ({
         .update(updates)
         .eq('id', listId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ lists: previousLists })
       return { error: err.message }
@@ -176,6 +195,8 @@ const useTodoStore = create((set, get) => ({
 
   deleteList: async (listId) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const previousLists = get().lists
@@ -193,9 +214,11 @@ const useTodoStore = create((set, get) => ({
         .delete()
         .eq('id', listId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ lists: previousLists, items: previousItems })
       return { error: err.message }
@@ -204,6 +227,8 @@ const useTodoStore = create((set, get) => ({
 
   createItem: async ({ list_id, title, assigned_to = null, due_at = null }) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     const { pairId } = get()
     if (!user || !pairId || !title.trim()) return { error: 'Title is required' }
 
@@ -234,12 +259,14 @@ const useTodoStore = create((set, get) => ({
         .select()
         .single()
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
 
       // Replace optimistic with real data
       set({ items: get().items.map(i => i.id === tempId ? newItem : i) })
       return { success: true, item: newItem }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback optimistic update
       set({ items: get().items.filter(i => i.id !== tempId) })
       return { error: err.message }
@@ -248,6 +275,8 @@ const useTodoStore = create((set, get) => ({
 
   updateItem: async (itemId, updates) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const previousItems = get().items
@@ -263,9 +292,11 @@ const useTodoStore = create((set, get) => ({
         .update(updates)
         .eq('id', itemId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ items: previousItems })
       return { error: err.message }
@@ -274,6 +305,8 @@ const useTodoStore = create((set, get) => ({
 
   toggleItem: async (itemId) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const item = get().items.find(i => i.id === itemId)
@@ -292,9 +325,11 @@ const useTodoStore = create((set, get) => ({
         .update({ completed: !item.completed })
         .eq('id', itemId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ items: previousItems })
       return { error: err.message }
@@ -303,6 +338,8 @@ const useTodoStore = create((set, get) => ({
 
   deleteItem: async (itemId) => {
     const { user } = useAuthStore.getState()
+    const generation = get().generation
+    const isCurrent = () => get().generation === generation && useAuthStore.getState().user?.id === user?.id
     if (!user) return { error: 'Not authenticated' }
 
     const previousItems = get().items
@@ -316,9 +353,11 @@ const useTodoStore = create((set, get) => ({
         .delete()
         .eq('id', itemId)
 
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       if (error) throw error
       return { success: true }
     } catch (err) {
+      if (!isCurrent()) return { error: 'Sessão alterada' }
       // Rollback on error
       set({ items: previousItems })
       return { error: err.message }
@@ -341,6 +380,7 @@ const useTodoStore = create((set, get) => ({
 
   cleanup: () => {
     const { subscription } = get()
+    set({ generation: get().generation + 1, sessionUserId: null, error: null })
     if (subscription) {
       supabase.removeChannel(subscription)
     }

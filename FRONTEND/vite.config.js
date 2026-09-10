@@ -32,13 +32,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         navigateFallback: 'index.html',
         importScripts: ['push-handler.js'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/storage/,
-            handler: 'StaleWhileRevalidate',
-            options: { cacheName: 'supabase-storage' }
-          }
-        ]
+        // Private media is downloaded with the current session and held in memory.
+        runtimeCaching: []
       }
     })
   ],

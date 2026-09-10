@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { X, Bug, Lightbulb, Wrench, HelpCircle, Loader2 } from 'lucide-react'
 import { supabase } from '../../shared/lib/supabase'
 import useAuthStore from '../../stores/authStore'
+import { useDialogFocus } from '../../hooks/useDialogFocus'
 import './BugReport.css'
 
 const CATEGORIES = [
@@ -18,6 +19,7 @@ export default function BugReportModal({ onClose }) {
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState(null)
   const user = useAuthStore((s) => s.user)
+  const dialogRef = useDialogFocus(true, onClose)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -46,7 +48,7 @@ export default function BugReportModal({ onClose }) {
   if (submitted) {
     return (
       <div className="bug-report-overlay" onClick={onClose}>
-        <div className="bug-report-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="bug-report-modal" ref={dialogRef} role="dialog" aria-modal="true" aria-label="Relato enviado" tabIndex={-1} onClick={(e) => e.stopPropagation()}>
           <div className="bug-report-success">
             <div className="bug-report-success-icon">✓</div>
             <h3>Obrigado!</h3>
@@ -62,10 +64,10 @@ export default function BugReportModal({ onClose }) {
 
   return (
     <div className="bug-report-overlay" onClick={onClose}>
-      <div className="bug-report-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="bug-report-modal" ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="bug-report-title" tabIndex={-1} onClick={(e) => e.stopPropagation()}>
         <div className="bug-report-header">
-          <h3>Reportar Problema</h3>
-          <button className="bug-report-close" onClick={onClose}>
+          <h3 id="bug-report-title">Reportar Problema</h3>
+          <button className="bug-report-close" onClick={onClose} aria-label="Fechar relato">
             <X size={20} />
           </button>
         </div>
@@ -80,6 +82,7 @@ export default function BugReportModal({ onClose }) {
                   <button
                     key={cat.value}
                     type="button"
+                    aria-pressed={category === cat.value}
                     className={`bug-report-category ${category === cat.value ? 'bug-report-category--active' : ''}`}
                     onClick={() => setCategory(cat.value)}
                   >
@@ -106,7 +109,7 @@ export default function BugReportModal({ onClose }) {
             <span className="bug-report-charcount">{description.length}/2000</span>
           </div>
 
-          {error && <p className="bug-report-error">{error}</p>}
+          {error && <p className="bug-report-error" role="alert">{error}</p>}
 
           <div className="bug-report-actions">
             <button type="button" className="bug-report-btn bug-report-btn--cancel" onClick={onClose}>

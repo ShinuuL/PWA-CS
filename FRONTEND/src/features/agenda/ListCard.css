@@ -87,3 +87,36 @@
 .list-card__menu-item--danger {
   color: #FF6B6B;
 }
+
+.list-card {
+  background: rgba(24, 31, 51, 0.76);
+  border: 1px solid rgba(184, 124, 255, 0.18);
+  box-shadow: 0 12px 28px rgba(2, 5, 15, 0.18);
+}
+
+.list-card:hover {
+  border-color: rgba(202, 162, 255, 0.44);
+  box-shadow: 0 16px 34px rgba(2, 5, 15, 0.26);
+}
+
+.list-card__progress {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.list-card__menu {
+  background: rgba(19, 26, 45, 0.98);
+  border-color: rgba(184, 124, 255, 0.3);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(18px);
+  z-index: 300;
+}
+
+.list-card__menu-item {
+  min-height: 44px;
+}
+
+.list-card:focus-visible,
+.list-card__menu-item:focus-visible {
+  outline: 2px solid #d7b8ff;
+  outline-offset: 3px;
+}

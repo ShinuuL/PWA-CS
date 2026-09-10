@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: var(--color-bg-dark);
+  background: transparent;
   padding: 1rem;
   padding-bottom: env(safe-area-inset-bottom, 0);
   overflow-y: auto;
@@ -841,4 +841,192 @@
 .note-editor__btn--submit:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Shared calendar, reminder and note surfaces stay readable over the ambient field. */
+.agenda {
+  background: transparent;
+}
+
+.agenda__tabs {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 0.75rem 0.75rem 0.5rem;
+  background: linear-gradient(to bottom, rgba(10, 12, 20, 0.88), rgba(10, 12, 20, 0));
+}
+
+.segmented-tabs {
+  padding: 0.25rem;
+  background: rgba(17, 23, 42, 0.78);
+  border: 1px solid rgba(184, 124, 255, 0.2);
+  border-radius: 14px;
+  box-shadow: 0 10px 26px rgba(2, 5, 15, 0.18);
+  backdrop-filter: blur(16px);
+}
+
+.segmented-tabs__tab {
+  min-height: 40px;
+  color: var(--color-text-secondary);
+}
+
+.segmented-tabs__tab--active {
+  background: linear-gradient(135deg, rgba(194, 141, 255, 0.94), rgba(149, 96, 236, 0.94));
+  color: #fff;
+  box-shadow: 0 5px 14px rgba(112, 65, 203, 0.28);
+}
+
+.calendar-grid,
+.events-tab__empty,
+.reminders-tab__empty,
+.notes-tab__empty,
+.notes-tab--error,
+.lists-tab__empty,
+.lists-tab__empty-items {
+  background: rgba(24, 31, 51, 0.72);
+  border-color: rgba(184, 124, 255, 0.25);
+  box-shadow: 0 14px 32px rgba(2, 5, 15, 0.16);
+  backdrop-filter: blur(16px);
+}
+
+.calendar-grid__day {
+  min-height: 42px;
+  border-radius: 12px;
+}
+
+.calendar-grid__day:hover {
+  background: rgba(184, 124, 255, 0.13);
+}
+
+.calendar-grid__day--today {
+  box-shadow: inset 0 0 0 1px rgba(184, 124, 255, 0.64);
+}
+
+.calendar-grid__day--selected {
+  background: linear-gradient(135deg, #c28dff, #9560ec);
+  box-shadow: 0 6px 16px rgba(112, 65, 203, 0.28);
+}
+
+.event-row,
+.note-card,
+.reminder-card,
+.lists-tab__items-header,
+.lists-tab__completed-section,
+.reminders-tab__completed-section {
+  background: rgba(24, 31, 51, 0.72);
+  border-color: rgba(184, 124, 255, 0.16);
+  box-shadow: 0 9px 22px rgba(2, 5, 15, 0.14);
+}
+
+.event-row {
+  margin-bottom: 0.5rem;
+  padding: 0.875rem;
+  border: 1px solid rgba(184, 124, 255, 0.16);
+  border-radius: var(--radius-md);
+}
+
+.event-row__category,
+.lists-tab__completed-badge,
+.reminders-tab__completed-badge {
+  background: rgba(184, 124, 255, 0.16);
+  color: #d7b8ff;
+}
+
+.events-tab__modal-overlay,
+.notes-tab__modal-overlay,
+.reminders-tab__modal-overlay,
+.lists-tab__modal-overlay {
+  padding: 1rem;
+  background: rgba(3, 6, 15, 0.82);
+  z-index: 300;
+}
+
+.events-tab__modal,
+.notes-tab__modal,
+.reminders-tab__modal,
+.lists-tab__modal {
+  background: rgba(19, 26, 45, 0.98);
+  border: 1px solid rgba(184, 124, 255, 0.3);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(20px);
+}
+
+.event-form__input,
+.event-form__textarea,
+.event-form__select,
+.note-editor__input,
+.note-editor__textarea,
+.reminder-form__input,
+.reminder-form__textarea,
+.reminder-form__select,
+.list-form__input,
+.item-form__input {
+  min-height: 44px;
+  background: rgba(13, 18, 33, 0.76);
+  border-color: rgba(184, 124, 255, 0.24);
+}
+
+.event-form__input:focus,
+.event-form__textarea:focus,
+.event-form__select:focus,
+.note-editor__input:focus,
+.note-editor__textarea:focus,
+.reminder-form__input:focus,
+.reminder-form__textarea:focus,
+.reminder-form__select:focus,
+.list-form__input:focus,
+.item-form__input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(184, 124, 255, 0.15);
+}
+
+.event-form__btn--submit,
+.note-editor__btn--submit,
+.reminder-form__btn--submit,
+.list-form__submit,
+.item-form__submit,
+.events-tab__retry,
+.notes-tab__retry,
+.reminders-tab__retry,
+.lists-tab__retry,
+.events-tab__empty-cta,
+.reminders-tab__empty-cta,
+.lists-tab__empty-cta {
+  background: linear-gradient(135deg, #c28dff, #9560ec);
+  box-shadow: 0 7px 18px rgba(112, 65, 203, 0.24);
+}
+
+.events-tab__fab,
+.reminders-tab__fab,
+.notes-tab__fab,
+.lists-tab__fab {
+  background: linear-gradient(135deg, #c28dff, #9560ec);
+  box-shadow: 0 10px 24px rgba(112, 65, 203, 0.36);
+  z-index: 30;
+}
+
+.agenda button:focus-visible,
+.agenda input:focus-visible,
+.agenda textarea:focus-visible,
+.agenda select:focus-visible {
+  outline: 2px solid #d7b8ff;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .agenda__tabs {
+    padding: 0.5rem 0.5rem 0.375rem;
+  }
+
+  .segmented-tabs {
+    backdrop-filter: blur(12px);
+  }
+
+  .events-tab__modal,
+  .notes-tab__modal,
+  .reminders-tab__modal,
+  .lists-tab__modal {
+    width: min(100%, 420px);
+    max-height: calc(100dvh - 2rem);
+  }
 }

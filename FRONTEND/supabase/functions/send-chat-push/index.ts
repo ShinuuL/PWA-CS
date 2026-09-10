@@ -1,64 +1,9 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import * as webpush from "jsr:@negrel/webpush";
-import { normalizeVapidKeyPair } from "../_shared/vapid.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.110.8";
+import * as webpush from "jsr:@negrel/webpush@0.5.0";
+import { requireInternal, requireUuid, readBody, HttpError, errorResponse } from "../_shared/security.js";
+import { vapidKeysToJwk } from "../_shared/vapid.ts";
 
-// ── VAPID key conversion helpers ─────────────────────────────────────────────
-// Converts raw base64url keys to JWK format for @negrel/webpush
-
-function base64urlToArrayBuffer(base64url: string): ArrayBuffer {
-  const padding = "=".repeat((4 - (base64url.length % 4)) % 4);
-  const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/") + padding;
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
-
-function arrayBufferToBase64url(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer);
-  let binary = "";
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
-}
-
-function convertVapidKeysToJWK(publicKeyBase64url: string, privateKeyBase64url: string) {
-  const publicKeyBuffer = base64urlToArrayBuffer(publicKeyBase64url);
-  if (publicKeyBuffer.byteLength !== 65) {
-    throw new Error(`Invalid public key length: ${publicKeyBuffer.byteLength} bytes, expected 65 for uncompressed P-256`);
-  }
-  const publicKeyBytes = new Uint8Array(publicKeyBuffer);
-  // Skip 0x04 prefix, extract x (32 bytes) and y (32 bytes)
-  const x = publicKeyBytes.slice(1, 33);
-  const y = publicKeyBytes.slice(33, 65);
-  const privateKeyBuffer = base64urlToArrayBuffer(privateKeyBase64url);
-
-  return {
-    publicKey: {
-      kty: "EC",
-      crv: "P-256",
-      alg: "ES256",
-      x: arrayBufferToBase64url(x),
-      y: arrayBufferToBase64url(y),
-      key_ops: ["verify"],
-      ext: true,
-    },
-    privateKey: {
-      kty: "EC",
-      crv: "P-256",
-      alg: "ES256",
-      x: arrayBufferToBase64url(x),
-      y: arrayBufferToBase64url(y),
-      d: arrayBufferToBase64url(privateKeyBuffer),
-      key_ops: ["sign"],
-      ext: true,
-    },
-  };
-}
 
 // ── CORS ─────────────────────────────────────────────────────────────────────
 const corsHeaders = {
@@ -76,19 +21,36 @@ serve(async (req: Request) => {
   console.log("send-chat-push: request received");
 
   try {
-    const { recipient_id, sender_name, message_text } = await req.json();
-    console.log("send-chat-push: payload:", { recipient_id, sender_name });
+    requireInternal(req, Deno.env.get("PUSH_INTERNAL_SECRET"));
+    const { message_id } = await readBody(req);
+    requireUuid(message_id);
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    const { data: message, error: messageError } = await supabase.from("messages")
+      .select("pair_id,sender_id,content").eq("id", message_id).maybeSingle();
+    if (messageError) throw messageError;
+    if (!message) throw new HttpError(404, "message_not_found");
+    const { data: pair, error: pairError } = await supabase.from("pairs")
+      .select("user_one,user_two").eq("id", message.pair_id).maybeSingle();
+    if (pairError) throw pairError;
+    if (!pair?.user_two || ![pair.user_one, pair.user_two].includes(message.sender_id)) throw new HttpError(403, "forbidden");
+    const recipient_id = pair.user_one === message.sender_id ? pair.user_two : pair.user_one;
+    const { data: profile, error: profileError } = await supabase.from("profiles")
+      .select("display_name").eq("id", message.sender_id).maybeSingle();
+    if (profileError) throw profileError;
+    const sender_name = profile?.display_name || "Seu par";
+    const message_text = message.content;
+
     // Fetch subscriptions for recipient
     const { data: subscriptions, error: subError } = await supabase
       .from("push_subscriptions")
       .select("*")
-      .eq("user_id", recipient_id);
+      .eq("user_id", recipient_id)
+      .eq("pair_id", message.pair_id);
 
     if (subError) {
       console.error("send-chat-push: DB error:", subError);
@@ -105,15 +67,11 @@ serve(async (req: Request) => {
     console.log(`send-chat-push: found ${subscriptions.length} subscriptions`);
 
     // ── VAPID key setup ────────────────────────────────────────────────────
-    const normalizedVapidKeys = normalizeVapidKeyPair(
+    const exportedVapidKeys = vapidKeysToJwk(
       Deno.env.get("VAPID_PUBLIC_KEY"),
       Deno.env.get("VAPID_PRIVATE_KEY")
     );
 
-    const exportedVapidKeys = convertVapidKeysToJWK(
-      normalizedVapidKeys.publicKey,
-      normalizedVapidKeys.privateKey
-    );
     const vapidKeys = await webpush.importVapidKeys(exportedVapidKeys, { extractable: false });
     const appServer = await webpush.ApplicationServer.new({
       contactInformation: Deno.env.get("VAPID_SUBJECT") || "mailto:notifications@couplespace.app",
@@ -186,9 +144,6 @@ serve(async (req: Request) => {
     });
   } catch (error: any) {
     console.error("send-chat-push: fatal error:", error.message);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return errorResponse(error, corsHeaders);
   }
 });

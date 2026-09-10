@@ -17,12 +17,14 @@ export default function EnterCode() {
 
   return (
     <div className="pairing-page">
-      <h2>Enter Invite Code</h2>
-      <p>Enter the code your partner shared with you</p>
+      <h2>Digite o código de convite</h2>
+      <p>Insira o código que seu par compartilhou</p>
 
       <form onSubmit={handleSubmit}>
         <input
           type="text"
+          aria-label="Código de convite"
+          inputMode="numeric"
           value={inputCode}
           onChange={(e) => setInputCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
           placeholder="000000"
@@ -34,7 +36,7 @@ export default function EnterCode() {
           disabled={loading || inputCode.length !== 6}
           className="connect-button"
         >
-          {loading ? 'Connecting...' : 'Connect'}
+          {loading ? 'Conectando…' : 'Conectar'}
         </button>
       </form>
 

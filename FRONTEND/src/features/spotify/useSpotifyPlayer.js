@@ -1,42 +1,76 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import useSpotifyStore from '../../stores/spotifyStore'
 
-const loadSpotifySDK = () => {
-  return new Promise((resolve) => {
-    if (window.Spotify) {
+let sdkPromise = null
+
+function loadSpotifySDK() {
+  if (window.Spotify) return Promise.resolve(window.Spotify)
+  if (sdkPromise) return sdkPromise
+
+  sdkPromise = new Promise((resolve, reject) => {
+    const existingScript = document.querySelector('script[data-spotify-web-playback-sdk="true"]')
+    const script = existingScript || document.createElement('script')
+    const previousReadyHandler = window.onSpotifyWebPlaybackSDKReady
+    const timeout = window.setTimeout(() => {
+      fail(new Error('O player do Spotify demorou para responder. Verifique sua conexão e tente novamente.'))
+    }, 10_000)
+
+    const cleanup = () => {
+      window.clearTimeout(timeout)
+      script.removeEventListener('error', onError)
+    }
+
+    const ready = () => {
+      if (typeof previousReadyHandler === 'function') previousReadyHandler()
+      if (!window.Spotify) return
+      cleanup()
       resolve(window.Spotify)
-      return
     }
 
-    window.onSpotifyWebPlaybackSDKReady = () => {}
+    const fail = (error) => {
+      cleanup()
+      reject(error)
+    }
 
-    const script = document.createElement('script')
-    script.src = 'https://sdk.scdn.co/spotify-player.js'
-    script.onload = () => {
-      const check = setInterval(() => {
-        if (window.Spotify) {
-          clearInterval(check)
-          resolve(window.Spotify)
-        }
-      }, 100)
-      setTimeout(() => {
-        clearInterval(check)
-        if (!window.Spotify) {
-          console.error('Spotify SDK failed to load')
-        }
-      }, 5000)
+    const onError = () => {
+      fail(new Error('Não foi possível carregar o player do Spotify. Desative bloqueadores e tente novamente.'))
     }
-    script.onerror = () => {
-      console.error('Failed to load Spotify SDK script')
+
+    window.onSpotifyWebPlaybackSDKReady = ready
+    script.addEventListener('error', onError, { once: true })
+
+    if (!existingScript) {
+      script.src = 'https://sdk.scdn.co/spotify-player.js'
+      script.async = true
+      script.dataset.spotifyWebPlaybackSdk = 'true'
+      document.body.appendChild(script)
     }
-    document.body.appendChild(script)
   })
+
+  sdkPromise.catch(() => {
+    sdkPromise = null
+  })
+
+  return sdkPromise
+}
+
+function toTrack(track) {
+  if (!track) return null
+  return {
+    name: track.name,
+    artist: track.artists?.[0]?.name || 'Artista desconhecido',
+    albumArt: track.album?.images?.[0]?.url || null,
+    uri: track.uri,
+    duration_ms: track.duration_ms,
+  }
 }
 
 export default function useSpotifyPlayer() {
   const playerRef = useRef(null)
   const [isReady, setIsReady] = useState(false)
   const [hasPremium, setHasPremium] = useState(true)
+  const [connectionStatus, setConnectionStatus] = useState('idle')
+  const [connectionMessage, setConnectionMessage] = useState(null)
   const cancelledRef = useRef(false)
 
   const accessToken = useSpotifyStore((s) => s.accessToken)
@@ -48,9 +82,30 @@ export default function useSpotifyPlayer() {
   const setError = useSpotifyStore((s) => s.setError)
 
   useEffect(() => {
-    if (!accessToken) return
+    if (!accessToken) {
+      setConnectionStatus('idle')
+      return
+    }
 
     cancelledRef.current = false
+    setConnectionStatus('loading')
+    setConnectionMessage(null)
+    setHasPremium(true)
+
+    const syncPlaybackState = (state) => {
+      if (!state || cancelledRef.current) return
+      const track = toTrack(state.track_window?.current_track)
+      if (track) setCurrentTrack(track)
+      setIsPlaying(!state.paused)
+      setProgress(state.position || 0)
+    }
+
+    const reportError = (message) => {
+      if (cancelledRef.current) return
+      setConnectionStatus('error')
+      setConnectionMessage(message)
+      setError(message)
+    }
 
     const initPlayer = async () => {
       try {
@@ -59,70 +114,83 @@ export default function useSpotifyPlayer() {
 
         const player = new Spotify.Player({
           name: 'CoupleSpace',
-          getOAuthToken: async (cb) => {
+          getOAuthToken: async (callback) => {
             const store = useSpotifyStore.getState()
-            const { tokenExpiresAt } = store
-            if (!tokenExpiresAt || tokenExpiresAt < Date.now() + 5 * 60 * 1000) {
-              await useSpotifyStore.getState().refreshTokenIfNeeded()
+            if (!store.tokenExpiresAt || store.tokenExpiresAt < Date.now() + 5 * 60 * 1000) {
+              await store.refreshTokenIfNeeded()
             }
-            const currentToken = useSpotifyStore.getState().accessToken
-            cb(currentToken)
+            callback(useSpotifyStore.getState().accessToken || '')
           },
           volume: 0.8,
         })
 
-        player.addListener('ready', ({ device_id }) => {
+        playerRef.current = player
+
+        player.addListener('ready', async ({ device_id }) => {
           if (cancelledRef.current) return
           setDeviceId(device_id)
           setIsReady(true)
+          setConnectionStatus('ready')
+          setConnectionMessage(null)
+          setError(null)
+          try {
+            syncPlaybackState(await player.getCurrentState())
+          } catch {
+            setConnectionMessage('O player está pronto. Escolha uma música para começar.')
+          }
+        })
+
+        player.addListener('not_ready', () => {
+          if (cancelledRef.current) return
+          setIsReady(false)
+          setConnectionStatus('offline')
+          setConnectionMessage('O player do Spotify ficou indisponível. Tentando reconectar…')
         })
 
         player.addListener('player_state_changed', (state) => {
-          if (cancelledRef.current) return
-          if (!state) return
-
-          const track = state.track_window?.current_track
-          if (track) {
-            setCurrentTrack({
-              name: track.name,
-              artist: track.artists[0]?.name || 'Unknown',
-              albumArt: track.album?.images?.[0]?.url || null,
-              uri: track.uri,
-              duration_ms: track.duration_ms,
-            })
+          syncPlaybackState(state)
+          if (!cancelledRef.current) {
+            setConnectionStatus('ready')
+            setConnectionMessage(null)
           }
-          setIsPlaying(!state.paused)
-          setProgress(state.position)
         })
 
-        player.addListener('account_error', ({ message }) => {
+        player.addListener('initialization_error', () => {
+          reportError('Este navegador não consegue iniciar o player do Spotify.')
+        })
+
+        player.addListener('authentication_error', () => {
+          reportError('A sessão do Spotify expirou. Conecte sua conta novamente.')
+        })
+
+        player.addListener('account_error', () => {
           if (cancelledRef.current) return
-          console.error('[spotify-sdk] account_error:', message)
           setHasPremium(false)
-          setError('premium_required')
+          setConnectionStatus('error')
+          setConnectionMessage('A reprodução no navegador requer uma conta Spotify Premium.')
+          setError('A reprodução no navegador requer uma conta Spotify Premium.')
         })
 
-        player.addListener('authentication_error', ({ message }) => {
+        player.addListener('playback_error', () => {
+          reportError('O Spotify não conseguiu reproduzir esta faixa. Tente outra música.')
+        })
+
+        player.addListener('autoplay_failed', () => {
           if (cancelledRef.current) return
-          console.error('[spotify-sdk] authentication_error:', message)
-          setError('auth_expired')
+          setConnectionStatus('blocked')
+          setConnectionMessage('Toque em reproduzir para permitir o áudio neste navegador.')
         })
 
-        player.addListener('playback_error', ({ message }) => {
-          console.error('[spotify-sdk] playback_error:', message)
-        })
-
-        player.connect().then((success) => {
-          if (success) {
-            playerRef.current = player
-          }
-        })
-      } catch (err) {
-        console.error('Failed to initialize Spotify player:', err)
+        const connected = await player.connect()
+        if (!connected) {
+          reportError('Não foi possível conectar o player do Spotify. Tente novamente.')
+        }
+      } catch (error) {
+        reportError(error.message || 'Não foi possível iniciar o player do Spotify.')
       }
     }
 
-    initPlayer()
+    void initPlayer()
 
     return () => {
       cancelledRef.current = true
@@ -134,7 +202,6 @@ export default function useSpotifyPlayer() {
     }
   }, [accessToken, setDeviceId, setCurrentTrack, setIsPlaying, setProgress, setError])
 
-  // Progress polling
   useEffect(() => {
     if (!isReady) return
 
@@ -144,71 +211,61 @@ export default function useSpotifyPlayer() {
 
       try {
         const state = await player.getCurrentState()
-        if (state && !state.paused) {
-          setProgress(state.position)
-        }
+        if (state && !state.paused) setProgress(state.position)
       } catch {
-        // ignore polling errors
+        // A próxima alteração de estado do SDK atualiza a interface.
       }
     }, 1000)
 
     return () => clearInterval(interval)
   }, [isReady, setProgress])
 
-  // Auto-resume via SDK when store requests it
   useEffect(() => {
     if (!isReady || !playerRef.current || !autoResume) return
 
     if (autoResume === 'pause') {
-      playerRef.current.pause()
+      void playerRef.current.pause()
     } else {
-      playerRef.current.resume()
+      void playerRef.current.resume()
     }
     useSpotifyStore.setState({ _autoResume: false })
   }, [autoResume, isReady])
 
-  // SDK actions (next, previous) triggered by store
   const sdkAction = useSpotifyStore((s) => s._sdkAction)
   useEffect(() => {
     if (!isReady || !playerRef.current || !sdkAction) return
 
     if (sdkAction === 'next') {
-      playerRef.current.nextTrack()
+      void playerRef.current.nextTrack()
     } else if (sdkAction === 'previous') {
-      playerRef.current.previousTrack()
+      void playerRef.current.previousTrack()
     }
     useSpotifyStore.setState({ _sdkAction: null })
   }, [sdkAction, isReady])
 
-  const play = useCallback(() => {
-    if (playerRef.current) {
-      playerRef.current.resume()
+  const runPlayerAction = useCallback(async (action) => {
+    if (!playerRef.current) {
+      setConnectionMessage('O player ainda está sendo conectado.')
+      return false
     }
-  }, [])
 
-  const pause = useCallback(() => {
-    if (playerRef.current) {
-      playerRef.current.pause()
+    try {
+      await action(playerRef.current)
+      return true
+    } catch {
+      const message = 'O Spotify não respondeu a esse controle. Tente novamente.'
+      setConnectionStatus('error')
+      setConnectionMessage(message)
+      setError(message)
+      return false
     }
-  }, [])
+  }, [setError])
 
-  const next = useCallback(() => {
-    if (playerRef.current) {
-      playerRef.current.nextTrack()
-    }
-  }, [])
-
-  const previous = useCallback(() => {
-    if (playerRef.current) {
-      playerRef.current.previousTrack()
-    }
-  }, [])
-
-  const seek = useCallback((positionMs) => {
-    if (playerRef.current) {
-      playerRef.current.seek(positionMs)
-    }
-  }, [])
+  const play = useCallback(() => runPlayerAction((player) => player.resume()), [runPlayerAction])
+  const pause = useCallback(() => runPlayerAction((player) => player.pause()), [runPlayerAction])
+  const next = useCallback(() => runPlayerAction((player) => player.nextTrack()), [runPlayerAction])
+  const previous = useCallback(() => runPlayerAction((player) => player.previousTrack()), [runPlayerAction])
+  const seek = useCallback((positionMs) => runPlayerAction((player) => player.seek(positionMs)), [runPlayerAction])
 
   return {
     play,
@@ -218,5 +275,7 @@ export default function useSpotifyPlayer() {
     seek,
     isReady,
     hasPremium,
+    connectionStatus,
+    connectionMessage,
   }
 }
