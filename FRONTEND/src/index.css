@@ -11,6 +11,9 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ambient-lilac: 184, 124, 255;
+  --ambient-mint: 57, 224, 204;
+  --ambient-blue: 69, 111, 255;
 }
 
 * {
@@ -25,6 +28,85 @@ body {
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global ambient theme: slow auroras sit behind every route and never intercept input. */
+#root {
+  position: relative;
+  min-height: 100%;
+  isolation: isolate;
+  overflow: clip;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(var(--ambient-lilac), 0.13), transparent 30rem),
+    radial-gradient(circle at 92% 78%, rgba(var(--ambient-mint), 0.08), transparent 28rem),
+    var(--color-bg-dark);
+}
+
+#root::before,
+#root::after {
+  position: fixed;
+  inset: -24%;
+  z-index: 0;
+  pointer-events: none;
+  content: '';
+  will-change: transform, opacity;
+}
+
+#root::before {
+  background:
+    radial-gradient(ellipse at 22% 22%, rgba(var(--ambient-lilac), 0.20) 0%, transparent 36%),
+    radial-gradient(ellipse at 74% 18%, rgba(var(--ambient-blue), 0.12) 0%, transparent 34%);
+  opacity: 0.82;
+}
+
+#root::after {
+  background:
+    radial-gradient(ellipse at 74% 72%, rgba(var(--ambient-mint), 0.14) 0%, transparent 34%),
+    radial-gradient(ellipse at 34% 86%, rgba(var(--ambient-lilac), 0.10) 0%, transparent 30%),
+    radial-gradient(rgba(255, 255, 255, 0.42) 0.65px, transparent 0.65px);
+  background-size: auto, auto, 30px 30px;
+  mask-image: linear-gradient(145deg, black 0%, rgba(0, 0, 0, 0.68) 45%, transparent 86%);
+  opacity: 0.34;
+}
+
+#root > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #root::before {
+    animation: ambient-drift 28s ease-in-out infinite alternate;
+  }
+
+  #root::after {
+    animation: ambient-drift-reverse 36s ease-in-out infinite alternate;
+  }
+
+  @keyframes ambient-drift {
+    0% { transform: translate3d(-2%, -1%, 0) scale(1); }
+    48% { transform: translate3d(2%, 1.5%, 0) scale(1.04); }
+    100% { transform: translate3d(4%, -1%, 0) scale(1.08); }
+  }
+
+  @keyframes ambient-drift-reverse {
+    0% { transform: translate3d(2%, 1%, 0) scale(1.04); }
+    50% { transform: translate3d(-2%, -1.5%, 0) scale(1); }
+    100% { transform: translate3d(-4%, 1%, 0) scale(1.07); }
+  }
+}
+
+@media (max-width: 600px) {
+  #root::before { opacity: 0.62; }
+  #root::after { opacity: 0.22; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root::before,
+  #root::after {
+    animation: none;
+    transform: none;
+  }
 }
 
 /* Prevent horizontal scroll on small viewports */
