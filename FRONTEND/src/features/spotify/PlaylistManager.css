@@ -56,7 +56,7 @@
 .playlist-manager__track-info { flex: 1; min-width: 0; }
 .playlist-manager__track-name, .playlist-manager__track-artist { overflow: hidden; margin: 0; text-overflow: ellipsis; white-space: nowrap; }
 .playlist-manager__track-name { color: var(--color-text-primary, #f7f5ff); font-size: 0.875rem; font-weight: 650; }
-.playlist-manager__track-artist { margin-top: 0.1875rem; color: var(--color-text-tertiary, #6f758d); font-size: 0.75rem; }
+.playlist-manager__track-artist { margin-top: 0.1875rem; color: var(--color-text-secondary, #a2a5b9); font-size: 0.75rem; }
 
 .playlist-manager__add-btn {
   display: flex;

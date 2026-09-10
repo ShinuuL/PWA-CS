@@ -10,7 +10,10 @@
 }
 
 .spotify-search__modal {
+  display: flex;
+  flex-direction: column;
   width: min(100%, 480px);
+  min-height: 0;
   max-height: min(80dvh, 680px);
   padding: clamp(1rem, 3vw, 1.5rem);
   border: 1px solid rgba(207, 190, 255, 0.22);
@@ -40,7 +43,7 @@
 .spotify-search__close:hover, .spotify-search__add-btn:hover:not(:disabled) { border-color: rgba(189, 134, 255, 0.54); background: rgba(189, 134, 255, 0.13); color: #f7f5ff; transform: translateY(-1px); }
 
 .spotify-search__input-container { position: relative; margin-bottom: 0.875rem; }
-.spotify-search__search-icon { position: absolute; top: 50%; left: 0.875rem; color: var(--color-text-tertiary, #6f758d); pointer-events: none; transform: translateY(-50%); }
+.spotify-search__search-icon { position: absolute; top: 50%; left: 0.875rem; color: var(--color-text-secondary, #a2a5b9); pointer-events: none; transform: translateY(-50%); }
 
 .spotify-search__input {
   width: 100%;
@@ -54,10 +57,10 @@
   font-size: 1rem;
 }
 
-.spotify-search__input::placeholder { color: var(--color-text-tertiary, #6f758d); }
+.spotify-search__input::placeholder { color: var(--color-text-secondary, #a2a5b9); }
 .spotify-search__input:focus { border-color: #bd86ff; box-shadow: 0 0 0 3px rgba(189, 134, 255, 0.14); outline: none; }
 
-.spotify-search__results { flex: 1; max-height: 400px; overflow-y: auto; padding-right: 0.125rem; }
+.spotify-search__results { flex: 1; min-height: 0; max-height: 400px; overflow-y: auto; padding-right: 0.125rem; }
 .spotify-search__loading { display: flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 160px; color: var(--color-text-secondary, #a2a5b9); font-size: 0.875rem; }
 .spotify-search__empty { padding: 2rem 1rem; color: var(--color-text-secondary, #a2a5b9); font-size: 0.875rem; text-align: center; }
 
@@ -67,7 +70,7 @@
 .spotify-search__track-info { flex: 1; min-width: 0; }
 .spotify-search__track-name, .spotify-search__track-artist { overflow: hidden; margin: 0; text-overflow: ellipsis; white-space: nowrap; }
 .spotify-search__track-name { color: var(--color-text-primary, #f7f5ff); font-size: 0.875rem; font-weight: 650; }
-.spotify-search__track-artist { margin-top: 0.1875rem; color: var(--color-text-tertiary, #6f758d); font-size: 0.75rem; }
+.spotify-search__track-artist { margin-top: 0.1875rem; color: var(--color-text-secondary, #a2a5b9); font-size: 0.75rem; }
 .spotify-search__add-btn { flex: 0 0 40px; border-radius: 50%; }
 .spotify-search__add-btn:disabled { cursor: default; }
 .spotify-search__add-btn--added { border-color: rgba(30, 215, 96, 0.55); background: #1ed760; color: #07130b; }

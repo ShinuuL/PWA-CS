@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { usePairing } from '../pairing/usePairing'
 import useDashboardStore from '../../stores/dashboardStore'
 import useSpotifyStore from '../../stores/spotifyStore'
-import CosmicBackground from './CosmicBackground'
 import './dashboard.css'
 
 import MemoryHero from './MemoryHero'
@@ -35,7 +34,6 @@ export default function HomePage() {
 
   return (
     <div className="dashboard">
-      <CosmicBackground />
       <div className="dashboard-grid">
         <MemoryHero />
         <div className="right-column">

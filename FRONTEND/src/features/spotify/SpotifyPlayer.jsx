@@ -58,6 +58,7 @@ export default function SpotifyPlayer() {
   }
 
   const state = getState()
+  const queueTracks = playlistTracks.slice(0, 3)
 
   // Fetch user playlists when connected but no playlist selected
   useEffect(() => {
@@ -204,6 +205,24 @@ export default function SpotifyPlayer() {
                 {formatTime(progress)} / {formatTime(currentTrack?.duration_ms)}
               </span>
             </div>
+            {queueTracks.length > 0 && (
+              <section className="spotify-player__queue" aria-label="Próximas músicas da playlist">
+                <p className="spotify-player__queue-title">Na fila</p>
+                <ul className="spotify-player__queue-list">
+                  {queueTracks.map((track) => (
+                    <li key={track.uri} className="spotify-player__queue-track">
+                      {track.albumArt && (
+                        <img src={track.albumArt} alt="" className="spotify-player__queue-art" />
+                      )}
+                      <span className="spotify-player__queue-track-info">
+                        <span className="spotify-player__queue-track-name">{track.name}</span>
+                        <span className="spotify-player__queue-track-artist">{track.artist}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
             <button className="spotify-player__btn spotify-player__btn--secondary" onClick={() => setShowPlaylistManager(true)}>
               <List size={14} />
               Nossa Playlist ({playlistTracks.length})
