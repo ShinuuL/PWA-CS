@@ -241,3 +241,65 @@
 .partner-modal-message-btn:hover {
   opacity: 0.9;
 }
+
+.profile-page {
+  padding-top: max(1.5rem, env(safe-area-inset-top));
+}
+
+.profile-form {
+  padding: 1.25rem;
+  background: rgba(24, 31, 51, 0.76);
+  border: 1px solid rgba(184, 124, 255, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 38px rgba(2, 5, 15, 0.2);
+  backdrop-filter: blur(18px);
+}
+
+.profile-field label {
+  color: #c7a5ff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.profile-field input {
+  background: rgba(13, 18, 33, 0.76);
+  border-color: rgba(184, 124, 255, 0.22);
+}
+
+.profile-field input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(184, 124, 255, 0.15);
+}
+
+.btn-primary,
+.partner-modal-message-btn {
+  background: linear-gradient(135deg, #c28dff, #9560ec);
+  box-shadow: 0 9px 22px rgba(112, 65, 203, 0.28);
+}
+
+.btn-secondary {
+  min-height: 44px;
+  background: rgba(24, 31, 51, 0.64);
+  border-color: rgba(184, 124, 255, 0.24);
+}
+
+.partner-modal-overlay {
+  background: rgba(3, 6, 15, 0.82);
+  z-index: 300;
+}
+
+.partner-modal-content {
+  background: rgba(19, 26, 45, 0.98);
+  border: 1px solid rgba(184, 124, 255, 0.3);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(20px);
+}
+
+.profile-page button:focus-visible,
+.profile-page input:focus-visible,
+.partner-modal-content button:focus-visible {
+  outline: 2px solid #d7b8ff;
+  outline-offset: 3px;
+}

@@ -176,3 +176,75 @@
   color: white;
   font-size: 1.5rem;
 }
+
+.pairing-gate {
+  position: relative;
+}
+
+.pairing-page {
+  max-width: 360px;
+  padding: 1.5rem;
+  background: rgba(24, 31, 51, 0.76);
+  border: 1px solid rgba(184, 124, 255, 0.24);
+  border-radius: 24px;
+  box-shadow: 0 22px 52px rgba(2, 5, 15, 0.3);
+  backdrop-filter: blur(20px);
+}
+
+.pairing-gate h2,
+.pairing-page h2 {
+  letter-spacing: -0.025em;
+}
+
+.invite-code .code {
+  width: 100%;
+  background: rgba(13, 18, 33, 0.72);
+  border-color: rgba(184, 124, 255, 0.38);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 28px rgba(70, 39, 142, 0.16);
+}
+
+.code-input {
+  min-height: 56px;
+  background: rgba(13, 18, 33, 0.76);
+  border-color: rgba(184, 124, 255, 0.26);
+}
+
+.code-input:focus {
+  box-shadow: 0 0 0 3px rgba(184, 124, 255, 0.16);
+}
+
+.generate-button,
+.connect-button {
+  min-height: 48px;
+  background: linear-gradient(135deg, #c28dff, #9560ec);
+  box-shadow: 0 9px 22px rgba(112, 65, 203, 0.3);
+}
+
+.toggle-button {
+  min-height: 40px;
+  border-radius: var(--radius-md);
+}
+
+.toggle-button:hover {
+  background: rgba(184, 124, 255, 0.1);
+}
+
+.pairing-gate button:focus-visible,
+.pairing-page input:focus-visible {
+  outline: 2px solid #d7b8ff;
+  outline-offset: 3px;
+}
+
+@media (max-width: 420px) {
+  .pairing-page {
+    padding: 1.25rem;
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(12px);
+  }
+
+  .invite-code .code {
+    font-size: 2rem;
+    letter-spacing: 0.35rem;
+    padding: 0.875rem 1rem;
+  }
+}

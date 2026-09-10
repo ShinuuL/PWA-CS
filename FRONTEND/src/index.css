@@ -55,18 +55,20 @@ body {
 #root::before {
   background:
     radial-gradient(ellipse at 22% 22%, rgba(var(--ambient-lilac), 0.20) 0%, transparent 36%),
-    radial-gradient(ellipse at 74% 18%, rgba(var(--ambient-blue), 0.12) 0%, transparent 34%);
+    radial-gradient(ellipse at 74% 18%, rgba(var(--ambient-blue), 0.12) 0%, transparent 34%),
+    radial-gradient(ellipse at 74% 72%, rgba(var(--ambient-mint), 0.14) 0%, transparent 34%),
+    radial-gradient(ellipse at 34% 86%, rgba(var(--ambient-lilac), 0.10) 0%, transparent 30%);
   opacity: 0.82;
 }
 
 #root::after {
-  background:
-    radial-gradient(ellipse at 74% 72%, rgba(var(--ambient-mint), 0.14) 0%, transparent 34%),
-    radial-gradient(ellipse at 34% 86%, rgba(var(--ambient-lilac), 0.10) 0%, transparent 30%),
-    radial-gradient(rgba(255, 255, 255, 0.42) 0.65px, transparent 0.65px);
-  background-size: auto, auto, 30px 30px;
-  mask-image: linear-gradient(145deg, black 0%, rgba(0, 0, 0, 0.68) 45%, transparent 86%);
-  opacity: 0.34;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.62) 0 0.7px, transparent 0.85px),
+    radial-gradient(circle, rgba(214, 199, 255, 0.48) 0 1.2px, transparent 1.4px);
+  background-size: 31px 37px, 89px 103px;
+  background-position: 0 0, 17px 23px;
+  mask-image: linear-gradient(145deg, black 0%, rgba(0, 0, 0, 0.82) 52%, transparent 94%);
+  opacity: 0.52;
 }
 
 #root > * {
@@ -80,7 +82,7 @@ body {
   }
 
   #root::after {
-    animation: ambient-drift-reverse 36s ease-in-out infinite alternate;
+    animation: starfield-drift 42s ease-in-out infinite alternate;
   }
 
   @keyframes ambient-drift {
@@ -89,7 +91,7 @@ body {
     100% { transform: translate3d(4%, -1%, 0) scale(1.08); }
   }
 
-  @keyframes ambient-drift-reverse {
+  @keyframes starfield-drift {
     0% { transform: translate3d(2%, 1%, 0) scale(1.04); }
     50% { transform: translate3d(-2%, -1.5%, 0) scale(1); }
     100% { transform: translate3d(-4%, 1%, 0) scale(1.07); }
@@ -98,7 +100,7 @@ body {
 
 @media (max-width: 600px) {
   #root::before { opacity: 0.62; }
-  #root::after { opacity: 0.22; }
+  #root::after { opacity: 0.34; }
 }
 
 @media (prefers-reduced-motion: reduce) {

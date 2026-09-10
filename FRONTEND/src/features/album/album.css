@@ -565,3 +565,84 @@
     padding: 1rem;
   }
 }
+
+/* Album media remains the focus while navigation and dialogs sit on cosmic glass. */
+.album-page {
+  background: transparent;
+}
+
+.album-header {
+  background: rgba(15, 20, 37, 0.84);
+  border-bottom: 1px solid rgba(184, 124, 255, 0.2);
+  backdrop-filter: blur(18px);
+}
+
+.album-header-back,
+.album-grid__delete,
+.album-lightbox-close {
+  border: 1px solid rgba(184, 124, 255, 0.26);
+  background: rgba(20, 27, 47, 0.78);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+}
+
+.album-grid__cell,
+.mini-album__thumb {
+  border: 1px solid rgba(184, 124, 255, 0.16);
+  box-shadow: 0 10px 24px rgba(1, 4, 13, 0.2);
+}
+
+.album-grid__empty,
+.mini-album__empty,
+.mini-album__skeleton {
+  background: rgba(24, 31, 51, 0.74);
+  border-color: rgba(184, 124, 255, 0.25);
+}
+
+.album-upload-btn,
+.album-upload-preview-confirm {
+  background: linear-gradient(135deg, #c28dff, #9560ec);
+  box-shadow: 0 9px 22px rgba(112, 65, 203, 0.32);
+}
+
+.album-upload-preview,
+.album-lightbox {
+  background: rgba(3, 6, 15, 0.84);
+  z-index: 300;
+}
+
+.album-upload-preview-card {
+  background: rgba(19, 26, 45, 0.98);
+  border: 1px solid rgba(184, 124, 255, 0.3);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(20px);
+}
+
+.album-upload-preview-caption,
+.album-upload-preview-cancel {
+  background: rgba(27, 34, 52, 0.82);
+  border-color: rgba(184, 124, 255, 0.24);
+}
+
+.album-lightbox-header,
+.album-lightbox-footer {
+  background: rgba(15, 20, 37, 0.88);
+  border-color: rgba(184, 124, 255, 0.2);
+  backdrop-filter: blur(18px);
+}
+
+.album-page button:focus-visible,
+.album-page input:focus-visible,
+.album-lightbox button:focus-visible {
+  outline: 2px solid #d7b8ff;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .album-content {
+    padding: 0.75rem;
+  }
+
+  .album-header {
+    backdrop-filter: blur(12px);
+  }
+}
