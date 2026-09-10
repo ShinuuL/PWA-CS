@@ -31,7 +31,7 @@ export default function SpotifyPlayer() {
   const disconnect = useSpotifyStore((s) => s.disconnect)
 
   const { startAuth } = useSpotifyAuth()
-  const { next, previous, hasPremium } = useSpotifyPlayer()
+  const { next, previous, hasPremium, connectionStatus, connectionMessage } = useSpotifyPlayer()
 
   const [userPlaylists, setUserPlaylists] = useState([])
   const [disconnecting, setDisconnecting] = useState(false)
@@ -59,6 +59,16 @@ export default function SpotifyPlayer() {
 
   const state = getState()
   const queueTracks = playlistTracks.slice(0, 3)
+  const statusLabel = {
+    idle: 'Preparando sessão',
+    loading: 'Conectando player',
+    ready: 'Pronto para tocar',
+    offline: 'Reconectando',
+    blocked: 'Aguardando toque',
+    error: 'Verifique a conexão',
+  }[connectionStatus]
+  const playerMessage = connectionMessage || error
+  const isConnectionNotice = connectionStatus === 'offline' || connectionStatus === 'blocked'
 
   // Fetch user playlists when connected but no playlist selected
   useEffect(() => {
@@ -247,6 +257,12 @@ export default function SpotifyPlayer() {
     <div className="spotify-player">
       <div className="spotify-player__header">
         <h3 className="spotify-player__title">Nossa Playlist</h3>
+        {isConnected && (
+          <span className={`spotify-player__status spotify-player__status--${connectionStatus}`}>
+            <span aria-hidden="true" />
+            {statusLabel || 'Spotify conectado'}
+          </span>
+        )}
         {isConnected && config?.playlist_id && (
           <div className="spotify-player__header-actions">
             <button className="spotify-player__header-btn" onClick={() => setShowPlaylistManager(true)}>
@@ -258,7 +274,7 @@ export default function SpotifyPlayer() {
           </div>
         )}
       </div>
-      {error && <p className="spotify-player__error" role="alert">{error}</p>}
+      {playerMessage && <p className={`spotify-player__error${isConnectionNotice ? ' spotify-player__error--notice' : ''}`} role="alert">{playerMessage}</p>}
       {renderContent()}
       <AnimatePresence>
         {showSearch && (

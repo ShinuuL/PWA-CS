@@ -16,7 +16,6 @@ export default function useSpotifyAuth() {
   const [authError, setAuthError] = useState(null)
 
   const setAccessToken = useSpotifyStore((s) => s.setAccessToken)
-  const setDeviceId = useSpotifyStore((s) => s.setDeviceId)
 
   const startAuth = useCallback(async () => {
     try {
@@ -125,21 +124,6 @@ export default function useSpotifyAuth() {
       // Store access_token in memory (not localStorage)
       setAccessToken(data.access_token, data.expires_in)
 
-      // Initialize Spotify SDK
-      if (window.Spotify) {
-        const player = new window.Spotify.Player({
-          name: 'CoupleSpace',
-          getOAuthToken: (cb) => cb(data.access_token),
-          volume: 0.8,
-        })
-
-        player.addListener('ready', ({ device_id }) => {
-          setDeviceId(device_id)
-        })
-
-        player.connect()
-      }
-
       // Clean up localStorage
       localStorage.removeItem('spotify_code_verifier')
       localStorage.removeItem('spotify_auth_state')
@@ -153,7 +137,7 @@ export default function useSpotifyAuth() {
       localStorage.removeItem('spotify_auth_state')
       return false
     }
-  }, [setAccessToken, setDeviceId])
+  }, [setAccessToken])
 
   return {
     startAuth,
